@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sahil — Portfolio</title>
+<meta name="description" content="Motion designer and 3D artist based in Oslo. Showreel, experience and selected work.">
+<meta name="theme-color" content="#286a6d">
+<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+
+<!-- Link previews (LinkedIn, Slack, iMessage, etc.). Once the site has
+     a web address, change og:image to the full address of the image,
+     e.g. https://your-domain.com/images/og-image-ss02.jpg — most preview
+     services ignore relative paths. See README → "Link previews". -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Sahil — Motion designer and 3D artist, Oslo">
+<meta property="og:description" content="Motion designer and 3D artist based in Oslo. Showreel, experience and selected work.">
+<meta property="og:image" content="images/og-image-ss02.jpg">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<div class="cinema-overlay"></div>
+
+<!-- ==================================================================
+     MASTHEAD — your logo, role, and how to reach you.
+     See README.md → "Your header" to edit every part of this.
+     ================================================================== -->
+<!-- The landing screen: the lighter teal band at the top of the page.
+     Everything after it sits on the deeper teal (see README §3). -->
+<div class="stage" id="start">
+<header class="masthead">
+  <div class="masthead__grid">
+  <h1>
+    <span class="masthead__logo logo-motion" role="img" aria-label="Sahil">
+      <picture class="logo-motion__ext">
+        <source media="(min-width: 684px)" srcset="images/sahil-logo-ext.webp" width="3473" height="2484">
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="">
+      </picture>
+      <picture class="logo-motion__still">
+        <source media="(min-width: 684px)" srcset="images/sahil-logo-still-ss02.webp" width="2000" height="1000">
+        <img src="images/sahil-logo-mobile-still-ss04.webp" alt="" width="1200" height="470">
+      </picture>
+      <canvas class="logo-motion__anim" aria-hidden="true"
+        data-src-wide="images/sahil-logo-motion-ss02.mp4"
+        data-src-narrow="images/sahil-logo-motion-mobile-ss04.mp4"></canvas>
+    </span>
+  </h1>
+  <p class="masthead__bio">Motion designer, 3D generalist and editor with broad experience in product visualization, advertising and digital campaigns. I work where design meets technical execution, bringing visual identities to life through strategic use of motion and 3D, so brands both communicate and sell across every surface.</p>
+  <div class="profile-card">
+    <picture>
+      <source srcset="images/sahil-profile.webp" type="image/webp">
+      <img class="profile-card__photo" src="images/sahil-profile.jpg" alt="Portrait of Sahil" width="563" height="563">
+    </picture>
+    <div class="profile-card__body">
+      <p class="profile-card__name">Sahil Singh</p>
+      <p class="profile-card__role">Motion designer and 3D artist</p>
+      <p class="profile-card__place">Based in Oslo</p>
+      <dl class="profile-card__contact">
+        <div>
+          <dt>Email</dt>
+          <dd><a href="mailto:sahil_singh98@hotmail.com">sahil_singh98@hotmail.com</a></dd>
+        </div>
+        <div>
+          <dt>Phone</dt>
+          <dd><a href="tel:+4740140423">+47 401 40 423</a></dd>
+        </div>
+        <div>
+          <dt>Showreel</dt>
+          <dd><a href="#intro" data-play-reel>Watch showreel</a></dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+  </div>
+
+  <a class="cue cue--down" href="#intro">Showreel and experiences <span aria-hidden="true">↓</span></a>
+</header>
+</div>
+
+<!-- ======================================================================
+     REEL + CV — two columns: the showreel on the left (it expands to
+     full width while playing, and shrinks back when paused or stopped),
+     recent experience and the two action buttons on the right.
+     See README.md → "The reel + CV row" to edit any part of this.
+     ====================================================================== -->
+<section class="intro" id="intro">
+
+  <a class="cue cue--top" href="#start">Back to top <span aria-hidden="true">↑</span></a>
+
+  <h2 class="intro__eyebrow">Experiences</h2>
+
+  <div class="intro__row">
+
+    <div class="intro__reel">
+      <!-- Showreel. Without JavaScript the browser's own controls show
+           (the "controls" attribute); the script at the bottom of the
+           page removes them and switches on the custom player. -->
+      <div class="reel__frame reel" id="reel" tabindex="-1">
+        <video class="reel__video" id="reel-video" controls playsinline preload="metadata"
+          poster="videos/showreel-poster.webp" width="1920" height="1080">
+          <source src="videos/showreel.webm" type="video/webm">
+          <source src="videos/showreel.mp4" type="video/mp4">
+        </video>
+
+        <button class="reel__bigplay" type="button" data-reel="play" aria-label="Play showreel">
+          <span class="reel__bigplay-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg>
+          </span>
+        </button>
+
+        <div class="reel__controls">
+          <button class="reel__btn" type="button" data-reel="toggle" aria-label="Pause">
+            <svg class="reel__icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>
+            <svg class="reel__icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
+          </button>
+          <span class="reel__time" aria-hidden="true"><span data-reel="current">0:00</span> / <span data-reel="duration">1:00</span></span>
+          <input class="reel__seek" type="range" data-reel="seek" min="0" max="1000" step="1" value="0" aria-label="Seek">
+          <button class="reel__btn" type="button" data-reel="mute" aria-label="Mute">
+            <svg class="reel__icon-sound" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15 9a4.2 4.2 0 0 1 0 6M17.5 6.5a7.8 7.8 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <svg class="reel__icon-muted" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9.5l5 5M20.5 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+          <button class="reel__btn" type="button" data-reel="fullscreen" aria-label="Full screen">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 9V4.5H9M15 4.5h4.5V9M19.5 15v4.5H15M9 19.5H4.5V15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="intro__cv">
+      <ul class="cv__list">
+        <li>
+          <span class="cv__role">Motion Designer</span>
+          <span class="cv__org">SDG / TBWA</span>
+          <span class="cv__years">2020 — Present</span>
+        </li>
+        <li>
+          <span class="cv__role">Film Producer</span>
+          <span class="cv__org">Bydel St. Hanshaugen</span>
+          <span class="cv__years">2017 — 2019</span>
+        </li>
+        <li>
+          <span class="cv__role">PR Assistant</span>
+          <span class="cv__org">UKM Norge</span>
+          <span class="cv__years">2016 — 2019</span>
+        </li>
+        <li>
+          <span class="cv__role">Production Supervisor</span>
+          <span class="cv__org">Smartprat</span>
+          <span class="cv__years">2015 — 2017</span>
+        </li>
+      </ul>
+      <div class="cv__actions">
+        <a class="btn btn--primary" href="mailto:sahil_singh98@hotmail.com">Contact</a>
+        <a class="btn btn--ghost" href="files/Sahil_Singh_CV_2026.pdf" download>Full Resume</a>
+      </div>
+    </div>
+
+  </div>
+
+
+  <a class="cue cue--down" href="#works">Works and cases <span aria-hidden="true">↓</span></a>
+</section>
+
+<main>
+
+  <!-- Selected Works: the last screen. It holds its own two links
+       (top right: back to Experiences; bottom left: back to the top),
+       which the footer sits directly under. -->
+  <div class="works" id="works">
+
+  <a class="cue cue--top" href="#intro">Back to experiences <span aria-hidden="true">↑</span></a>
+
+  <section class="hero">
+    <h2 class="hero__eyebrow">Selected Works / 2020&mdash;2026</h2>
+    <p class="hero__tagline">
+      A running log of projects, experiments, and shipped work.
+      Every case below opens as its own file — click through for the full write-up.
+    </p>
+  </section>
+
+  <section class="cases" id="cases">
+    <!-- The homepage grid is filled in by assets/cases.js from
+         cases/manifest.json — add, remove or reorder a case there and
+         it updates here automatically. See README.md → "Adding a new
+         case". -->
+    <div class="cases__grid"></div>
+  </section>
+
+  <a class="cue cue--bottom" href="#start">Back to top <span aria-hidden="true">↑</span></a>
+
+  </div>
+
+</main>
+
+<footer class="footer">
+  <p>© 2026 Sahil</p>
+  <p>sahil_singh98@hotmail.com</p>
+</footer>
+
+<!-- The showreel player. This is the only JavaScript on the site. It
+     runs the custom controls and expands the reel to full width while
+     it plays (dimming the rest of the page), reversing both on pause.
+     See README.md → "The reel + CV row". -->
+<script>
+(function () {
+  var reel = document.getElementById('reel');
+  var video = document.getElementById('reel-video');
+  var intro = document.getElementById('intro');
+  if (!reel || !video || !intro) return;
+
+  var q = function (name) { return reel.querySelector('[data-reel="' + name + '"]'); };
+  var toggleBtn = q('toggle'), muteBtn = q('mute'), fsBtn = q('fullscreen');
+  var seek = q('seek'), current = q('current'), duration = q('duration');
+
+  // Hand over from the browser's built-in controls to ours.
+  video.controls = false;
+  reel.classList.add('reel--custom');
+
+  function fmt(t) {
+    t = Math.max(0, Math.floor(t || 0));
+    return Math.floor(t / 60) + ':' + ('0' + (t % 60)).slice(-2);
+  }
+
+  var changeTimer = null;
+  function setPlaying(on) {
+    // switch the expand / collapse animation on for its 0.5 s
+    intro.classList.add('is-changing');
+    clearTimeout(changeTimer);
+    changeTimer = setTimeout(function () { intro.classList.remove('is-changing'); }, 600);
+    intro.classList.toggle('is-playing', on);
+    document.body.classList.toggle('is-playing', on);
+    reel.classList.toggle('is-paused', !on);
+    toggleBtn.setAttribute('aria-label', on ? 'Pause' : 'Play');
+  }
+
+  function togglePlay() {
+    if (video.paused || video.ended) video.play(); else video.pause();
+  }
+
+  // Progress: a smooth animation-frame loop while playing, plus a
+  // one-off update whenever the position changes while paused.
+  var raf = null;
+  function paint() {
+    var d = video.duration || 0;
+    // while scrubbing (or waiting for a seek), show where the visitor is
+    // pointing, not where the film currently is
+    var t = dragging ? scrubTime() : (pendingSeek !== null ? pendingSeek : video.currentTime);
+    var pct = d ? (t / d) * 100 : 0;
+    if (!dragging) seek.value = Math.round(pct * 10);
+    seek.style.setProperty('--progress', (dragging ? seek.value / 10 : pct) + '%');
+    current.textContent = fmt(t);
+    seek.setAttribute('aria-valuetext', fmt(t) + ' of ' + fmt(d));
+  }
+  function loop() { paint(); raf = requestAnimationFrame(loop); }
+
+  video.addEventListener('loadedmetadata', function () {
+    duration.textContent = fmt(video.duration);
+    paint();
+  });
+  video.addEventListener('play', function () {
+    reel.classList.add('is-started');
+    setPlaying(true);
+    cancelAnimationFrame(raf); loop();
+    wake();
+  });
+  video.addEventListener('pause', function () {
+    if (swapping) return; // just the file being swapped (see "Scrubbing" below)
+    if (scrubPauses > 0) { scrubPauses--; return; } // held still while scrubbing
+    setPlaying(false);
+    cancelAnimationFrame(raf); paint();
+    wake();
+  });
+  video.addEventListener('ended', function () {
+    // Back to the poster and the big play button.
+    setPlaying(false);
+    reel.classList.remove('is-started');
+    video.currentTime = 0;
+    video.load();
+    q('play').focus({ preventScroll: true });
+  });
+  video.addEventListener('seeked', paint);
+  video.addEventListener('volumechange', function () {
+    var muted = video.muted || video.volume === 0;
+    reel.classList.toggle('is-muted', muted);
+    muteBtn.setAttribute('aria-label', muted ? 'Unmute' : 'Mute');
+  });
+
+  // Links marked data-play-reel (the "Watch showreel" link in the
+  // profile card) do two things: the browser scrolls to the reel as
+  // usual (href="#intro"), and this starts it. Starting it inside the
+  // click is what lets it play with sound — browsers only allow that
+  // right after a click or tap.
+  Array.prototype.forEach.call(document.querySelectorAll('[data-play-reel]'), function (link) {
+    link.addEventListener('click', function () {
+      if (!video.paused && !video.ended) return; // already playing: just scroll
+      reel.classList.add('is-started');
+      var started = video.play();
+      if (started && started.catch) {
+        started.catch(function () {
+          // blocked anyway: start it muted rather than not at all
+          video.muted = true;
+          video.play().catch(function () {});
+        });
+      }
+    });
+  });
+
+  q('play').addEventListener('click', function () {
+    reel.classList.add('is-started'); // show the control bar first, so focus can move to it
+    video.play();
+    toggleBtn.focus({ preventScroll: true });
+  });
+  toggleBtn.addEventListener('click', togglePlay);
+  video.addEventListener('click', togglePlay);
+  muteBtn.addEventListener('click', function () { video.muted = !video.muted; });
+
+  // ---- Scrubbing -------------------------------------------------
+  var dragging = false;      // the mouse or a finger is down on the bar
+  var pendingSeek = null;    // where the visitor wants to go, while the file loads
+  var waitingForFile = false;
+  var wholeFile = false;     // true once the film is in memory
+  var swapping = false;
+  var scrubPauses = 0;       // pauses we caused ourselves while dragging
+  var resumeAfterDrag = false;
+
+  // Where the bar points, but never the very last second: reaching the
+  // end counts as "finished" and would send the reel back to the poster.
+  function scrubTime() {
+    var d = video.duration || 0;
+    return Math.min((seek.value / 1000) * d, Math.max(0, d - 1));
+  }
+
+  // Can the browser jump to t? A server that supports HTTP range
+  // requests (every normal web host does) makes the whole film
+  // seekable. Some simple local servers don't, and then every jump
+  // would restart the film from the beginning.
+  function canSeekTo(t) {
+    if (video.readyState < 1) return true;
+    var s = video.seekable, d = video.duration || 0;
+    if (!s.length) return false;
+    if (s.end(s.length - 1) >= d - 1) return true;
+    for (var i = 0; i < s.length; i++) {
+      if (t >= s.start(i) && t <= s.end(i)) return true;
+    }
+    return false;
+  }
+
+  function seekTo(t) {
+    if (canSeekTo(t)) { video.currentTime = t; return; }
+    loadWholeFile(t);
+  }
+
+  // Fallback for servers without range support: fetch the whole film
+  // into memory and play that copy, which can always be seeked. This
+  // only ever happens on such a server, and only when a visitor
+  // actually scrubs. Pages opened straight from a file can't fetch, so
+  // there the film simply stays where it is instead of restarting.
+  function loadWholeFile(t) {
+    pendingSeek = t;
+    if (waitingForFile || wholeFile) return;
+    waitingForFile = true;
+    reel.classList.add('is-loading');
+    fetch(video.currentSrc)
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.blob(); })
+      .then(function (blob) {
+        var wasPlaying = !video.paused;
+        swapping = true;
+        video.addEventListener('loadedmetadata', function once() {
+          video.removeEventListener('loadedmetadata', once);
+          video.currentTime = pendingSeek !== null ? pendingSeek : 0;
+          pendingSeek = null;
+          wholeFile = true;
+          swapping = false;
+          if (wasPlaying) {
+            var p = video.play();
+            if (p && p.catch) p.catch(function () {});
+          }
+          paint();
+        });
+        video.src = URL.createObjectURL(blob);
+      })
+      .catch(function () { pendingSeek = null; swapping = false; })
+      .then(function () { waitingForFile = false; reel.classList.remove('is-loading'); paint(); });
+  }
+
+  seek.addEventListener('input', function () {
+    seekTo(scrubTime());
+    paint();
+  });
+  // While the bar is held, the film waits where it is (as in most
+  // players) and carries on when it's let go, so it can't run out
+  // halfway through a scrub. The page doesn't react to this pause.
+  seek.addEventListener('pointerdown', function () {
+    dragging = true;
+    resumeAfterDrag = !video.paused && !video.ended;
+    if (resumeAfterDrag) { scrubPauses++; video.pause(); }
+  });
+  function endDrag() {
+    if (!dragging) return;
+    dragging = false;
+    if (resumeAfterDrag) {
+      resumeAfterDrag = false;
+      var p = video.play();
+      if (p && p.catch) p.catch(function () {});
+    }
+    paint();
+  }
+  window.addEventListener('pointerup', endDrag);
+  window.addEventListener('pointercancel', endDrag);
+  seek.addEventListener('change', endDrag);
+
+  // Full screen: the whole frame, so our controls come along. iPhone
+  // Safari can only put the <video> itself full screen, with its own
+  // controls — that's the fallback.
+  fsBtn.addEventListener('click', function () {
+    var fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+    if (fsEl) {
+      (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    } else if (reel.requestFullscreen) {
+      reel.requestFullscreen();
+    } else if (reel.webkitRequestFullscreen) {
+      reel.webkitRequestFullscreen();
+    } else if (video.webkitEnterFullscreen) {
+      video.webkitEnterFullscreen();
+    }
+  });
+  function onFsChange() {
+    var on = (document.fullscreenElement || document.webkitFullscreenElement) === reel;
+    reel.classList.toggle('is-fullscreen', on);
+    fsBtn.setAttribute('aria-label', on ? 'Exit full screen' : 'Full screen');
+  }
+  document.addEventListener('fullscreenchange', onFsChange);
+  document.addEventListener('webkitfullscreenchange', onFsChange);
+
+  // Keyboard, when focus is anywhere inside the player:
+  // space / k = play-pause, ← → = 5 s, m = mute, f = full screen.
+  reel.addEventListener('keydown', function (e) {
+    var tag = e.target.tagName;
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    if ((e.key === ' ' || e.key === 'Enter') && (tag === 'BUTTON')) return; // buttons handle these themselves
+    if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && tag === 'INPUT') return; // the slider does too
+    var handled = true;
+    switch (e.key) {
+      case ' ': case 'k': case 'K': togglePlay(); break;
+      case 'ArrowLeft': seekTo(Math.max(0, video.currentTime - 5)); break;
+      case 'ArrowRight': seekTo(Math.min(Math.max(0, (video.duration || 0) - 1), video.currentTime + 5)); break;
+      case 'm': case 'M': muteBtn.click(); break;
+      case 'f': case 'F': fsBtn.click(); break;
+      default: handled = false;
+    }
+    if (handled) { e.preventDefault(); wake(); }
+  });
+
+  // Controls fade out after a few seconds without any movement while
+  // playing (2.5 s with a mouse, 3.5 s on a touchscreen), and come back
+  // on any movement, tap or key press.
+  var idleTimer = null;
+  var touching = false;      // the last pointer was a finger, not a mouse
+  var tapOnlyRevealed = false;
+  function wake() {
+    reel.classList.remove('is-idle');
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(function () {
+      // stay visible while a keyboard user is on a control, or a finger
+      // is on the scrub bar
+      if (!video.paused && !dragging && !reel.querySelector(':focus-visible')) reel.classList.add('is-idle');
+    }, touching ? 3500 : 2500);
+  }
+  reel.addEventListener('pointermove', function (e) { touching = e.pointerType !== 'mouse'; wake(); });
+  // Capture phase, so the state is read before anything else reacts.
+  reel.addEventListener('pointerdown', function (e) {
+    touching = e.pointerType !== 'mouse';
+    // A tap while the controls are hidden should only bring them back:
+    // not also pause the film, and not press a button you can't see.
+    tapOnlyRevealed = touching && reel.classList.contains('is-idle');
+    if (tapOnlyRevealed) setTimeout(function () { tapOnlyRevealed = false; }, 700);
+    wake();
+  }, true);
+  reel.addEventListener('click', function (e) {
+    if (!tapOnlyRevealed) return;
+    tapOnlyRevealed = false;
+    e.stopPropagation();
+    e.preventDefault();
+  }, true);
+  reel.addEventListener('focusin', wake);
+  reel.addEventListener('pointerleave', function (e) {
+    // Only for a mouse leaving the player. Lifting a finger also counts
+    // as "leaving", and hiding the controls at that moment made the tap
+    // fall through to the video underneath instead of hitting the button.
+    if (e.pointerType !== 'mouse') return;
+    if (!video.paused) { clearTimeout(idleTimer); reel.classList.add('is-idle'); }
+  });
+
+  video.muted = false;
+  setPlaying(false);
+})();
+</script>
+
+<script>
+/* Jump links. After a click on an in-page link, the page glides to the
+   next screen while the mouse pointer stays where it was, so whatever
+   ends up under it (often the first case card) would suddenly react as
+   if it had been hovered. This switches those hover effects off until
+   the mouse really moves again. (The "is-jumping" class is picked up
+   by the case-card hover rule in style.css.) */
+(function () {
+  var root = document.documentElement;
+  var x = null, y = null;
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest || !e.target.closest('a[href^="#"]')) return;
+    root.classList.add('is-jumping');
+    // e.detail is 0 when the link was activated from the keyboard
+    x = e.detail ? e.clientX : null;
+    y = e.detail ? e.clientY : null;
+  });
+  document.addEventListener('pointermove', function (e) {
+    if (!root.classList.contains('is-jumping')) return;
+    // the browser also reports a "move" at the same spot when the
+    // page scrolls under a still mouse; only a real move counts
+    if (x !== null && Math.abs(e.clientX - x) < 4 && Math.abs(e.clientY - y) < 4) return;
+    root.classList.remove('is-jumping');
+  }, { passive: true });
+})();
+</script>
+<script src="assets/cases.js" defer></script>
+<script src="assets/logo-motion.js" defer></script>
+</body>
+</html>

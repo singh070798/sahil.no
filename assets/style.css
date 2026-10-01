@@ -1,0 +1,1680 @@
+/* =====================================================================
+   SAHIL — shared stylesheet — Bold Duotone variant (teal background)
+   One page background (teal), white cards, near-black text inside
+   the cards, and a single Signal Blue accent. See README.md §3 for
+   the reasoning and the measured contrast of every text color.
+   ===================================================================== */
+
+:root {
+  /* ---- base colors — licorice black, stark white, one loud unmixed
+     blue, one warm grey. Directness, not blending. ---- */
+  --licorice: #14110f;
+  --paper: #ffffff;
+  --signal-blue: #2f5de3;
+  --ash: #8a8580;
+
+  /* ---- two backgrounds, one teal. --bg is the lighter band at the
+     top of every page (the homepage landing screen, the case-page
+     header); --bg-deep is everything below it. Text on the band uses
+     lighter values set on .stage further down. The logo's dark chrome
+     ribbon needs the lighter one to show its shading. Text directly on
+     either uses the light --ink tiers below; text inside the white
+     cards uses the dark tiers redefined further down. ---- */
+  --bg: #286a6d;
+  --bg-deep: #123c3e;
+  --surface: var(--paper);
+  --surface-hover: #f3f3f1;
+  --media-fill: var(--paper);
+
+  /* ---- lines — light on the teal background; flipped dark inside
+     the two white-card containers. Ash is the card border. ---- */
+  --line: rgba(255, 255, 255, 0.16);
+  --line-strong: var(--ash);
+
+  /* ---- ink — text on the deeper teal (--bg-deep), where most text
+     sits. All three tiers clear WCAG AA (4.5:1) for normal-size text:
+       --ink        9.89:1   headings, primary text
+       --ink-dim    7.92:1   paragraphs, secondary text
+       --ink-faint  6.52:1   small labels (footer, index)
+     The lighter band at the top overrides these (see .stage). ---- */
+  --ink: #ede8e0;
+  --ink-dim: #d4d1cd;
+  --ink-faint: #c2beb9;
+
+  /* ---- one accent only — a light tint of Signal Blue for text on the
+     deeper teal (6.22:1). Inside cards, --accent switches back to
+     full-strength Signal Blue. ---- */
+  --accent: #a5b9f3;
+
+  /* ---- type ----
+     Display/label face: a condensed grotesque, matched to the
+     Akzidenz-Grotesk BQ Condensed Medium used in the logo's own
+     watermark type. That's a commercial font not on Google Fonts, so
+     Archivo Narrow stands in here — see README §6 to swap in the real
+     one if you have a license.
+     Body face: IBM Plex Sans. */
+  --font-display: "Archivo Narrow", "Akzidenz-Grotesk BQ Condensed", "Arial Narrow", sans-serif;
+  --font-body: "IBM Plex Sans", -apple-system, sans-serif;
+
+  /* ---- radius — small and precise, matching the logo's fine ribbon
+     line rather than an inflated "bubble" shape ---- */
+  --radius: 10px;
+
+  /* ---- layout — the homepage frame. Case pages use their own,
+     narrower widths (see "Case detail pages" below). ---- */
+  --page-width: 1100px;
+  --grid-gap: 1.75rem;
+
+  /* ---- full-screen sections (landing, Experiences), desktop only.
+     They must never be taller than the window, or the "↓" link at the
+     bottom ends up below the fold. So their vertical spacing shrinks
+     with the window's HEIGHT (vh), between a minimum and the roomy
+     size used on tall screens:
+       --screen-pad-top     space above the content
+       --cue-gap            minimum space between content and the link
+       --screen-pad-bottom  space under the link
+       --screen-reserve     everything below the content, added up
+                            (the link itself is about 1.6rem tall)
+     Anything that has to fit (the portrait, the expanded reel) is
+     sized from these, so they always add up to one screen. ---- */
+  --screen-pad-top: clamp(1.25rem, 6vh, 4.5rem);
+  --cue-gap: clamp(1rem, 4vh, 2.5rem);
+  --screen-pad-bottom: 1.75rem;
+  --screen-reserve: calc(var(--cue-gap) + 1.6rem + var(--screen-pad-bottom));
+  --footer-h: 6.5rem;
+
+  /* ---- the space between sections (stacked layouts, and above the
+     "Selected Works" heading). It's the total gap between the content
+     of two neighbouring sections: 6rem on phones, growing with the
+     window to 8rem. Where the background changes colour (landing →
+     Experiences) it's split in half, one half of padding on each side
+     of the colour edge. To make the page airier or tighter, change
+     this one value. ---- */
+  --section-gap: clamp(6rem, 14vw, 8rem);
+
+  /* ---- type scale — seven tiers, each with one job:
+       --text-display  the one big heading per page (case titles)
+       --text-h2       second-largest heading (case card titles)
+       --text-h3       in-body subheadings ("The problem," etc.)
+       --text-lead     intro-line paragraphs (the "Selected Works" tagline)
+       --text-body     running paragraph text / emphasized list items
+       --text-body-sm  secondary/supporting text (descriptions, orgs)
+       --text-label    every small tracked-out caps/meta string —
+                        case numbers, tags, nav links, footer, dates.
+                        All share one letter-spacing, --tracking-label. ---- */
+  --text-display: clamp(2.25rem, 5.5vw, 3.25rem);
+  --text-h2: 1.5rem;
+  --text-h3: 1.1875rem;
+  --text-lead: 1.125rem;
+  --text-body: 1rem;
+  --text-body-sm: 0.9375rem;
+  --text-label: 0.875rem;
+  --tracking-label: 0.08em;
+}
+
+/* These two containers (the case-index cards, and the CV card in the
+   reel/CV row) are light surfaces sitting on the dark page background
+   — text inside them needs the opposite of everything above: dark
+   text, and the original full-strength accent colors. CSS custom
+   properties cascade, so redefining them here quietly flips every
+   descendant inside these two containers back to the in-card values,
+   without touching a single selector inside them individually. */
+.case-card,
+.intro__cv,
+.profile-card {
+  --ink: #14110f;
+  --ink-dim: #4a4642;
+  --ink-faint: #6b6660;
+  --accent: var(--signal-blue);
+  --line: rgba(20, 17, 15, 0.14);
+}
+
+
+* { box-sizing: border-box; }
+
+html { background: var(--bg-deep); }
+
+/* Anchor links (like the "↓" cues on the homepage) glide instead of jumping —
+   unless the visitor has asked their system for reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+body {
+  margin: 0;
+  background: var(--bg-deep);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* Shared label style — condensed, tracked-out caps, matching the
+   --text-label / --tracking-label tokens above. Every small meta/nav
+   string on the site (case numbers, tags, footer, nav links, etc.)
+   uses these same two values directly rather than this class, but
+   it's kept here as the reference definition of what "label tier"
+   means — if you add a new small-caps element, this is the pattern
+   to copy. */
+.label {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+/* ---------------------------------------------------------------------
+   Masthead — the logo (script + its own watermark type, baked into
+   the one image) and the profile card.
+   --------------------------------------------------------------------- */
+/* The lighter band: full window width, behind the header. It clips
+   the logo artwork so the ribbon never spills onto the deeper teal
+   below.
+
+   Text on the band gets its own, lighter colors: the standard ones
+   are tuned for the deeper teal and fall below WCAG AA here. On
+   #286a6d these measure:
+     --ink        5.57:1
+     --ink-dim    4.96:1
+     --ink-faint  4.60:1
+     --accent     4.60:1
+   (The white profile card redefines its own colors, so it's
+   unaffected.) */
+.stage {
+  --ink: #f5f2ec;
+  --ink-dim: #e8e5e1;
+  --ink-faint: #e0ddd8;
+  --accent: #d3ddfb;
+  --line: rgba(255, 255, 255, 0.24);
+  background: var(--bg);
+  overflow: hidden;
+  overflow: clip;
+}
+
+.masthead {
+  --edge: 1.25rem; /* the side padding; the phone logo cancels it to run edge to edge */
+  position: relative;
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 2.5rem var(--edge) calc(var(--section-gap) / 2);
+}
+
+/* The logo sits inside an <h1> — the brand name lives entirely in
+   the image, so this gives the homepage its one real heading. */
+.masthead h1 {
+  margin: 0;
+  font-size: 0;
+  line-height: 0;
+}
+
+/* ---------------------------------------------------------------------
+   Header grid. The header uses the same grid as the case cards below
+   (same column minimum, same gap), so the profile card is always
+   exactly as wide as one case card and sits in the last column:
+     3 columns   logo across columns 1–2, card in column 3
+     2 columns   logo on top, card below in column 2
+     1 column    logo on top, card below at full width
+   --------------------------------------------------------------------- */
+.masthead__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  column-gap: var(--grid-gap);
+  align-items: start;
+}
+
+.masthead h1 {
+  grid-column: 1 / -1;
+}
+
+.profile-card {
+  grid-column: -2 / -1;
+}
+
+/* Short bio. Phones: between the logo and the card. Two columns:
+   left of the card, bottom-aligned with it. Landing screen: under
+   the logo, bottom-aligned with the card (see the 1012px block). */
+.masthead__bio {
+  position: relative;
+  z-index: 1;
+  max-width: 29rem;
+  margin: 0 0 1.75rem;
+  font-size: var(--text-body);
+  line-height: 1.6;
+  color: var(--ink-dim);
+}
+
+@media (min-width: 684px) {
+  .masthead__bio {
+    grid-column: 1 / -2;
+    align-self: end;
+    margin: 0;
+  }
+}
+
+/* Trim the space above the first line's capitals and below the last
+   line's baseline, so the text's last baseline sits exactly on the
+   card's bottom edge (browsers without text-box leave a few pixels). */
+@supports (text-box: trim-both cap alphabetic) {
+  .masthead__bio {
+    text-box: trim-both cap alphabetic;
+  }
+}
+
+/* The logo — an animated loop with a transparent background, in two
+   framings. Its parts, stacked inside .logo-motion:
+     __ext    (684px and up only) the ribbon's extended tail and upper
+              arm, as a still image with a hole where the animation
+              plays. It lets the ribbon run off the window edges.
+     __still  the first frame of the animation, as an image. Shown
+              until the animation starts, and instead of it for
+              visitors with "reduce motion" on (or on the rare device
+              without WebGL).
+     __anim   the loop itself, drawn on a <canvas>. The video files
+              hold the logo's colors in their top half and its
+              transparency in the bottom half; assets/logo-motion.js
+              plays the right file for the screen size and recombines
+              the halves onto the canvas.
+   Below 684px: a self-contained crop with soft edges, in the normal
+   flow. */
+.masthead__logo {
+  display: block;
+  width: calc(100% + 2 * var(--edge));
+  max-width: none;
+  height: auto;
+  margin: 0 calc(-1 * var(--edge)) 1rem;
+}
+
+.logo-motion {
+  position: relative;
+  aspect-ratio: 1200 / 470;
+}
+
+.logo-motion__ext {
+  display: none;
+}
+
+.logo-motion__still,
+.logo-motion__anim {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.logo-motion__still img,
+.logo-motion__ext img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.logo-motion__anim {
+  opacity: 0;
+}
+
+/* The animation's first frame matches the still exactly, so the
+   swap is invisible. */
+.logo-motion.is-animating .logo-motion__anim {
+  opacity: 1;
+}
+
+.logo-motion.is-animating .logo-motion__still {
+  visibility: hidden;
+}
+
+@media (min-width: 641px) {
+  .masthead {
+    --edge: 1.75rem;
+    padding: 3.5rem var(--edge) calc(var(--section-gap) / 2);
+  }
+}
+
+/* From 684px: the full banner, absolutely positioned so its lettering
+   lands where we want it while the ribbon runs off the top and left
+   edges of the window. The animation (2000 × 1000) sits inside the
+   still ribbon extensions at x 1600, y 1200 of the 3473 × 2484 box
+   — hence the percentages below. (The ribbon's tail and upper arm were both
+   extended in the artwork so they reach the window edges even when
+   the logo is large and centered on a tall screen.)
+
+   The banner is placed with three values:
+     --logo-gw  how wide the lettering is (this sets the logo's size)
+     --logo-gx  where the lettering's left edge goes
+     --logo-gy  where the lettering's top edge goes
+   The multipliers turn those into the image's size and offset. They
+   come from where the lettering sits in the artwork (3473 × 2484 px;
+   lettering box at x 2340, y 1460, 820 × 340 px), so they only change
+   if the artwork does — see README §5. */
+@media (min-width: 684px) {
+  .masthead {
+    padding-top: 17rem;
+  }
+
+  .masthead__logo,
+  .case-topbar .masthead__logo {
+    --logo-gw: 502px;
+    --logo-gx: 44px;
+    --logo-gy: 41px;
+    position: absolute;
+    width: calc(var(--logo-gw) * 4.23537);
+    left: calc(var(--logo-gx) - var(--logo-gw) * 2.85366);
+    top: calc(var(--logo-gy) - var(--logo-gw) * 1.78049);
+    max-width: none;
+    margin: 0;
+    pointer-events: none;
+  }
+
+  .masthead h1 {
+    grid-column: 1 / -1;
+  }
+
+  .logo-motion {
+    aspect-ratio: 3473 / 2484;
+  }
+
+  .logo-motion__ext {
+    display: block;
+    position: absolute;
+    inset: 0;
+  }
+
+  .logo-motion__still,
+  .logo-motion__anim {
+    left: 46.0697%;   /* 1600 / 3473 */
+    top: 48.3092%;    /* 1200 / 2484 */
+    width: 57.5871%;  /* 2000 / 3473 */
+    height: 40.2576%; /* 1000 / 2484 */
+    /* Where the ribbon crosses into the animation (its top and left
+       edges), the animation fades in over its first 40px, on top of
+       the still extension, which stays solid there and only fades
+       out over the next 40px (that fade is baked into
+       sahil-logo-ext.webp). One layer is always fully solid, so the
+       join has no visible step or thin patch. Only the ribbon passes
+       through these bands, never the lettering. */
+    -webkit-mask-image:
+      linear-gradient(to bottom, transparent, #000 4%),
+      linear-gradient(to right, transparent, #000 2%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      linear-gradient(to bottom, transparent, #000 4%),
+      linear-gradient(to right, transparent, #000 2%);
+    mask-composite: intersect;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Landing screen (1012px and up, where the grid has three columns).
+   The header fills the first screen. The logo grows to span columns
+   1–2 and is centered vertically against the profile card in column
+   3, and a small "Showreel and experiences ↓" cue at the bottom points on down.
+   --------------------------------------------------------------------- */
+@media (min-width: 1012px) {
+  /* Two rows on the left — the logo's area on top, the bio below —
+     with the card spanning both on the right. The logo's area is
+     therefore exactly the space between the card's top edge and the
+     top of the bio, and the logo centers itself in it, whatever the
+     bio's length or the font. */
+  .masthead {
+    min-height: 100vh;
+    min-height: 100svh;
+    padding: var(--screen-pad-top) 1.75rem var(--screen-pad-bottom);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* The grid is only as tall as the card, and centered in the space
+     above the "↓" link (auto margins take the free space equally). */
+  .masthead__grid {
+    grid-template-rows: 1fr auto;
+    margin-block: auto;
+  }
+
+  /* On short windows the portrait is cropped (never squashed) so the
+     card, and with it the whole screen, fits: window height minus
+     everything above and below the card's text (about 15.9rem). */
+  .profile-card__photo {
+    max-height: max(12rem, calc(100vh - var(--screen-pad-top) - var(--screen-reserve) - 16.2rem));
+    object-position: 50% 30%;
+  }
+
+  .masthead h1 {
+    position: relative; /* the logo is positioned inside this area */
+    grid-column: 1 / -2;
+    grid-row: 1;
+    align-self: stretch;
+  }
+
+  .profile-card {
+    grid-row: 1 / 3;
+    align-self: center;
+  }
+
+  /* The bio is the bottom row on the left, so its last line lines up
+     with the card's bottom edge. It spans the two left-hand grid
+     columns (two thirds of the grid), the same width as the logo's
+     area. */
+  .masthead__bio {
+    grid-row: 2;
+    align-self: end;
+    max-width: none;
+  }
+
+  .masthead .masthead__logo {
+    /* lettering as wide as two grid columns plus the gap between
+       them, minus a little breathing room from the card */
+    --logo-gw: calc(((min(100vw, 1100px) - 7rem) * 2 / 3 + 1.75rem) * 0.86);
+    --logo-gx: 0px;
+    /* vertically centered in the logo's area. 0.2073 is half the
+       height of the lettering ÷ its width (340 ÷ 2 ÷ 820 px in the
+       artwork). If a new animation's lettering is taller or shorter,
+       this is the number to change. */
+    --logo-gy: calc(50% - var(--logo-gw) * 0.2073);
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Cues — the small "↑ / ↓" links that let visitors click their way
+   through the homepage instead of scrolling. One style, three
+   placements:
+     .cue--down    bottom left, ↓ to the next screen (landing,
+                   Experiences). It sits at the end of the section's
+                   content, so it scrolls with the page like any other
+                   link. (It used to be "sticky", but that made it
+                   follow the window while scrolling between screens.)
+     .cue--bottom  bottom left, ↑ back to the top (Selected Works)
+     .cue--top     top right, ↑ back to the previous screen
+   Shown from 1012px, where those sections fill the screen; on smaller
+   screens they're hidden and the page simply scrolls. The two
+   absolute ones need a position: relative parent.
+   --------------------------------------------------------------------- */
+.cue {
+  display: none;
+}
+
+@media (min-width: 1012px) {
+  .cue {
+    display: inline-flex;
+    gap: 0.6em;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    transition: color 0.15s ease, opacity 0.3s ease;
+  }
+
+  .cue:hover,
+  .cue:focus-visible {
+    color: var(--accent);
+  }
+
+  .cue--down {
+    align-self: flex-start;
+    margin-top: var(--cue-gap);
+  }
+
+  .cue--bottom {
+    position: absolute;
+    left: 1.75rem;
+    bottom: 1.75rem;
+  }
+
+  .cue--top {
+    position: absolute;
+    top: 1.75rem;
+    right: 1.75rem;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Profile card — portrait on top; role, location and contact details
+   underneath. Always one grid column wide (see "Header grid" above).
+   --------------------------------------------------------------------- */
+.profile-card {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 18px 40px rgba(30, 20, 10, 0.22);
+}
+
+.profile-card picture {
+  display: block;
+}
+
+.profile-card__photo {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+.profile-card__body {
+  padding: 1.25rem 1.35rem 1.1rem;
+}
+
+.profile-card__name {
+  margin: 0 0 0.3rem;
+  font-size: var(--text-h2);
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--ink);
+}
+
+.profile-card__role {
+  margin: 0;
+  font-size: var(--text-body);
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--ink);
+}
+
+.profile-card__place {
+  margin: 0.2rem 0 0;
+  font-size: var(--text-body-sm);
+  color: var(--ink-dim);
+}
+
+.profile-card__contact {
+  margin: 1rem 0 0;
+  border-top: 1px solid var(--line);
+}
+
+.profile-card__contact div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.profile-card__contact div:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.profile-card__contact dt {
+  flex: none;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.profile-card__contact dd {
+  margin: 0;
+  min-width: 0;
+  text-align: right;
+  font-size: var(--text-body-sm);
+  color: var(--ink);
+}
+
+.profile-card__contact a {
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.profile-card__contact a:hover,
+.profile-card__contact a:focus-visible {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* ---------------------------------------------------------------------
+   Reel + CV row — on the same grid as the landing screen and the case
+   cards. The reel expands to fill the row while playing (via
+   .is-playing, toggled by the showreel script at the bottom of
+   index.html) and the CV column collapses out of the way, then both
+   reverse on pause.
+   --------------------------------------------------------------------- */
+.intro {
+  /* card spacing, shrunk on short desktop windows (see below) */
+  --cv-pt: 1.75rem;
+  --cv-pb: 1.85rem;
+  --cv-li: 0.85rem;
+  --cv-list-gap: 1.75rem;
+  --cv-lh: 1.6;
+  position: relative;
+  z-index: 41;
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: calc(var(--section-gap) / 2) 1.75rem 0;
+}
+
+/* From 1012px the Experiences section is a full screen of its own,
+   like the landing screen above it, with its content centered in the
+   space above the "Works and cases ↓" link. Same spacing tokens as
+   the landing, so both screens fit the window the same way. On short
+   windows the CV card tightens up (in proportion to the window's
+   height) so the whole screen still fits. */
+@media (min-width: 1012px) {
+  .intro {
+    --cv-pt: clamp(1.1rem, 3vh, 1.75rem);
+    --cv-pb: clamp(1.15rem, 3.1vh, 1.85rem);
+    --cv-li: clamp(0.4rem, 1.5vh, 0.85rem);
+    --cv-list-gap: clamp(0.9rem, 2.7vh, 1.75rem);
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    padding: var(--screen-pad-top) 1.75rem var(--screen-pad-bottom);
+  }
+
+  #intro .intro__eyebrow {
+    margin-top: auto;
+    margin-bottom: clamp(0.6rem, 2vh, 1.25rem);
+  }
+
+  /* Short windows (roughly a 1366 × 768 laptop with its browser
+     toolbars): tighter line spacing in the CV list as well. */
+  @media (max-height: 760px) {
+    .intro { --cv-lh: 1.35; }
+  }
+
+  /* Very short windows (about 640px or less): tighter still. */
+  @media (max-height: 640px) {
+    .intro {
+      --cv-lh: 1.25;
+      --cv-li: 0.35rem;
+    }
+  }
+
+  .intro__row {
+    margin-bottom: auto;
+  }
+
+  /* the links step aside while the reel plays */
+  .intro.is-playing .cue {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* While playing, the reel fills the row but never gets taller than
+     the space above the link, whatever the window's height. */
+  .intro.is-playing .intro__reel {
+    max-width: calc((100vh - var(--screen-pad-top) - var(--screen-reserve) - 3.6rem) * 16 / 9);
+  }
+}
+
+/* One shared headline for both the reel and the experience list. */
+.intro__eyebrow {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-h2);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 1.25rem;
+}
+
+/* The reel and the CV card follow the same grid as the case cards
+   below (columns at least 300px wide, --grid-gap apart), so they
+   change layout at exactly the same window widths:
+     under 684px    stacked, full width
+     684–1011px     two equal columns (like the case cards' two columns)
+     1012px and up  three columns: the reel spans two, the CV card is
+                    one — exactly as wide as a case card
+   684 and 1012 are where the case grid itself changes from three
+   columns to two to one. Its columns are auto-fill, so it reflows on
+   its own; this row can't, so the same two widths are written out
+   here as media queries. */
+.intro__row {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--grid-gap);
+}
+
+/* Full-page dimming layer, shown only while the reel is playing (see
+   the showreel script at the bottom of index.html, which toggles
+   .is-playing on <body>). Sits above every other section but below
+   .intro itself (z-index 41 above), so the reel stays lit while
+   everything else — masthead, "Selected Works," the case grid,
+   footer — dims to draw the eye to the video. Purely visual: it
+   doesn't block clicks or scrolling underneath it. */
+.cinema-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  z-index: 40;
+}
+
+body.is-playing .cinema-overlay {
+  opacity: 1;
+}
+
+.intro__reel {
+  min-width: 0;
+}
+
+.intro__cv {
+  min-width: 0;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  padding: var(--cv-pt) 1.75rem var(--cv-pb);
+}
+
+/* Under 684px the two are stacked, and nothing happens to the CV card
+   while the reel plays: it just stays below the video.
+
+   From 684px they are two fixed columns of the grid, and the reel
+   grows across the row while it plays. The CV card is never resized
+   or squeezed: it stays exactly where it is, the reel grows over the
+   top of it (the reel is stacked above), and the card fades out and
+   is then hidden. On pause the reel shrinks back and the card fades
+   in as it's uncovered.
+
+   How the card stays put while the reel grows: the reel's width goes
+   up by (card width + gap), and the card's left margin goes down by
+   exactly the same amount, over the same 0.5 s, so the card's left
+   edge (reel width + gap + margin) never changes. */
+@media (min-width: 684px) {
+  .intro__row {
+    --col-reel: calc((100% - var(--grid-gap)) / 2);
+    --col-cv: calc((100% - var(--grid-gap)) / 2);
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .intro__reel {
+    position: relative;
+    z-index: 1; /* above the CV card, which it grows over */
+    flex: 0 0 var(--col-reel);
+  }
+
+  .intro__cv {
+    flex: 0 0 var(--col-cv);
+  }
+
+  .intro.is-playing .intro__reel {
+    flex-basis: 100%;
+  }
+
+  .intro.is-playing .intro__cv {
+    margin-left: calc(-1 * (var(--col-cv) + var(--grid-gap)));
+    opacity: 0;
+    visibility: hidden; /* out of the tab order and the reading order once faded */
+    pointer-events: none;
+  }
+
+  /* The animation only exists while the player script has
+     .is-changing on the section (for half a second around play and
+     pause), so resizing the window snaps between layouts the same
+     way the case grid does, instead of gliding. */
+  .intro.is-changing .intro__reel {
+    transition: flex-basis 0.5s ease;
+  }
+
+  .intro.is-changing .intro__cv {
+    transition: margin-left 0.5s ease, opacity 0.3s ease;
+  }
+
+  .intro.is-changing.is-playing .intro__cv {
+    /* hide it (visibility) only once the fade has finished */
+    transition: margin-left 0.5s ease, opacity 0.3s ease, visibility 0s linear 0.3s;
+  }
+}
+
+@media (min-width: 1012px) {
+  /* three columns: the reel spans two of them (two columns plus the
+     gap between them), the CV card takes the third */
+  .intro__row {
+    --col-reel: calc((100% - 2 * var(--grid-gap)) / 3 * 2 + var(--grid-gap));
+    --col-cv: calc((100% - 2 * var(--grid-gap)) / 3);
+  }
+}
+
+.reel__frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--licorice);
+  border: 1px solid var(--line-strong);
+  box-shadow: 0 18px 40px rgba(30, 20, 10, 0.22);
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+}
+
+.reel__video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: none;
+  background: var(--licorice);
+}
+
+/* ---------------------------------------------------------------------
+   Showreel player controls. Everything below only applies once the
+   script has taken over (.reel--custom); without JavaScript the
+   browser's own controls are shown instead.
+
+   States, all classes on .reel set by the script:
+     .is-started     has been played at least once (big button gone)
+     .is-paused      currently paused
+     .is-muted       sound off
+     .is-idle        playing, and the mouse has been still for 2.5 s
+     .is-fullscreen  in full-screen mode
+   --------------------------------------------------------------------- */
+.reel__bigplay,
+.reel__controls {
+  display: none;
+}
+
+.reel--custom .reel__video {
+  cursor: pointer;
+}
+
+/* The big play button over the poster */
+.reel--custom .reel__bigplay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--paper);
+  cursor: pointer;
+}
+
+.reel__bigplay-icon {
+  display: grid;
+  place-items: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--licorice);
+  /* two-layer drop shadow: a tight contact shadow plus a soft, wide
+     one, so the button lifts off light and dark frames alike */
+  box-shadow:
+    0 2px 6px rgba(20, 17, 15, 0.28),
+    0 12px 32px rgba(20, 17, 15, 0.38);
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.reel__bigplay-icon svg {
+  width: 1.9rem;
+  height: 1.9rem;
+  fill: currentColor;
+  margin-left: 0.2rem; /* optical centering — a triangle's visual weight sits left of its box center */
+}
+
+.reel__bigplay:hover .reel__bigplay-icon,
+.reel__bigplay:focus-visible .reel__bigplay-icon {
+  background: var(--signal-blue);
+  color: var(--paper);
+  transform: scale(1.06);
+}
+
+.reel__bigplay:focus-visible {
+  outline: none;
+}
+
+.reel__bigplay:focus-visible .reel__bigplay-icon {
+  outline: 2px solid var(--paper);
+  outline-offset: 4px;
+}
+
+.reel.is-started .reel__bigplay {
+  display: none;
+}
+
+/* The control bar */
+.reel--custom.is-started .reel__controls {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2.5rem 0.75rem 0.6rem;
+  background: linear-gradient(to top, rgba(20, 17, 15, 0.72), rgba(20, 17, 15, 0));
+  color: var(--paper);
+  transition: opacity 0.3s ease;
+}
+
+.reel.is-idle .reel__controls {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.reel.is-idle,
+.reel.is-idle .reel__video {
+  cursor: none;
+}
+
+.reel__btn {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.reel__btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.reel__btn:focus-visible {
+  outline: 2px solid var(--paper);
+  outline-offset: 1px;
+}
+
+.reel__btn svg {
+  width: 1.3rem;
+  height: 1.3rem;
+  fill: currentColor;
+}
+
+/* swap icons by state */
+.reel__icon-play,
+.reel__icon-muted { display: none; }
+.reel.is-paused .reel__icon-play { display: block; }
+.reel.is-paused .reel__icon-pause { display: none; }
+.reel.is-muted .reel__icon-muted { display: block; }
+.reel.is-muted .reel__icon-sound { display: none; }
+
+.reel__time {
+  flex: none;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-label);
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  margin: 0 0.35rem 0 0.15rem;
+  white-space: nowrap;
+}
+
+/* The scrub bar: a native range input, restyled. --progress (set by
+   the script) paints the played part of the track. */
+.reel__seek {
+  --progress: 0%;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 1.5rem;
+  margin: 0 0.35rem;
+  background: transparent;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.reel__seek::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(to right, var(--paper) var(--progress), rgba(255, 255, 255, 0.3) var(--progress));
+}
+
+.reel__seek::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(to right, var(--paper) var(--progress), rgba(255, 255, 255, 0.3) var(--progress));
+}
+
+.reel__seek::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -5px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--paper);
+  transform: scale(0.0001);
+  transition: transform 0.15s ease;
+}
+
+.reel__seek::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--paper);
+  transform: scale(0.0001);
+  transition: transform 0.15s ease;
+}
+
+.reel__seek:hover::-webkit-slider-thumb,
+.reel__seek:focus-visible::-webkit-slider-thumb { transform: scale(1); }
+.reel__seek:hover::-moz-range-thumb,
+.reel__seek:focus-visible::-moz-range-thumb { transform: scale(1); }
+
+/* While the film is being loaded into memory so it can be scrubbed
+   (only on servers without range-request support), the bar pulses. */
+.reel.is-loading .reel__seek {
+  animation: reel-pulse 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes reel-pulse {
+  from { opacity: 1; }
+  to { opacity: 0.4; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reel.is-loading .reel__seek { animation: none; opacity: 0.6; }
+}
+
+.reel__seek:focus-visible {
+  outline: 2px solid var(--paper);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Full screen: square corners, whole picture visible */
+.reel.is-fullscreen {
+  border: 0;
+  border-radius: 0;
+  aspect-ratio: auto;
+}
+
+.reel.is-fullscreen .reel__video {
+  object-fit: contain;
+}
+
+/* Small screens: drop the time readout to give the scrub bar room */
+@media (max-width: 420px) {
+  .reel__time { display: none; }
+  .reel__bigplay-icon { width: 3.75rem; height: 3.75rem; }
+}
+
+.cv__list {
+  list-style: none;
+  margin: 0 0 var(--cv-list-gap);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.cv__list li {
+  display: flex;
+  flex-direction: column;
+  line-height: var(--cv-lh);
+  gap: 0.15rem;
+  padding: var(--cv-li) 0;
+  border-top: 1px solid var(--line);
+}
+
+.cv__list li:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.cv__role {
+  font-weight: 600;
+  color: var(--ink);
+  font-size: var(--text-body);
+}
+
+.cv__org {
+  color: var(--ink-dim);
+  font-size: var(--text-body-sm);
+}
+
+.cv__years {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-label);
+  letter-spacing: var(--tracking-label);
+  color: var(--ink-faint);
+}
+
+.cv__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* The CV card is one grid column wide (329px at most): a little less
+   side padding keeps both buttons on one row. */
+.cv__actions .btn {
+  padding-left: 1.1em;
+  padding-right: 1.1em;
+}
+
+/* Button text is all caps, but fonts reserve room below the baseline
+   for descenders (g, p, y) that caps never use — so plain padding
+   leaves caps sitting visibly high in the button. Two layers fix it:
+
+   1. Browsers that support text-box (Chrome/Edge 133+, Safari 18.2+)
+      trim the text box to exactly cap height and baseline, using the
+      font's own measurements. Equal padding then centers the caps
+      precisely, whatever the font.
+   2. Older browsers get line-height: 1 and a little more padding on
+      top than bottom (--btn-nudge). If the text still looks off in
+      those, adjust --btn-nudge: bigger moves the text down.
+
+   Both add up to the same total height, so buttons don't change size
+   between browsers. */
+.btn {
+  --btn-nudge: 0.06em;
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  line-height: 1;
+  padding: calc(1.1em + var(--btn-nudge)) 1.4em calc(1.1em - var(--btn-nudge));
+  /* every button has a border — transparent where it shouldn't show —
+     so solid and outlined buttons are exactly the same height */
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  text-align: center;
+}
+
+@supports (text-box: trim-both cap alphabetic) {
+  .btn {
+    text-box: trim-both cap alphabetic;
+    padding: 1.25em 1.4em;
+  }
+}
+
+.btn--primary {
+  background: var(--accent);
+  color: var(--surface);
+}
+
+.btn--primary:hover,
+.btn--primary:focus-visible {
+  background: var(--ink);
+}
+
+.btn--ghost {
+  background: transparent;
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+
+.btn--ghost:hover,
+.btn--ghost:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ---------------------------------------------------------------------
+   Hero (short intro line above the case grid)
+   --------------------------------------------------------------------- */
+.hero {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  /* the full gap above (nothing but background between it and
+     Experiences), and a little more air between the intro text and
+     the cards than before */
+  padding: var(--section-gap) 1.75rem 3.25rem;
+}
+
+/* From 1012px each section is its own screen, so the heading only
+   needs to sit about where the Experiences heading does. */
+@media (min-width: 1012px) {
+  .hero {
+    padding-top: clamp(4rem, 12vh, 7rem);
+  }
+}
+
+.hero__eyebrow {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-h2);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 0.9rem;
+}
+
+.hero__tagline {
+  max-width: 52ch;
+  color: var(--ink-dim);
+  font-size: var(--text-lead);
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------------
+   Case index (grid of cards on the homepage)
+   --------------------------------------------------------------------- */
+/* The last screen: Selected Works (plus its links) and, directly
+   under it, the footer. From 1012px the two together are at least one
+   window tall, so jumping here lines the section up with the top of
+   the window even when the page is short. */
+.works {
+  position: relative;
+  max-width: var(--page-width);
+  margin: 0 auto;
+}
+
+@media (min-width: 1012px) {
+  .works {
+    min-height: calc(100vh - var(--footer-h));
+    min-height: calc(100svh - var(--footer-h));
+  }
+
+  .footer {
+    min-height: var(--footer-h);
+  }
+}
+
+.cases {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 0 1.75rem var(--section-gap);
+}
+
+.cases__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--grid-gap);
+}
+
+/* Shown by assets/cases.js in place of the grid if cases/manifest.json
+   can't be reached — most likely because the page was opened straight
+   from disk instead of through a local server. */
+.cases__empty {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--ink-dim);
+  font-size: var(--text-body);
+}
+
+.case-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  overflow: hidden;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  /* Forces the browser to anti-alias the rounded-corner clip properly
+     while this element is on a GPU compositing layer (which the hover
+     transform below puts it on). Without this, Chrome/Safari can
+     rasterize the rounded corners at low quality during scroll,
+     making them look blocky/pixelated until scrolling stops. Doesn't
+     change how the card looks — it's a rendering-quality fix, not a
+     visual effect. */
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+}
+
+/* The hover effect is skipped right after a jump link is clicked
+   (html.is-jumping, set by the script at the bottom of index.html), so
+   a card that happens to end up under the still mouse pointer doesn't
+   pop up by itself. Keyboard focus is unaffected. */
+html:not(.is-jumping) .case-card:hover,
+.case-card:focus-visible {
+  transform: translateY(-3px);
+  border-color: var(--accent);
+  background: var(--surface-hover);
+}
+
+.case-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Media slot — put a real <img> or <video> in here (see README §9). */
+.case-card__media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--media-fill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.case-card__media img,
+.case-card__media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.case-card__media-placeholder {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: #8a8580; /* Ash */
+}
+
+.case-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  flex-grow: 1;
+  padding: 1.6rem 1.6rem 1.85rem;
+}
+
+.case-card__title {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--text-h3);
+  margin: 0;
+  color: var(--ink);
+}
+
+.case-card__desc {
+  color: var(--ink-dim);
+  font-size: var(--text-body-sm);
+  margin: 0;
+  flex-grow: 1;
+}
+
+/* Tags as plain marks, not badge/pill soup. */
+.case-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.case-card__tags span:not(:last-child)::after {
+  content: "·";
+  margin-left: 0.5em;
+  color: var(--ink-faint);
+}
+
+.case-card__arrow {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-label);
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+}
+
+html:not(.is-jumping) .case-card:hover .case-card__arrow {
+  color: var(--accent);
+}
+
+/* ---------------------------------------------------------------------
+   Footer
+   --------------------------------------------------------------------- */
+.footer {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 2rem 1.75rem 3rem;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-label);
+  letter-spacing: var(--tracking-label);
+  color: var(--ink-faint);
+}
+
+/* ---------------------------------------------------------------------
+   Case detail pages — a narrower layout than the homepage: 900px for
+   the header, visuals and nav, 700px for the running text.
+   --------------------------------------------------------------------- */
+.case-topbar {
+  --edge: 1.25rem; /* side padding; the phone logo cancels it to run edge to edge */
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+  /* extra room on top so the "Index" link sits above the logo, not on it */
+  padding: 4.25rem var(--edge) 1.5rem;
+}
+
+.case-topbar__logo-link {
+  display: block;
+}
+
+.back-link {
+  position: absolute;
+  top: 2.5rem;
+  right: 1.25rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  transition: color 0.15s ease;
+}
+
+.back-link:hover,
+.back-link:focus-visible { color: var(--accent); }
+
+@media (min-width: 641px) {
+  .case-topbar {
+    --edge: 1.75rem;
+    padding: 4rem var(--edge) 2.5rem;
+  }
+
+  .back-link {
+    right: 1.75rem;
+  }
+}
+
+/* The logo on case pages. The topbar is 900px wide while the
+   homepage masthead is 1100px, so the same offsets would put the logo
+   up to 100px further right here. --logo-shift pulls it back by
+   exactly that difference, so the logo lines up with the homepage's
+   frame and its ribbon still runs off the left edge of the window.
+   The shift grows from 0 (at 900px wide) to 100px (at 1100px and up),
+   matching how the two containers' left edges drift apart.
+
+   The banner is mostly transparent, so the image ignores clicks
+   (otherwise its empty area covered the case title and sent clicks
+   back to the index). An invisible box over the lettering is the
+   link's click and focus target instead. */
+@media (min-width: 684px) {
+  .case-topbar {
+    --logo-shift: clamp(0px, (100vw - 900px) / 2, 100px);
+    padding-top: 17rem;
+  }
+
+  .case-topbar .masthead__logo {
+    --logo-gx: calc(44px - var(--logo-shift));
+  }
+
+  .case-topbar__logo-link {
+    display: inline;
+  }
+
+  .case-topbar__logo-link::after {
+    content: "";
+    position: absolute;
+    top: 41px;
+    left: calc(44px - var(--logo-shift));
+    width: 502px;
+    height: 208px;
+    border-radius: var(--radius);
+  }
+
+  .case-topbar__logo-link:focus-visible {
+    outline: none;
+  }
+
+  .case-topbar__logo-link:focus-visible::after {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+  }
+}
+
+.case-header {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2.5rem 1.75rem calc(var(--section-gap) / 2);
+}
+
+.case-header__title {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--text-display);
+  line-height: 1.08;
+  margin: 0 0 2rem;
+  color: var(--ink);
+}
+
+.case-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1.5rem;
+  border-top: 1px solid var(--line);
+  padding: 1.5rem 0 0; /* no bottom line — the edge of the header band marks the end */
+}
+
+.case-meta dt {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 0.4em;
+}
+
+.case-meta dd {
+  margin: 0;
+  font-size: var(--text-body-sm);
+  color: var(--ink);
+}
+
+.case-visual {
+  max-width: 900px;
+  margin: calc(var(--section-gap) / 2) auto;
+  padding: 0 1.75rem;
+}
+
+.case-visual__frame {
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--media-fill);
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+}
+
+/* No real image or video yet — give the placeholder text a sensible
+   16:9 box to sit in, centered. Once real media is added, the frame
+   simply takes on that media's own shape instead (see below), rather
+   than cropping it to fit a fixed box. */
+.case-visual__frame:not(:has(img, video)) {
+  aspect-ratio: 16 / 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.case-visual__frame img,
+.case-visual__frame video {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* A video's real shape isn't known until it loads; 16:9 is just a
+   reasonable guess to size the frame with until then — "auto" means
+   the moment the real ratio is known, it takes over. */
+.case-visual__frame video {
+  aspect-ratio: auto 16 / 9;
+}
+
+
+.case-body {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0 1.75rem 5rem;
+  color: var(--ink-dim);
+}
+
+.case-body p {
+  margin: 0 0 1.4em;
+  font-size: var(--text-body);
+}
+
+.case-body h2 {
+  font-family: var(--font-body);
+  font-weight: 600;
+  color: var(--ink);
+  font-size: var(--text-h2);
+  margin: 2.2em 0 0.7em;
+}
+
+.case-body code {
+  background: var(--paper);
+  color: var(--licorice);
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.case-nav {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: calc(var(--section-gap) / 2) 1.75rem 6rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+
+/* Filled in by assets/cases.js. Until that script runs — or if it
+   can't (see .cases__empty below) — there's nothing to show, so the
+   border above doesn't sit over an empty gap. */
+.case-nav:empty {
+  display: none;
+}
+
+.case-nav a {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  transition: color 0.15s ease;
+}
+
+.case-nav a:hover,
+.case-nav a:focus-visible { color: var(--accent); }
+
+.case-nav__next { text-align: right; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+@media (max-width: 640px) {
+  .intro { padding: calc(var(--section-gap) / 2) 1.25rem 0; }
+  .hero { padding: var(--section-gap) 1.25rem 2.75rem; }
+  .cases { padding: 0 1.25rem var(--section-gap); }
+  .footer { flex-direction: column; gap: 0.5rem; }
+  .case-nav { flex-direction: column; gap: 1rem; }
+  .case-nav__next { text-align: left; }
+}
