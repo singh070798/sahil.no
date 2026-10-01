@@ -9,7 +9,7 @@
   ],
   "media": {
     "type": "video",
-    "src": "cases/Assets/aschehoug/Aschehoug_preview.webm",
+    "src": "cases/Assets/Aschehoug/Aschehoug_preview.webm",
     "mime": "video/webm",
     "poster": "cases/Assets/Aschehoug/Aschehoug_preview.png"
   }
