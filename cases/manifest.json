@@ -1,0 +1,47 @@
+[
+  {
+  "file": "aschehoug.html",
+  "title": "Aschehoug Skole — RUTE",
+  "desc": "Animating 10 films for modular learning plan.",
+  "tags": [
+    "Educational",
+    "Movie"
+  ],
+  "media": {
+    "type": "video",
+    "src": "/cases/Assets/aschehoug/Aschehoug_preview.webm",
+    "mime": "video/webm",
+    "poster": "/cases/Assets/Aschehoug/Aschehoug_preview.png"
+  }
+},
+  {
+  "file": "silenteight.html",
+  "title": "Silent Eight — Brand Elements",
+  "desc": "Iridescent liquid loops as brand elements for an AI company fighting financial crime.",
+  "tags": [
+    "Motion Identity",
+    "3D"
+  ],
+  "media": {
+    "type": "video",
+    "src": "cases/Assets/silenteight/SilentEight_Eight_close.webm",
+    "mime": "video/webm",
+    "poster": "cases/Assets/silenteight/SilentEight_Eight_close_preview.jpg"
+  }
+},
+  {
+  "file": "ceedr.html",
+  "title": "Ceedr — Rebrand",
+  "desc": "A brand film and motion elements for the growth agency formerly known as The Engine.",
+  "tags": [
+    "Brand Film",
+    "Motion Identity"
+  ],
+  "media": {
+    "type": "video",
+    "src": "cases/Assets/ceedr/C.webm",
+    "mime": "video/webm",
+    "poster": "cases/Assets/ceedr/C_preview.jpg"
+  }
+}
+]
