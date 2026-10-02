@@ -36,7 +36,7 @@
       '<h3 class="case-card__title">' + esc(entry.title) + '</h3>' +
       '<p class="case-card__desc">' + esc(entry.desc || "") + '</p>' +
       '<div class="case-card__tags">' + tags + '</div>' +
-      '<span class="case-card__arrow">View file \u2192</span>' +
+      '<span class="case-card__arrow">Read more \u2192</span>' +
       '</div></a>';
   }
 

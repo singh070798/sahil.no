@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Folka — Endringsledelse — Sahil</title>
+<meta name="description" content="An infographic film about change management, told almost entirely with coloured circles.
+">
+<meta name="theme-color" content="#286a6d">
+<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32-light.png" media="(prefers-color-scheme: light)">
+<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32-dark.png" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+
+<!-- Link previews (LinkedIn, Slack, iMessage, etc.). Once the site has
+     a web address, change og:image to the full address of the image,
+     e.g. https://your-domain.com/images/og-image-ss02.jpg — most preview
+     services ignore relative paths. See README → "Link previews". -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="Folka — Endringsledelse — Sahil">
+<meta property="og:description" content="An infographic film about change management, told almost entirely with coloured circles.
+">
+<meta property="og:image" content="../images/og-image-ss02.jpg">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../assets/style.css">
+
+<!-- Video player module (see the Case Page Builder tool). Self-
+     contained: no other file needs to change for this to work. -->
+<style>
+.case-player{position:relative;border-radius:var(--radius,10px);overflow:hidden;background:#14110f;aspect-ratio:16/9;outline:none}
+.case-player .case-player__video{display:block;width:100%;height:100%;object-fit:cover;cursor:pointer;background:#14110f}
+.case-player__bigplay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border:0;padding:0;background:transparent;cursor:pointer}
+.case-player.is-started .case-player__bigplay{display:none}
+.case-player__bigplay-icon{display:grid;place-items:center;width:4.5rem;height:4.5rem;border-radius:50%;background:#fff;color:#14110f;box-shadow:0 2px 6px rgba(20,17,15,.28),0 12px 32px rgba(20,17,15,.38);transition:background .2s ease,transform .2s ease}
+.case-player__bigplay:hover .case-player__bigplay-icon{background:#2f5de3;color:#fff;transform:scale(1.06)}
+.case-player__bigplay-icon svg{width:1.9rem;height:1.9rem;fill:currentColor;margin-left:.2rem}
+.case-player__controls{position:absolute;left:0;right:0;bottom:0;display:none;align-items:center;gap:.5rem;padding:2.5rem .75rem .6rem;background:linear-gradient(to top,rgba(20,17,15,.72),rgba(20,17,15,0));color:#fff;transition:opacity .3s ease}
+.case-player.is-started .case-player__controls{display:flex}
+.case-player.is-idle .case-player__controls{opacity:0;pointer-events:none}
+.case-player.is-idle,.case-player.is-idle .case-player__video{cursor:none}
+.case-player__btn{flex:none;display:grid;place-items:center;width:2.25rem;height:2.25rem;padding:0;border:0;border-radius:50%;background:transparent;color:inherit;cursor:pointer}
+.case-player__btn:hover{background:rgba(255,255,255,.16)}
+.case-player__btn svg{width:1.3rem;height:1.3rem;fill:currentColor}
+.case-player .i-play,.case-player .i-muted{display:none}
+.case-player.is-paused .i-play{display:block}
+.case-player.is-paused .i-pause{display:none}
+.case-player.is-muted .i-muted{display:block}
+.case-player.is-muted .i-sound{display:none}
+.case-player__time{flex:none;font-family:var(--font-display,sans-serif);font-weight:600;font-size:.8rem;letter-spacing:.02em;font-variant-numeric:tabular-nums;margin:0 .35rem 0 .15rem;white-space:nowrap}
+.case-player__seek{--progress:0%;flex:1 1 auto;min-width:0;height:1.5rem;margin:0 .35rem;background:transparent;cursor:pointer;-webkit-appearance:none;appearance:none}
+.case-player__seek::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:linear-gradient(to right,#fff var(--progress),rgba(255,255,255,.3) var(--progress))}
+.case-player__seek::-moz-range-track{height:4px;border-radius:2px;background:linear-gradient(to right,#fff var(--progress),rgba(255,255,255,.3) var(--progress))}
+.case-player__seek::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;margin-top:-5px;border:0;border-radius:50%;background:#fff}
+.case-player__seek::-moz-range-thumb{width:14px;height:14px;border:0;border-radius:50%;background:#fff}
+.case-player.is-fullscreen{border-radius:0;aspect-ratio:auto}
+.case-player.is-fullscreen .case-player__video{object-fit:contain}
+.case-visual__frame .case-player{aspect-ratio:auto 16/9;border-radius:0}
+.case-player.is-loading .case-player__seek{animation:case-player-pulse .9s ease-in-out infinite alternate}
+@keyframes case-player-pulse{from{opacity:1}
+to{opacity:.4}
+}
+@media (prefers-reduced-motion: reduce){.case-player.is-loading .case-player__seek{animation:none;opacity:.6}
+}
+</style>
+<script>
+document.addEventListener("loadedmetadata",function(e){var v=e.target;if(!v.classList||!v.classList.contains("case-player__video"))return;var root=v.closest(".case-player");if(!root)return;if(v.videoWidth&&v.videoHeight)root.style.aspectRatio=v.videoWidth+"/"+v.videoHeight;var dur=root.querySelector("[data-dur]");if(dur){var d=Math.max(0,Math.floor(v.duration||0));dur.textContent=Math.floor(d/60)+":"+("0"+(d%60)).slice(-2)}},true);
+</script>
+</head>
+<body>
+
+<!-- The header band (lighter teal): logo, title and details. The
+     rest of the page sits on the deeper teal. -->
+<header class="stage">
+
+<div class="case-topbar">
+  <a href="../index.html" class="case-topbar__logo-link">
+    <span class="masthead__logo logo-motion" role="img" aria-label="Sahil — back to index">
+      <picture class="logo-motion__ext">
+        <source media="(min-width: 684px)" srcset="../images/sahil-logo-ext.webp" width="3473" height="2484">
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="">
+      </picture>
+      <picture class="logo-motion__still">
+        <source media="(min-width: 684px)" srcset="../images/sahil-logo-still-ss02.webp" width="2000" height="1000">
+        <img src="../images/sahil-logo-mobile-still-ss04.webp" alt="" width="1200" height="470">
+      </picture>
+      <canvas class="logo-motion__anim" aria-hidden="true"
+        data-src-wide="../images/sahil-logo-motion-ss02.mp4"
+        data-src-narrow="../images/sahil-logo-motion-mobile-ss04.mp4"></canvas>
+    </span>
+  </a>
+  <a class="back-link" href="../index.html">Index</a>
+</div>
+
+  <div class="case-header">
+    <h1 class="case-header__title">Folka — Endringsledelse</h1>
+
+    <dl class="case-meta">
+      <div>
+        <dt>Role</dt>
+        <dd>Motion &amp; Sound Design</dd>
+      </div>
+      <div>
+        <dt>Year</dt>
+        <dd>2022</dd>
+      </div>
+      <div>
+        <dt>Tools</dt>
+        <dd>After Effects, Premiere Pro</dd>
+      </div>
+      <div>
+        <dt>Tags</dt>
+        <dd>Infographic, Explainer</dd>
+      </div>
+    </dl>
+  </div>
+
+</header>
+
+<main>
+
+  <div class="case-visual">
+    <div class="case-visual__frame">
+      <div class="case-player" style="aspect-ratio:auto 16/9;border-radius:0">
+        <video class="case-player__video" playsinline poster="Assets/folka/Folka_endringsledelse_preview.jpg">
+          <source src="Assets/folka/Folka_endringsledelse.webm" type="video/webm">
+        </video>
+        <button class="case-player__bigplay" type="button" aria-label="Play video">
+          <span class="case-player__bigplay-icon"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg></span>
+        </button>
+        <div class="case-player__controls">
+          <button class="case-player__btn" type="button" data-action="toggle" aria-label="Pause">
+            <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>
+            <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
+          </button>
+          <span class="case-player__time" aria-hidden="true"><span data-cur>0:00</span> / <span data-dur>0:00</span></span>
+          <input class="case-player__seek" type="range" min="0" max="1000" step="1" value="0" aria-label="Seek">
+          <button class="case-player__btn" type="button" data-action="mute" aria-label="Mute">
+            <svg class="i-sound" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15 9a4.2 4.2 0 0 1 0 6M17.5 6.5a7.8 7.8 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <svg class="i-muted" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9.5l5 5M20.5 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+          <button class="case-player__btn" type="button" data-action="fullscreen" aria-label="Full screen">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 9V4.5H9M15 4.5h4.5V9M19.5 15v4.5H15M9 19.5H4.5V15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <article class="case-body">
+    <p>
+      Folka is a communication agency specialising in pedagogy. Endringsledelse (change management) is an animated explainer that works as one of their mini courses. I made it through the design agency Komité, handling both the animation and the sound design.
+    </p>
+
+    <h2>The problem</h2>
+
+    <p>
+      Change management is an abstract subject with a lot of moving parts. Folka supplied a voiceover, a brand guide and a rough storyboard. My job was to turn that into moving images that made the ideas easy to follow, without losing the course's substance.
+    </p>
+
+    <h2>The approach</h2>
+
+    <p>
+      I took my cue from the title sequence of The Morning Show, where a handful of coloured dots carry an entire story without a single word. The film uses the same idea: Simple circles with become the main characters, and using Folka's colours stand in for people, groups, ideas and stages in the model. The same shapes regroup into a question mark, a phone, a clock and a target, so one scene flows into the next rather than cutting away. Most of the work went into those transitions, so the viewer can follow the thinking as one continuous line. I built the soundscape alongside the animation so every movement has its own small sound.
+    </p>
+
+    <h2>Result</h2>
+
+    <p>
+      A finished explainer film that now forms part of Folka's mini course on change management. The client was very happy with the result.
+    </p>
+  </article>
+
+  <!-- Filled in by assets/cases.js from cases/manifest.json — no
+       need to pick a prev/next case by hand. -->
+  <nav class="case-nav"></nav>
+
+</main>
+
+<script>
+document.querySelectorAll(".case-player").forEach(function(root){var video=root.querySelector("video"),seek=root.querySelector(".case-player__seek"),cur=root.querySelector("[data-cur]"),dur=root.querySelector("[data-dur]"),toggleBtn=root.querySelector('[data-action="toggle"]'),muteBtn=root.querySelector('[data-action="mute"]'),fsBtn=root.querySelector('[data-action="fullscreen"]'),bigplay=root.querySelector(".case-player__bigplay");if(!video)return;function fmt(t){t=Math.max(0,Math.floor(t||0));return Math.floor(t/60)+":"+("0"+(t%60)).slice(-2)}function scrubTime(){var d=video.duration||0;return Math.min((seek.value/1000)*d,Math.max(0,d-1))}var dragging=false,resumeAfterDrag=false,scrubPauses=0,pendingSeek=null,waitingForFile=false,wholeFile=false,swapping=false;function paint(){var d=video.duration||0,t=dragging?scrubTime():video.currentTime,pct=d?(t/d)*100:0;if(!dragging)seek.value=Math.round(pct*10);seek.style.setProperty("--progress",(dragging?seek.value/10:pct)+"%");cur.textContent=fmt(t)}video.addEventListener("loadedmetadata",paint);function togglePlay(){if(video.paused||video.ended)video.play();else video.pause()}function start(){root.classList.add("is-started");var p=video.play();if(p&&p.catch)p.catch(function(){})}bigplay.addEventListener("click",start);video.addEventListener("click",function(){if(tapOnlyRevealed){tapOnlyRevealed=false;return}togglePlay()});toggleBtn.addEventListener("click",togglePlay);video.addEventListener("play",function(){root.classList.remove("is-paused");wake()});video.addEventListener("pause",function(){if(swapping)return;if(scrubPauses>0){scrubPauses--;return}root.classList.add("is-paused")});video.addEventListener("ended",function(){root.classList.remove("is-started");root.classList.add("is-paused");video.currentTime=0});video.addEventListener("timeupdate",paint);video.addEventListener("volumechange",function(){root.classList.toggle("is-muted",video.muted||video.volume===0)});muteBtn.addEventListener("click",function(){video.muted=!video.muted});function canSeekTo(t){if(video.readyState<1)return true;var s=video.seekable,d=video.duration||0;if(!s.length)return false;if(s.end(s.length-1)>=d-1)return true;for(var i=0;i<s.length;i++){if(t>=s.start(i)&&t<=s.end(i))return true}return false}function seekTo(t){if(canSeekTo(t)){video.currentTime=t;return}loadWholeFile(t)}function loadWholeFile(t){pendingSeek=t;if(waitingForFile||wholeFile)return;waitingForFile=true;root.classList.add("is-loading");fetch(video.currentSrc).then(function(r){if(!r.ok)throw new Error(r.status);return r.blob()}).then(function(blob){swapping=true;video.addEventListener("loadedmetadata",function once(){video.removeEventListener("loadedmetadata",once);video.currentTime=pendingSeek!==null?pendingSeek:0;pendingSeek=null;wholeFile=true;swapping=false;if(!dragging&&resumeAfterDrag){resumeAfterDrag=false;var p=video.play();if(p&&p.catch)p.catch(function(){})}paint()});video.src=URL.createObjectURL(blob)}).catch(function(){pendingSeek=null;swapping=false}).then(function(){waitingForFile=false;root.classList.remove("is-loading");paint()})}seek.addEventListener("pointerdown",function(){dragging=true;resumeAfterDrag=!video.paused&&!video.ended;if(resumeAfterDrag){scrubPauses++;video.pause()}});seek.addEventListener("input",function(){seekTo(scrubTime());paint()});function endDrag(){if(!dragging)return;dragging=false;if(resumeAfterDrag&&!waitingForFile){resumeAfterDrag=false;var p=video.play();if(p&&p.catch)p.catch(function(){})}paint()}window.addEventListener("pointerup",endDrag);window.addEventListener("pointercancel",endDrag);seek.addEventListener("change",endDrag);fsBtn.addEventListener("click",function(){var fsEl=document.fullscreenElement||document.webkitFullscreenElement;if(fsEl){(document.exitFullscreen||document.webkitExitFullscreen).call(document)}else if(root.requestFullscreen){root.requestFullscreen()}else if(root.webkitRequestFullscreen){root.webkitRequestFullscreen()}else if(video.webkitEnterFullscreen){video.webkitEnterFullscreen()}});function onFs(){root.classList.toggle("is-fullscreen",(document.fullscreenElement||document.webkitFullscreenElement)===root)}document.addEventListener("fullscreenchange",onFs);document.addEventListener("webkitfullscreenchange",onFs);var idleTimer=null,touching=false,tapOnlyRevealed=false;function wake(){root.classList.remove("is-idle");clearTimeout(idleTimer);idleTimer=setTimeout(function(){if(!video.paused&&!dragging&&!root.querySelector(":focus-visible"))root.classList.add("is-idle")},touching?3500:2500)}root.addEventListener("pointermove",function(e){touching=e.pointerType!=="mouse";wake()});root.addEventListener("pointerdown",function(e){touching=e.pointerType!=="mouse";tapOnlyRevealed=touching&&root.classList.contains("is-idle");if(tapOnlyRevealed)setTimeout(function(){tapOnlyRevealed=false},700);wake()},true);root.addEventListener("click",function(e){if(tapOnlyRevealed){tapOnlyRevealed=false;e.stopPropagation();e.preventDefault()}},true);root.addEventListener("focusin",wake);root.addEventListener("pointerleave",function(e){if(e.pointerType!=="mouse")return;if(!video.paused){clearTimeout(idleTimer);root.classList.add("is-idle")}});root.setAttribute("tabindex","-1");root.addEventListener("keydown",function(e){if(e.altKey||e.ctrlKey||e.metaKey)return;var handled=true;switch(e.key){case " ":case "k":case "K":togglePlay();break;case "ArrowLeft":seekTo(Math.max(0,video.currentTime-5));break;case "ArrowRight":seekTo(Math.min((video.duration||0)-1,video.currentTime+5));break;case "m":case "M":muteBtn.click();break;case "f":case "F":fsBtn.click();break;default:handled=false}if(handled){e.preventDefault();wake()}});root.classList.add("is-paused");});
+</script>
+<script src="../assets/cases.js" defer></script>
+<script src="../assets/logo-motion.js" defer></script>
+</body>
+</html>

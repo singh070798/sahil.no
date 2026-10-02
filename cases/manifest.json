@@ -43,5 +43,36 @@
     "mime": "video/webm",
     "poster": "cases/Assets/ceedr/C_preview.jpg"
   }
+},
+    {
+  "file": "onna.html",
+  "title": "Onna — Investor Film",
+  "desc": "An investor film for a vertical farming company, which helped it raise well above its target.",
+  "tags": [
+    "Brand Film",
+    "Investor Pitch"
+  ],
+  "media": {
+    "type": "video",
+    "src": "cases/Assets/onna/Onna_short.webm",
+    "mime": "video/webm",
+    "poster": "cases/Assets/onna/Onna_Main_preview.jpg"
+  }
+},
+    {
+  "file": "folka.html",
+  "title": "Folka — Endringsledelse",
+  "desc": "An infographic film about change management, told almost entirely with coloured circles.\n",
+  "tags": [
+    "Infographic",
+    "Explainer"
+  ],
+  "media": {
+    "type": "video",
+    "src": "cases/Assets/folka/Folka_endringsledelse_short.webm",
+    "mime": "video/webm",
+    "poster": "cases/Assets/folka/Folka_endringsledelse_preview.jpg"
+  }
 }
 ]
+
