@@ -43,8 +43,8 @@
 
   /* ---- one accent only — a light tint of Signal Blue for text on the
      deeper teal (6.22:1). Inside cards, --accent switches back to
-     full-strength Signal Blue. ---- */
-  --accent: #a5b9f3;
+     full-strength Signal Blue. old #a5b9f3 ---- */
+  --accent: #f4d58d;
 
   /* ---- type ----
      Display/label face: a condensed grotesque, matched to the
@@ -1621,7 +1621,7 @@ html:not(.is-jumping) .case-card:hover .case-card__arrow {
 .case-body h2 {
   font-family: var(--font-body);
   font-weight: 600;
-  color: var(--ink);
+  color: var(--accent);
   font-size: var(--text-h2);
   margin: 2.2em 0 0.7em;
 }
