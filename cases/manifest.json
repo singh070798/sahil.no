@@ -73,6 +73,36 @@
     "mime": "video/webm",
     "poster": "cases/Assets/folka/Folka_endringsledelse_preview.jpg"
   }
+},
+    {
+  "file": "komite.html",
+  "title": "Komité — Showreel",
+  "desc": "An agency showreel that slows down to let the work breathe.",
+  "tags": [
+    "Showreel"
+  ],
+  "media": {
+    "type": "video",
+    "src": "cases/Assets/komite/Komite_Showreel_short.webm",
+    "mime": "video/webm",
+    "poster": "cases/Assets/komite/Komite_Showreel_handbrake_preview.jpg"
+  }
+},
+    {
+  "file": "eika.html",
+  "title": "Eika — Kredittkort",
+  "desc": "Rebuilding a 2D brand style in 3D for Eika's credit card campaigns.",
+  "tags": [
+    "Social Media",
+    "Campaign",
+    "3D"
+  ],
+  "media": {
+    "type": "video",
+    "src": "cases/Assets/eika/Eika_1200x650_SS02.webm",
+    "mime": "video/webm",
+    "poster": "cases/Assets/eika/Eika_1200x650_SS02_preview.jpg"
+  }
 }
 ]
 
