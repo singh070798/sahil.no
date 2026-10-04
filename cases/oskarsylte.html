@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oskar Sylte — Social Media — Sahil</title>
+<meta name="description" content="Monthly social content built with 3D product assets and a hands-on, AI-assisted workflow.">
+<meta name="theme-color" content="#286a6d">
+<link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32-light.png" media="(prefers-color-scheme: light)">
+<link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32-dark.png" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+
+<!-- Link previews (LinkedIn, Slack, iMessage, etc.). Once the site has
+     a web address, change og:image to the full address of the image,
+     e.g. https://your-domain.com/images/og-image-ss02.jpg — most preview
+     services ignore relative paths. See README → "Link previews". -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="Oskar Sylte — Social Media — Sahil">
+<meta property="og:description" content="Monthly social content built with 3D product assets and a hands-on, AI-assisted workflow.">
+<meta property="og:image" content="../images/og-image-ss02.jpg">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<!-- The header band (lighter teal): logo, title and details. The
+     rest of the page sits on the deeper teal. -->
+<header class="stage">
+
+<div class="case-topbar">
+  <a href="../index.html" class="case-topbar__logo-link">
+    <span class="masthead__logo logo-motion" role="img" aria-label="Sahil — back to index">
+      <picture class="logo-motion__ext">
+        <source media="(min-width: 684px)" srcset="../images/sahil-logo-ext.webp" width="3473" height="2484">
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="">
+      </picture>
+      <picture class="logo-motion__still">
+        <source media="(min-width: 684px)" srcset="../images/sahil-logo-still-ss02.webp" width="2000" height="1000">
+        <img src="../images/sahil-logo-mobile-still-ss04.webp" alt="" width="1200" height="470">
+      </picture>
+      <canvas class="logo-motion__anim" aria-hidden="true"
+        data-src-wide="../images/sahil-logo-motion-ss02.mp4"
+        data-src-narrow="../images/sahil-logo-motion-mobile-ss04.mp4"></canvas>
+    </span>
+  </a>
+  <a class="back-link" href="../index.html">Index</a>
+</div>
+
+  <div class="case-header">
+    <h1 class="case-header__title">Oskar Sylte — Social Media</h1>
+
+    <dl class="case-meta">
+      <div>
+        <dt>Role</dt>
+        <dd>VFX, Motion &amp; 3D</dd>
+      </div>
+      <div>
+        <dt>Year</dt>
+        <dd>2025–2026</dd>
+      </div>
+      <div>
+        <dt>Tools</dt>
+        <dd>ComfyUI, After Effects</dd>
+      </div>
+      <div>
+        <dt>Tags</dt>
+        <dd>Social Media, 3D, AI</dd>
+      </div>
+    </dl>
+  </div>
+
+</header>
+
+<main>
+
+  <div class="case-visual">
+    <div class="case-visual__frame">
+      <video autoplay muted loop playsinline poster="Assets/oskar/os-hero_preview.jpg">
+        <source src="Assets/oskar/os-hero.webm" type="video/webm">
+      </video>
+    </div>
+  </div>
+
+  <article class="case-body">
+    <p>
+      Oskar Sylte is one of Norway's oldest soda producers, based in Molde. They have been a long-running retainer client at SDG\TBWA, and I've made social media content for them over several years. This case focuses on 2025–2026, when I delivered a steady stream of posts.
+    </p>
+
+    <h2>The challenge</h2>
+
+    <p>
+      The budget was limited, but the goal was always to deliver the best possible work within it. Motion performs better than stills on social media, so I pushed for animated posts wherever possible. The recurring ask was to place Oskar Sylte's products into different life style settings. And at times into setting that weren't possible to recreate because of the season, geography or availability at the time. Recreating the scenes digitally is relatively simple with a still images, but much harder in motion, and quick compositing tricks don't hold up once things start moving. Neither did AI-generated content as the brand's audience had reacted badly to earlier posts, calling it slop.
+    </p>
+
+    <div class="case-row" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:var(--grid-gap,1.75rem);margin:2rem 0">
+      <div>
+        <div class="case-visual__frame">
+          <video autoplay muted loop playsinline poster="Assets/oskar/OS_Limonade_ocean_1080x1920_SS01_1_preview.jpg">
+            <source src="Assets/oskar/OS_Limonade_ocean_1080x1920_SS01_1.webm" type="video/webm">
+          </video>
+        </div>
+      </div>
+      <div>
+        <div class="case-visual__frame">
+          <video autoplay muted loop playsinline poster="Assets/oskar/os-lim2_1_preview.jpg">
+            <source src="Assets/oskar/os-lim2_1.webm" type="video/webm">
+          </video>
+        </div>
+      </div>
+    </div>
+
+    <h2>The approach</h2>
+
+    <p>
+      First, I built 3D models of all of Oskar Sylte's products, so we were no longer limited to existing pack shots. On top of that, I developed a workflow that lean into the strengths of AI-generation to streamline the project. I find stock images or build a plate with AI to act as the surrounding scene. Then integrate the 3D soda product into the scene. Animate the scene with AI in ComfyUI. Finally I reposition the labels back from the 3D assets into the final video so every logo, label and line of type on the product stays accurate. AI generation is a step in the process, not the finished product. The ideas, the product accuracy and the final craft stay in my hands.
+    </p>
+
+    <div class="case-row" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:var(--grid-gap,1.75rem);margin:2rem 0">
+      <div>
+        <div class="case-visual__frame">
+          <video autoplay muted loop playsinline poster="Assets/oskar/120526_OS_Norges-brus_SS02_1_preview.jpg">
+            <source src="Assets/oskar/120526_OS_Norges-brus_SS02_1.webm" type="video/webm">
+          </video>
+        </div>
+      </div>
+      <div>
+        <div class="case-visual__frame">
+          <video autoplay muted loop playsinline poster="Assets/oskar/os-norge_1_preview.jpg">
+            <source src="Assets/oskar/os-norge_1.webm" type="video/webm">
+          </video>
+        </div>
+      </div>
+    </div>
+
+    <h2>Result</h2>
+
+    <p>
+      A steady flow of animated posts at a level the budget wouldn't otherwise allow. Oskar Sylte's dedicated audience has received the content well, without the &quot;slop&quot; comments that earlier AI-made posts attracted. I believe that's because the process leans on what AI does well and relies on manual work for the rest, rather than letting AI generate the whole result.
+    </p>
+
+    <div class="case-row" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:var(--grid-gap,1.75rem);margin:2rem 0">
+      <div>
+        <div class="case-visual__frame">
+          <video autoplay muted loop playsinline poster="Assets/oskar/OS_Limonade_park_1080x1920_SS03_1_preview.jpg">
+            <source src="Assets/oskar/OS_Limonade_park_1080x1920_SS03_1.webm" type="video/webm">
+          </video>
+        </div>
+      </div>
+      <div>
+        <div class="case-visual__frame">
+          <video autoplay muted loop playsinline poster="Assets/oskar/os-lim1_1_preview.jpg">
+            <source src="Assets/oskar/os-lim1_1.webm" type="video/webm">
+          </video>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- Filled in by assets/cases.js from cases/manifest.json — no
+       need to pick a prev/next case by hand. -->
+  <nav class="case-nav"></nav>
+
+</main>
+
+<script src="../assets/cases.js" defer></script>
+<script src="../assets/logo-motion.js" defer></script>
+</body>
+</html>
