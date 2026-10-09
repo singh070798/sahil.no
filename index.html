@@ -136,26 +136,35 @@
     </div>
 
     <div class="intro__cv">
-      <ul class="cv__list">
+      <!-- Two groups, matching the CV: full-time work first, then
+           freelance. Each row: role and years on one line, the
+           organisation under it. To add a role, copy an <li> into the
+           right group. -->
+      <h3 class="cv__group" id="cv-work">Work</h3>
+      <ul class="cv__list" aria-labelledby="cv-work">
         <li>
           <span class="cv__role">Motion Designer</span>
-          <span class="cv__org">SDG / TBWA</span>
-          <span class="cv__years">2020 — Present</span>
+          <span class="cv__years">2023 — Present</span>
+          <span class="cv__org">Scandinavian Design Group</span>
+        </li>
+        <li>
+          <span class="cv__role">Motion Designer</span>
+          <span class="cv__years">2020 — 2023</span>
+          <span class="cv__org">TBWA</span>
+        </li>
+      </ul>
+
+      <h3 class="cv__group" id="cv-freelance">Freelance</h3>
+      <ul class="cv__list" aria-labelledby="cv-freelance">
+        <li>
+          <span class="cv__role">Content Producer</span>
+          <span class="cv__years">2014 — 2020</span>
+          <span class="cv__org">Hagecrew · UKM Norge</span>
         </li>
         <li>
           <span class="cv__role">Film Producer</span>
-          <span class="cv__org">Bydel St. Hanshaugen</span>
-          <span class="cv__years">2017 — 2019</span>
-        </li>
-        <li>
-          <span class="cv__role">PR Assistant</span>
-          <span class="cv__org">UKM Norge</span>
-          <span class="cv__years">2016 — 2019</span>
-        </li>
-        <li>
-          <span class="cv__role">Production Supervisor</span>
-          <span class="cv__org">Smartprat</span>
-          <span class="cv__years">2015 — 2017</span>
+          <span class="cv__years">2015 — 2019</span>
+          <span class="cv__org">Rockslo · Bydel St. Hanshaugen</span>
         </li>
       </ul>
       <div class="cv__actions">

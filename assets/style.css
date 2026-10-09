@@ -683,14 +683,21 @@ a { color: inherit; text-decoration: none; }
   /* Short windows (roughly a 1366 × 768 laptop with its browser
      toolbars): tighter line spacing in the CV list as well. */
   @media (max-height: 760px) {
-    .intro { --cv-lh: 1.35; }
+    .intro {
+      --cv-lh: 1.35;
+      --cv-li: clamp(0.3rem, 1vh, 0.6rem);
+      --cv-list-gap: clamp(0.8rem, 2.2vh, 1.4rem);
+    }
   }
 
   /* Very short windows (about 640px or less): tighter still. */
   @media (max-height: 640px) {
     .intro {
-      --cv-lh: 1.25;
-      --cv-li: 0.35rem;
+      --cv-lh: 1.2;
+      --cv-li: 0.2rem;
+      --cv-list-gap: 0.7rem;
+      --cv-pt: 0.9rem;
+      --cv-pb: 0.95rem;
     }
   }
 
@@ -1147,6 +1154,37 @@ body.is-playing .cinema-overlay {
   letter-spacing: var(--tracking-label);
   color: var(--ink-faint);
 }
+
+/* Group labels above each list ("Work", "Freelance"). Same small caps
+   style as the years, in the accent color so they read as headings. */
+.cv__group {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 calc(var(--cv-li) * 0.6);
+}
+
+/* The first list's bottom gap doubles as the space before the next
+   label; keep it smaller than the gap before the buttons. */
+.cv__list:has(+ .cv__group) {
+  margin-bottom: calc(var(--cv-list-gap) * 0.8);
+}
+
+/* Each row is a small grid: role and years on the first line (years
+   right-aligned), the organisation on the second. */
+.cv__list li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 1rem;
+  row-gap: 0;
+}
+
+.cv__list .cv__role  { grid-column: 1; grid-row: 1; }
+.cv__list .cv__years { grid-column: 2; grid-row: 1; align-self: center; }
+.cv__list .cv__org   { grid-column: 1 / -1; grid-row: 2; }
 
 .cv__actions {
   display: flex;

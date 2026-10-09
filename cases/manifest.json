@@ -1,4 +1,52 @@
 [
+    {
+  "file": "maarud-q.html",
+  "title": "Maarud & Q — Campaign",
+  "desc": "3D campaign content and product imagery for a chips-and-dip summer campaign.\n",
+  "tags": [
+    "Social Media",
+    "Campaign",
+    "3D"
+  ],
+  "media": {
+    "type": "video",
+    "src": "cases/Assets/maarudq/Maarud_NewsScene.webm",
+    "mime": "video/webm",
+    "poster": "cases/Assets/maarudq/Maarud_NewsScene_preview.jpg"
+  }
+},
+    {
+  "file": "eika.html",
+  "title": "Eika — Kredittkort",
+  "desc": "Rebuilding a 2D brand style in 3D for Eika's credit card campaigns.",
+  "tags": [
+    "Social Media",
+    "Campaign",
+    "3D"
+  ],
+  "media": {
+    "type": "video",
+    "src": "cases/Assets/eika/Eika_1200x650_SS02.webm",
+    "mime": "video/webm",
+    "poster": "cases/Assets/eika/Eika_1200x650_SS02_preview.jpg"
+  }
+},
+    {
+  "file": "oskarsylte.html",
+  "title": "Oskar Sylte — Social Media",
+  "desc": "Monthly social content built with 3D product assets and a hands-on, AI-assisted workflow.",
+  "tags": [
+    "Social Media",
+    "3D",
+    "AI"
+  ],
+  "media": {
+    "type": "video",
+    "src": "cases/Assets/oskar/os-short.webm",
+    "mime": "video/webm",
+    "poster": "cases/Assets/oskar/os-short_preview.jpg"
+  }
+},
   {
   "file": "aschehoug.html",
   "title": "Aschehoug Skole — RUTE",
@@ -89,22 +137,6 @@
   }
 },
     {
-  "file": "eika.html",
-  "title": "Eika — Kredittkort",
-  "desc": "Rebuilding a 2D brand style in 3D for Eika's credit card campaigns.",
-  "tags": [
-    "Social Media",
-    "Campaign",
-    "3D"
-  ],
-  "media": {
-    "type": "video",
-    "src": "cases/Assets/eika/Eika_1200x650_SS02.webm",
-    "mime": "video/webm",
-    "poster": "cases/Assets/eika/Eika_1200x650_SS02_preview.jpg"
-  }
-},
-    {
   "file": "tvp.html",
   "title": "The Viking Planet — Posters",
   "desc": "Subtle 2.5D motion for The Viking Planet's summer campaign on digital screens across Oslo.",
@@ -120,22 +152,6 @@
   }
 },
     {
-  "file": "oskarsylte.html",
-  "title": "Oskar Sylte — Social Media",
-  "desc": "Monthly social content built with 3D product assets and a hands-on, AI-assisted workflow.",
-  "tags": [
-    "Social Media",
-    "3D",
-    "AI"
-  ],
-  "media": {
-    "type": "video",
-    "src": "cases/Assets/oskar/os-short.webm",
-    "mime": "video/webm",
-    "poster": "cases/Assets/oskar/os-short_preview.jpg"
-  }
-},
-    {
   "file": "cst.html",
   "title": "CST — Brand Elements",
   "desc": "Rigged brand animations for Canadian Seafood Treasures, emulating the style of a hand-drawn brand film.",
@@ -148,22 +164,6 @@
     "src": "cases/Assets/cst/kishredfish.webm",
     "mime": "video/webm",
     "poster": "cases/Assets/cst/kishredfish_preview.jpg"
-  }
-},
-    {
-  "file": "maarud-q.html",
-  "title": "Maarud & Q — Campaign",
-  "desc": "3D campaign content and product imagery for a chips-and-dip summer campaign.\n",
-  "tags": [
-    "Social Media",
-    "Campaign",
-    "3D"
-  ],
-  "media": {
-    "type": "video",
-    "src": "cases/Assets/maarudq/Maarud_NewsScene.webm",
-    "mime": "video/webm",
-    "poster": "cases/Assets/maarudq/Maarud_NewsScene_preview.jpg"
   }
 },
     {
