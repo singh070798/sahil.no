@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Every page search engines should know about. Add a line here when
+     you add a case or a tool (see README.md → "The tools folder"). -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://sahil.no/</loc></url>
+  <url><loc>https://sahil.no/cases/maarud-q.html</loc></url>
+  <url><loc>https://sahil.no/cases/eika.html</loc></url>
+  <url><loc>https://sahil.no/cases/oskarsylte.html</loc></url>
+  <url><loc>https://sahil.no/cases/aschehoug.html</loc></url>
+  <url><loc>https://sahil.no/cases/silenteight.html</loc></url>
+  <url><loc>https://sahil.no/cases/ceedr.html</loc></url>
+  <url><loc>https://sahil.no/cases/onna.html</loc></url>
+  <url><loc>https://sahil.no/cases/folka.html</loc></url>
+  <url><loc>https://sahil.no/cases/komite.html</loc></url>
+  <url><loc>https://sahil.no/cases/tvp.html</loc></url>
+  <url><loc>https://sahil.no/cases/cst.html</loc></url>
+  <url><loc>https://sahil.no/cases/spond.html</loc></url>
+  <url><loc>https://sahil.no/tool/</loc></url>
+  <url><loc>https://sahil.no/tool/banner-compressor.html</loc></url>
+  <url><loc>https://sahil.no/tool/banner-tester.html</loc></url>
+  <url><loc>https://sahil.no/tool/case-editor.html</loc></url>
+  <url><loc>https://sahil.no/tool/cv-editor.html</loc></url>
+  <url><loc>https://sahil.no/tool/banner-animator.html</loc></url>
+  <url><loc>https://sahil.no/tool/frame-grabber.html</loc></url>
+  <url><loc>https://sahil.no/tool/file-converter.html</loc></url>
+</urlset>

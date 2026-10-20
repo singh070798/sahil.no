@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Case page builder — Sahil</title>
+<meta name="description" content="Builds case study pages for Sahil Singh&#x27;s portfolio from a form, with a live desktop and mobile preview, plus the homepage card entry.">
+<meta name="theme-color" content="#286a6d">
+<link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32-light.png" media="(prefers-color-scheme: light)">
+<link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32-dark.png" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+<link rel="canonical" href="https://sahil.no/tool/case-editor.html">
+<meta name="author" content="Sahil Singh">
+
+<!-- Link previews. Full addresses, since most preview services
+     ignore relative ones. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Sahil Singh">
+<meta property="og:url" content="https://sahil.no/tool/case-editor.html">
+<meta property="og:title" content="Case page builder — Sahil">
+<meta property="og:description" content="Builds case study pages for Sahil Singh&#x27;s portfolio from a form, with a live desktop and mobile preview, plus the homepage card entry.">
+<meta property="og:image" content="https://sahil.no/images/og-image-ss02.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Case page builder",
+  "description": "Builds case study pages for Sahil Singh's portfolio from a form, with a live desktop and mobile preview, plus the homepage card entry.",
+  "url": "https://sahil.no/tool/case-editor.html",
+  "applicationCategory": "DesignApplication",
+  "operatingSystem": "Any (runs in a web browser)",
+  "isAccessibleForFree": true,
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "NOK"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sahil Singh",
+    "url": "https://sahil.no/"
+  }
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="tool.css">
+<style>
+/* Case page builder — layout only; buttons, fields and panels come
+   from tool.css. The form (left) and the live preview (right) both
+   stick to the top of the window; the form scrolls inside its own
+   panel, so scrolling the page itself goes straight past them to the
+   export: the case page code and the manifest entry, shown in full.
+   Below 880px everything stacks and the page scrolls normally. */
+.cb { display: flex; flex-direction: column; gap: 1rem; }
+.cb-bar { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; flex: none; }
+.file-pill {
+  font-size: 0.875rem; color: var(--ink-dim); border: 1px solid var(--line-strong); border-radius: 999px;
+  padding: 0.3rem 0.8rem; white-space: nowrap; max-width: 40vw; overflow: hidden; text-overflow: ellipsis;
+}
+.cb-bar .spacer { flex: 1; }
+.cb-bar .tool-label { margin-right: 0.25rem; }
+.tabs { display: flex; gap: 0.35rem; }
+.tab {
+  font-family: var(--font-display); font-weight: 600; font-size: 0.8125rem; letter-spacing: var(--tracking-label);
+  text-transform: uppercase; padding: 0.6rem 1rem; border-radius: 999px; border: 1px solid var(--line-strong);
+  background: transparent; color: var(--ink-dim); cursor: pointer;
+}
+.tab:hover { color: var(--ink); border-color: var(--accent); }
+.tab[aria-selected="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+
+.layout { display: grid; grid-template-columns: minmax(320px, 400px) minmax(0, 1fr); gap: 1rem; align-items: start; }
+.editor {
+  padding: 1.25rem; position: sticky; top: 1rem; overflow-y: auto;
+  max-height: calc(100vh - 2rem); max-height: calc(100svh - 2rem);
+}
+.preview-col { position: sticky; top: 1rem; min-width: 0; }
+@media (max-width: 880px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  .preview-col { position: static; }
+  .editor { position: static; max-height: none; overflow: visible; }
+}
+
+/* ---- the form ---- */
+.editor input:not([type="radio"], [type="checkbox"]),
+.editor textarea,
+.editor select { width: 100%; }
+fieldset { border: 1px solid var(--line); border-radius: var(--radius); padding: 0.9rem 1rem 1.1rem; margin: 0 0 1rem; min-width: 0; }
+legend {
+  font-family: var(--font-display); font-weight: 600; font-size: 0.8125rem; letter-spacing: var(--tracking-label);
+  text-transform: uppercase; color: var(--accent); padding: 0 0.4rem;
+}
+legend .sub { font-family: var(--font-body); font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--ink-faint); }
+.field { margin-bottom: 0.75rem; }
+.field:last-child { margin-bottom: 0; }
+.field label { display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.3rem; color: var(--ink-dim); }
+.field input, .field textarea, .field select { width: 100%; }
+.hint, .field .hint { font-size: 0.78rem; color: var(--ink-faint); margin-top: 0.3rem; line-height: 1.4; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+
+.radiorow { display: flex; gap: 0.4rem; margin-bottom: 0.6rem; flex-wrap: wrap; }
+.radiorow label {
+  flex: 1; min-width: 5.5rem; display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+  font-size: 0.8125rem; font-weight: 600; padding: 0.45rem 0.3rem; border: 1px solid var(--line-strong);
+  border-radius: 6px; cursor: pointer; color: var(--ink-dim);
+}
+.radiorow input { width: 14px; height: 14px; }
+.radiorow label:has(input:checked) { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); color: var(--ink); }
+
+.checkrow { display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.875rem; margin: 0.2rem 0 0.4rem; cursor: pointer; line-height: 1.4; }
+.checkrow input { margin-top: 0.1rem; flex: none; }
+.checkrow small { display: block; color: var(--ink-faint); font-size: 0.78rem; }
+.subfields { border-left: 2px solid var(--line); padding-left: 0.75rem; margin-top: 0.6rem; }
+
+.block { border: 1px solid var(--line); border-radius: 6px; padding: 0.6rem 0.7rem; margin-bottom: 0.55rem; background: var(--sunk); }
+.block__head { display: flex; align-items: center; gap: 0.3rem; margin-bottom: 0.4rem; flex-wrap: wrap; }
+.block__tag {
+  font-family: var(--font-display); font-weight: 600; font-size: 0.75rem; letter-spacing: var(--tracking-label);
+  text-transform: uppercase; color: var(--ink-faint);
+}
+.block__spacer { flex: 1; }
+.addrow { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.5rem; }
+.col-item { border: 1px dashed var(--line-strong); border-radius: 6px; padding: 0.55rem 0.6rem; margin-top: 0.5rem; background: var(--paper); }
+.col-item__label {
+  font-family: var(--font-display); font-weight: 600; font-size: 0.75rem; letter-spacing: var(--tracking-label);
+  text-transform: uppercase; color: var(--ink-faint); margin-bottom: 0.4rem;
+}
+
+.instructions { font-size: 0.875rem; line-height: 1.55; color: var(--ink-dim); background: var(--sunk); border-radius: 6px; padding: 0.9rem 1rem; margin-bottom: 1rem; }
+.instructions strong { color: var(--ink); }
+.instructions ol { margin: 0.4rem 0 0.5rem; padding-left: 1.2rem; }
+.instructions li { margin-bottom: 0.25rem; }
+.draft-note { font-size: 0.8125rem; color: var(--ink-faint); }
+
+/* ---- preview and export ---- */
+/* The preview renders at a real screen width (desktop 1280px, phone
+   390px) and is scaled down to fit the column; the script at the end
+   of the page sets the sizes. The workspace always uses the whole
+   window width (tool--full in tool.css). */
+.pv-bar {
+  display: flex; align-items: center; gap: 0.5rem 0.75rem;
+  flex-wrap: wrap; padding-bottom: 0.75rem;
+}
+.pv-bar .spacer { flex: 1; }
+.seg { display: inline-flex; border: 1px solid var(--line-strong); border-radius: 999px; padding: 2px; }
+.seg button {
+  display: inline-flex; align-items: center; gap: 0.45em; border: 0; border-radius: 999px; cursor: pointer;
+  font-family: var(--font-display); font-weight: 600; font-size: 0.8125rem; letter-spacing: var(--tracking-label);
+  text-transform: uppercase; padding: 0.5rem 0.85rem; background: transparent; color: var(--ink-dim);
+}
+.seg button:hover { color: var(--ink); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg-deep); }
+.seg svg, .pv-bar .btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.pv-size { font-size: 0.8125rem; color: var(--ink-faint); white-space: nowrap; }
+
+.preview-frame-wrap {
+  box-sizing: content-box; position: relative; overflow: hidden; margin: 0 auto;
+  border: 1px solid var(--line-strong); border-radius: var(--radius); background: var(--bg-deep);
+  width: 100%; height: 60vh; /* until the script sizes it */
+}
+.preview-frame-wrap iframe {
+  position: absolute; top: 0; left: 0; display: block; border: 0;
+  width: 100%; height: 100%; transform-origin: 0 0; background: var(--bg-deep);
+}
+.preview-col.is-mobile .preview-frame-wrap { border-radius: 22px; border-width: 1px; box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.06); }
+.preview-note { font-size: 0.875rem; color: var(--ink-faint); margin: 0.75rem 0 1rem !important; }
+/* ---- export: both outputs, in full, under the workspace ---- */
+.cb-export { margin-top: calc(var(--section-gap) / 2); padding-top: calc(var(--section-gap) / 2); border-top: 1px solid var(--line); }
+.cb-export__head { max-width: 62ch; margin-bottom: 1.5rem; }
+.cb-export__head h2 { font-family: var(--font-body); font-weight: 600; font-size: var(--text-h2); margin: 0 0 0.4rem; color: var(--ink); }
+.cb-export__head p { color: var(--ink-dim); }
+.cb-export__grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 1rem; align-items: start; }
+.export--card { position: sticky; top: 1rem; }
+@media (max-width: 880px) {
+  .cb-export__grid { grid-template-columns: minmax(0, 1fr); }
+  .export--card { position: static; }
+}
+.export { padding: 1.25rem; }
+.export .tool-heading { margin-bottom: 0.25rem; }
+.export__step { font-family: var(--font-display); font-weight: 600; font-size: 0.8125rem; letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--ink-faint); margin-bottom: 0.2rem !important; }
+.export__where { font-size: 0.875rem; color: var(--ink-dim); margin-bottom: 0.9rem !important; }
+.export-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+/* the code is shown in full: the box grows to fit (script at the end
+   of the page) and long lines wrap, so nothing scrolls inside it */
+.export textarea {
+  display: block; width: 100%; min-height: 6rem; resize: none; overflow: hidden;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace !important;
+  font-size: 0.75rem !important; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere;
+  background: var(--sunk) !important; tab-size: 2;
+}
+.status { font-size: 0.8125rem; margin-top: 0.4rem; min-height: 1.2em; }
+.status.ok { color: var(--ok); }
+.status.err { color: var(--danger); }
+.export .hint { margin-top: 0.6rem; }
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+</style>
+</head>
+<body class="tool-page">
+
+<!-- The header band (lighter teal), the same as on the case pages:
+     logo, back link, the tool's name, what it does and a few details.
+     The tool itself sits below, on the deeper teal. -->
+<header class="stage">
+
+<div class="case-topbar">
+  <a href="../" class="case-topbar__logo-link">
+    <span class="masthead__logo logo-motion" role="img" aria-label="Sahil — back to index">
+      <picture class="logo-motion__ext">
+        <source media="(min-width: 684px)" srcset="../images/sahil-logo-ext.webp" width="3473" height="2484">
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="">
+      </picture>
+      <picture class="logo-motion__still">
+        <source media="(min-width: 684px)" srcset="../images/sahil-logo-still-ss02.webp" width="2000" height="1000">
+        <img src="../images/sahil-logo-mobile-still-ss04.webp" alt="" width="1200" height="470">
+      </picture>
+      <canvas class="logo-motion__anim" aria-hidden="true"
+        data-src-wide="../images/sahil-logo-motion-ss02.mp4"
+        data-src-narrow="../images/sahil-logo-motion-mobile-ss04.mp4"></canvas>
+    </span>
+  </a>
+  <a class="back-link" href="./">Tools</a>
+</div>
+
+  <div class="case-header">
+    <h1 class="case-header__title">Case page builder</h1>
+    <p class="tool-lede">Fill in a form and get a finished case page for this portfolio, with a live preview as you type. It also writes the homepage card&#x27;s entry for cases/manifest.json.</p>
+
+    <dl class="case-meta">
+      <div>
+        <dt>Input</dt>
+        <dd>A form, or an existing case page</dd>
+      </div>
+      <div>
+        <dt>Output</dt>
+        <dd>A case page and its manifest entry</dd>
+      </div>
+      <div>
+        <dt>Runs</dt>
+        <dd>In your browser. Drafts save automatically</dd>
+      </div>
+    </dl>
+  </div>
+
+</header>
+
+<main class="tool tool--full">
+  <div class="cb">
+
+    <div class="cb-bar">
+      <span class="file-pill" id="filePill">cases/case-untitled.html</span>
+      <button type="button" class="btn btn--small" id="loadBtn">Load a case page…</button>
+      <input type="file" id="fileInput" accept=".html,text/html" class="vh">
+      <span class="spacer"></span>
+      <span class="tool-label" id="previewLabel">Preview</span>
+      <div class="tabs" role="tablist" aria-labelledby="previewLabel">
+        <button class="tab" id="tabCasePage" role="tab" aria-selected="true">Case page</button>
+        <button class="tab" id="tabCard" role="tab" aria-selected="false">Homepage card</button>
+      </div>
+    </div>
+
+    <div class="layout">
+
+      <form class="editor tool-panel" id="editor" autocomplete="off">
+
+      <div class="instructions">
+        <strong>How this works.</strong> Fill in the fields below. The
+        preview on the right updates live and stays in view while you
+        scroll the form. Colors, type and layout match the real site;
+        the animated logo is simplified to a plain wordmark here.
+        <ol>
+          <li>Fill in this form for one project.</li>
+          <li>Under <strong>Export</strong>, below the preview, download the case page into your <code>cases/</code> folder.</li>
+          <li>Copy the manifest entry next to it into <code>cases/manifest.json</code>. The <strong>Homepage card</strong> tab previews how that card looks.</li>
+          <li>To edit a page later, use <strong>Load a case page…</strong> above and pick the file — everything reloads into the form.</li>
+        </ol>
+        Your work here also autosaves in this browser as you type. This
+        assumes your site already has <code>assets/cases.js</code> and
+        <code>cases/manifest.json</code> set up (they're what makes the
+        homepage grid and Prev/Next links build themselves) — if you're
+        starting from an older copy of the site without them, ask for
+        those two files first.
+      </div>
+
+      <fieldset>
+        <legend>Basics</legend>
+        <div class="field">
+          <label for="f-title">Title</label>
+          <input type="text" id="f-title" data-bind="title" placeholder="Project name">
+        </div>
+        <div class="field">
+          <label for="f-oneliner">One-line summary</label>
+          <textarea id="f-oneliner" data-bind="oneLiner" rows="2" placeholder="One sentence — used in the browser tab, search results, link previews, and the homepage card."></textarea>
+        </div>
+        <div class="field">
+          <label for="f-filename">File name</label>
+          <input type="text" id="f-filename" placeholder="case-my-project.html">
+          <div class="hint">Suggested automatically from the title until you edit it yourself.</div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Details</legend>
+        <div class="row2">
+          <div class="field">
+            <label for="f-role">Role</label>
+            <input type="text" id="f-role" data-bind="role" placeholder="Brand &amp; motion design">
+          </div>
+          <div class="field">
+            <label for="f-year">Year</label>
+            <input type="text" id="f-year" data-bind="year" placeholder="2026">
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-tools">Tools</label>
+          <input type="text" id="f-tools" data-bind="tools" placeholder="After Effects, Cinema 4D">
+        </div>
+        <div class="field">
+          <label for="f-tags">Tags</label>
+          <input type="text" id="f-tags" data-bind="tagsRaw" placeholder="Branding, Motion">
+          <div class="hint">Comma-separated. Shown as separate tags on the homepage card.</div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Hero media <span class="sub">— top of the case page</span></legend>
+        <div class="radiorow" data-radio="hero.type">
+          <label><input type="radio" name="hero-type" value="placeholder" checked><span>Placeholder</span></label>
+          <label><input type="radio" name="hero-type" value="image"><span>Image</span></label>
+          <label><input type="radio" name="hero-type" value="video"><span>Video</span></label>
+        </div>
+        <div id="heroMediaFields"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Card preview media <span class="sub">— homepage grid</span></legend>
+        <div class="radiorow" data-radio="card.type">
+          <label><input type="radio" name="card-type" value="placeholder" checked><span>Placeholder</span></label>
+          <label><input type="radio" name="card-type" value="image"><span>Image</span></label>
+          <label><input type="radio" name="card-type" value="video"><span>Video</span></label>
+        </div>
+        <div id="cardMediaFields"></div>
+        <div class="hint" style="margin-top:0.5rem;">No player option here — the whole card is a link to the case page, so an interactive video inside it would fight with that click.</div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Body content</legend>
+        <div id="blocks"></div>
+        <div class="addrow">
+          <button type="button" class="btn btn--small" data-add="p">+ Paragraph</button>
+          <button type="button" class="btn btn--small" data-add="h2">+ Heading</button>
+          <button type="button" class="btn btn--small" data-add="media">+ Media</button>
+          <button type="button" class="btn btn--small" data-add="row">+ Row (side by side)</button>
+        </div>
+      </fieldset>
+
+      <div class="draft-note" id="draftNote"></div>
+      <div style="margin-top:0.75rem;">
+        <button type="button" class="btn btn--small btn--danger" id="resetBtn">Reset to blank</button>
+      </div>
+
+    </form>
+
+      <div class="preview-col">
+        <div class="pv-bar" id="pvBar">
+          <div class="seg" role="group" aria-label="Preview size">
+            <button type="button" data-device="desktop" aria-pressed="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/></svg>Desktop
+            </button>
+            <button type="button" data-device="mobile" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/></svg>Mobile
+            </button>
+          </div>
+          <span class="pv-size" id="pvSize"></span>
+        </div>
+
+      <div id="panelCasePage">
+        <div class="preview-frame-wrap"><iframe id="previewCase" title="Case page preview"></iframe></div>
+        <p class="preview-note">
+          This approximates <code id="fnLabel1">cases/case-untitled.html</code>. Media paths resolve from the <code>cases/</code> folder, as
+          they will on the real page. The real logo, Index link and page chrome are fixed and always correct
+          in the exported file — simplified to a plain wordmark here. Video
+          player modules are fully interactive in this preview.
+        </p>
+      </div>
+
+      <div id="panelCard" style="display:none;">
+        <div class="preview-frame-wrap"><iframe id="previewCard" title="Homepage card preview"></iframe></div>
+        <p class="preview-note">This is one card as it sits in the <code>Selected Works</code> grid, next to a plain neighbor card for scale. On the real site, cards like this are built automatically from <code>cases/manifest.json</code> — you never write this markup by hand.</p>
+      </div>
+
+    </div>
+      </div>
+    </div>
+
+    <section class="cb-export" aria-labelledby="exportHeading">
+      <div class="cb-export__head">
+        <h2 id="exportHeading">Export</h2>
+        <p>Each case needs both: the page itself, and an entry in the manifest that puts it on the homepage. Both update as you edit the form.</p>
+      </div>
+      <div class="cb-export__grid">
+
+        <div class="export tool-panel">
+          <p class="export__step">Step 1</p>
+          <h3 class="tool-heading">The case page</h3>
+          <p class="export__where">Save it in your <code>cases/</code> folder.</p>
+          <div class="export-actions">
+            <button type="button" class="btn btn--primary" id="downloadCase">Download <span id="dlName1">case-untitled.html</span></button>
+            <button type="button" class="btn" id="copyCase">Copy code</button>
+            <button type="button" class="btn btn--quiet" id="selectCase">Select all</button>
+          </div>
+          <div class="status" id="statusCase"></div>
+          <label class="vh" for="codeCase">Case page code</label>
+          <textarea id="codeCase" readonly spellcheck="false"></textarea>
+        </div>
+
+        <div class="export export--card tool-panel">
+          <p class="export__step">Step 2</p>
+          <h3 class="tool-heading">The manifest entry</h3>
+          <p class="export__where">Add it to the list in <code>cases/manifest.json</code>.</p>
+          <div class="export-actions">
+            <button type="button" class="btn btn--primary" id="copyCardBtn">Copy code</button>
+            <button type="button" class="btn btn--quiet" id="selectCardBtn">Select all</button>
+          </div>
+          <div class="status" id="statusCardCode"></div>
+          <label class="vh" for="codeCard">Manifest entry</label>
+          <textarea id="codeCard" readonly spellcheck="false"></textarea>
+          <p class="hint">Where you place it in the list is where it appears on the homepage and in the Prev/Next order. Add a comma before or after it to match its new neighbors.</p>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  // =====================================================================
+  // State
+  // =====================================================================
+  var blockId = 0;
+  function nextId() { blockId++; return blockId; }
+
+  function blankMedia() { return { type: "placeholder", src: "", alt: "", videoMode: "loop", videoSrc: "", poster: "" }; }
+  function blankColItem() { return { type: "placeholder", src: "", alt: "", videoMode: "loop", videoSrc: "", poster: "", text: "" }; }
+
+  function newBlock(type) {
+    var b = { id: nextId(), type: type };
+    if (type === "p" || type === "h2") b.text = "";
+    if (type === "media") b.media = blankMedia();
+    if (type === "row") b.cols = 2, b.items = [blankColItem(), blankColItem()];
+    return b;
+  }
+
+  function defaultState() {
+    blockId = 0;
+    var b1 = newBlock("p"); b1.text = "Replace this paragraph with your project write-up. A short opening paragraph works well here: what the project was, who it was for, and what the goal was.";
+    var h1 = newBlock("h2"); h1.text = "The challenge";
+    var b2 = newBlock("p"); b2.text = "Describe the brief or the problem you were solving. Keep it to a few sentences — this page is a case file, not an essay.";
+    var h2b = newBlock("h2"); h2b.text = "The approach";
+    var b3 = newBlock("p"); b3.text = "Walk through your process or key decisions. Add more headings as needed, drop in a Media block for extra images or video, or a Row to put two or three things side by side.";
+    var h3 = newBlock("h2"); h3.text = "Result";
+    var b4 = newBlock("p"); b4.text = "Close with the outcome — what shipped, what changed, or what you learned.";
+    return {
+      title: "", oneLiner: "", role: "", year: "", tools: "", tagsRaw: "",
+      filename: "", filenameTouched: false,
+      hero: blankMedia(), card: blankMedia(),
+      body: [b1, h1, b2, h2b, b3, h3, b4]
+    };
+  }
+
+  var state = defaultState();
+
+  // =====================================================================
+  // Draft persistence
+  // =====================================================================
+  var STORAGE_KEY = "case-page-builder-draft-v2";
+  var draftNote = document.getElementById("draftNote");
+
+  function saveDraft() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); draftNote.textContent = "Saved in this browser."; }
+    catch (e) { draftNote.textContent = ""; }
+  }
+  function loadDraft() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return false;
+      var parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== "object" || !Array.isArray(parsed.body)) return false;
+      state = parsed;
+      blockId = state.body.reduce(function (m, b) {
+        var ids = [b.id || 0];
+        if (b.items) b.items.forEach(function () {});
+        return Math.max(m, b.id || 0);
+      }, 0);
+      return true;
+    } catch (e) { return false; }
+  }
+  var hadDraft = loadDraft();
+  if (hadDraft) draftNote.textContent = "Restored your last draft.";
+
+  // =====================================================================
+  // Helpers
+  // =====================================================================
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+  function escAttr(s) { return esc(s); }
+  function getPath(obj, path) { return path.split(".").reduce(function (o, k) { return o == null ? o : o[k]; }, obj); }
+  function setPath(obj, path, value) {
+    var parts = path.split(".");
+    var last = parts.pop();
+    var target = parts.reduce(function (o, k) { return o[k]; }, obj);
+    target[last] = value;
+  }
+  function tagList() { return state.tagsRaw.split(",").map(function (t) { return t.trim(); }).filter(Boolean); }
+  function videoMimeType(src) {
+    var ext = String(src || "").split(".").pop().toLowerCase().split(/[?#]/)[0];
+    return { webm: "video/webm", mp4: "video/mp4", m4v: "video/mp4", mov: "video/quicktime", ogv: "video/ogg" }[ext] || "video/mp4";
+  }
+  function tagsJoined() { return tagList().join(", "); }
+
+  function slugify(s) {
+    return String(s || "").toLowerCase().trim()
+      .replace(/&/g, " and ")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 60);
+  }
+  function suggestedFilename() {
+    var slug = slugify(state.title);
+    return "case-" + (slug || "untitled") + ".html";
+  }
+  function filename() { return state.filename || suggestedFilename(); }
+
+  function usesPlayerAnywhere() {
+    function chk(m) { return m && m.type === "video" && m.videoMode === "player"; }
+    if (chk(state.hero)) return true;
+    for (var i = 0; i < state.body.length; i++) {
+      var b = state.body[i];
+      if (b.type === "media" && chk(b.media)) return true;
+      if (b.type === "row") {
+        for (var j = 0; j < b.items.length; j++) if (chk(b.items[j])) return true;
+      }
+    }
+    return false;
+  }
+
+  // =====================================================================
+  // Simple field binding for plain inputs
+  // =====================================================================
+  var form = document.getElementById("editor");
+  var filenameInput = document.getElementById("f-filename");
+
+  function fillSimpleFields() {
+    form.querySelectorAll("[data-bind]").forEach(function (el) {
+      var v = getPath(state, el.dataset.bind);
+      el.value = v == null ? "" : v;
+    });
+    filenameInput.value = state.filenameTouched ? state.filename : suggestedFilename();
+  }
+
+  form.addEventListener("input", function (e) {
+    var bind = e.target.dataset.bind;
+    if (bind) { setPath(state, bind, e.target.value); if (bind === "title") syncFilenamePlaceholder(); scheduleUpdate(); }
+  });
+
+  filenameInput.addEventListener("input", function () {
+    state.filename = filenameInput.value;
+    state.filenameTouched = true;
+    scheduleUpdate();
+  });
+  function syncFilenamePlaceholder() {
+    if (!state.filenameTouched) filenameInput.value = suggestedFilename();
+  }
+
+  document.getElementById("resetBtn").addEventListener("click", function () {
+    if (!confirm("Clear everything in this form?")) return;
+    state = defaultState();
+    fillSimpleFields();
+    renderHeroCardFields();
+    renderBlocks();
+    scheduleUpdate();
+    saveDraft();
+  });
+
+  // =====================================================================
+  // Reusable media sub-field editor (Image / Video[+player] fields)
+  // Used for: hero, card, a Media block, and each Row column.
+  // =====================================================================
+  // "Transparent background" checkbox for image frames. Media frames are
+  // filled white by the site's stylesheet (--media-fill), which shows
+  // through the see-through parts of a PNG/WebP. Ticking this exports
+  // that one frame with style="background:transparent".
+  function transparentCheckbox(mediaObj) {
+    var lab = document.createElement("label");
+    lab.className = "checkrow";
+    var inp = document.createElement("input");
+    inp.type = "checkbox";
+    inp.checked = !!mediaObj.transparentBg;
+    inp.addEventListener("change", function () { mediaObj.transparentBg = inp.checked; scheduleUpdate(); });
+    var txt = document.createElement("span");
+    txt.innerHTML = "Transparent background<small>For PNG/WebP with see-through areas \u2014 removes the white frame fill behind this image.</small>";
+    lab.appendChild(inp); lab.appendChild(txt);
+    return lab;
+  }
+
+  function buildMediaTypeAndFields(container, mediaObj, opts) {
+    // opts: { allowPlaceholder, allowPlayer, allowText, name }
+    container.innerHTML = "";
+
+    if (opts.allowText) {
+      var radio = document.createElement("div");
+      radio.className = "radiorow";
+      [["placeholder", "Empty"], ["image", "Image"], ["video", "Video"], ["text", "Text"]].forEach(function (pair) {
+        var lab = document.createElement("label");
+        var inp = document.createElement("input");
+        inp.type = "radio"; inp.name = opts.name; inp.value = pair[0];
+        inp.checked = mediaObj.type === pair[0];
+        inp.addEventListener("change", function () { mediaObj.type = pair[0]; renderSub(); scheduleUpdate(); });
+        var span = document.createElement("span"); span.textContent = pair[1];
+        lab.appendChild(inp); lab.appendChild(span);
+        radio.appendChild(lab);
+      });
+      container.appendChild(radio);
+    } else if (opts.allowPlaceholder) {
+      var radio2 = document.createElement("div");
+      radio2.className = "radiorow";
+      [["placeholder", "Placeholder"], ["image", "Image"], ["video", "Video"]].forEach(function (pair) {
+        var lab = document.createElement("label");
+        var inp = document.createElement("input");
+        inp.type = "radio"; inp.name = opts.name; inp.value = pair[0];
+        inp.checked = mediaObj.type === pair[0];
+        inp.addEventListener("change", function () { mediaObj.type = pair[0]; renderSub(); scheduleUpdate(); });
+        var span = document.createElement("span"); span.textContent = pair[1];
+        lab.appendChild(inp); lab.appendChild(span);
+        radio2.appendChild(lab);
+      });
+      container.appendChild(radio2);
+    }
+
+    var sub = document.createElement("div");
+    container.appendChild(sub);
+
+    function field(labelText, value, placeholder, onInput, multiline) {
+      var wrap = document.createElement("div");
+      wrap.className = "field";
+      var lab = document.createElement("label"); lab.textContent = labelText;
+      var inp = document.createElement(multiline ? "textarea" : "input");
+      if (!multiline) inp.type = "text";
+      else inp.rows = 2;
+      inp.value = value || "";
+      inp.placeholder = placeholder || "";
+      inp.addEventListener("input", function () { onInput(inp.value); scheduleUpdate(); });
+      wrap.appendChild(lab); wrap.appendChild(inp);
+      return wrap;
+    }
+
+    function renderSub() {
+      sub.innerHTML = "";
+      if (mediaObj.type === "image") {
+        var s = document.createElement("div"); s.className = "subfields";
+        s.appendChild(field("Image path", mediaObj.src, "../images/example.jpg", function (v) { mediaObj.src = v; }));
+        s.appendChild(field("Alt text", mediaObj.alt, "Describe the image", function (v) { mediaObj.alt = v; }));
+        s.appendChild(transparentCheckbox(mediaObj));
+        sub.appendChild(s);
+      } else if (mediaObj.type === "video") {
+        var s2 = document.createElement("div"); s2.className = "subfields";
+        if (opts.allowPlayer) {
+          var modeRow = document.createElement("div");
+          modeRow.className = "radiorow";
+          [["loop", "Silent loop"], ["player", "Player (sound)"]].forEach(function (pair) {
+            var lab = document.createElement("label");
+            var inp = document.createElement("input");
+            inp.type = "radio"; inp.name = opts.name + "-vmode"; inp.value = pair[0];
+            inp.checked = (mediaObj.videoMode || "loop") === pair[0];
+            inp.addEventListener("change", function () { mediaObj.videoMode = pair[0]; scheduleUpdate(); });
+            var span = document.createElement("span"); span.textContent = pair[1];
+            lab.appendChild(inp); lab.appendChild(span);
+            modeRow.appendChild(lab);
+          });
+          s2.appendChild(modeRow);
+        }
+        s2.appendChild(field("Video path (.webm or .mp4)", mediaObj.videoSrc, "../images/example.webm", function (v) { mediaObj.videoSrc = v; }));
+        s2.appendChild(field("Poster image", mediaObj.poster, "../images/example-poster.jpg", function (v) { mediaObj.poster = v; }));
+        sub.appendChild(s2);
+      } else if (mediaObj.type === "text" && opts.allowText) {
+        var s3 = document.createElement("div"); s3.className = "subfields";
+        s3.appendChild(field("Text", mediaObj.text, "A short paragraph for this column.", function (v) { mediaObj.text = v; }, true));
+        sub.appendChild(s3);
+      }
+    }
+    renderSub();
+  }
+
+  var heroFieldsEl = document.getElementById("heroMediaFields");
+  var cardFieldsEl = document.getElementById("cardMediaFields");
+
+  function renderHeroCardFields() {
+    // wire the top-level Placeholder/Image/Video radios already in the HTML
+    form.querySelectorAll("[data-radio]").forEach(function (group) {
+      var path = group.dataset.radio;
+      var v = getPath(state, path);
+      group.querySelectorAll("input[type=radio]").forEach(function (r) {
+        r.checked = (r.value === v);
+        r.onchange = function () {
+          setPath(state, path, r.value);
+          if (path === "hero.type") renderHeroSub();
+          if (path === "card.type") renderCardSub();
+          scheduleUpdate();
+        };
+      });
+    });
+    renderHeroSub();
+    renderCardSub();
+  }
+
+  function renderHeroSub() {
+    heroFieldsEl.innerHTML = "";
+    if (state.hero.type === "image") {
+      buildInlineFields(heroFieldsEl, state.hero, { allowPlayer: true, kind: "image", name: "hero" });
+    } else if (state.hero.type === "video") {
+      buildInlineFields(heroFieldsEl, state.hero, { allowPlayer: true, kind: "video", name: "hero" });
+    }
+  }
+  function renderCardSub() {
+    cardFieldsEl.innerHTML = "";
+    if (state.card.type === "image") {
+      buildInlineFields(cardFieldsEl, state.card, { allowPlayer: false, kind: "image", name: "card" });
+    } else if (state.card.type === "video") {
+      buildInlineFields(cardFieldsEl, state.card, { allowPlayer: false, kind: "video", name: "card" });
+    }
+  }
+
+  // Renders just the sub-fields (no outer type radio — used where the
+  // type radio already exists in the static HTML, i.e. hero/card).
+  function buildInlineFields(container, mediaObj, opts) {
+    var wrap = document.createElement("div");
+    wrap.className = "subfields";
+    function field(labelText, value, placeholder, onInput) {
+      var f = document.createElement("div"); f.className = "field";
+      var lab = document.createElement("label"); lab.textContent = labelText;
+      var inp = document.createElement("input"); inp.type = "text";
+      inp.value = value || ""; inp.placeholder = placeholder || "";
+      inp.addEventListener("input", function () { onInput(inp.value); scheduleUpdate(); });
+      f.appendChild(lab); f.appendChild(inp);
+      return f;
+    }
+    if (opts.kind === "image") {
+      wrap.appendChild(field("Image path", mediaObj.src, "../images/example.jpg", function (v) { mediaObj.src = v; }));
+      wrap.appendChild(field("Alt text", mediaObj.alt, "Describe the image", function (v) { mediaObj.alt = v; }));
+      if (opts.name !== "card") wrap.appendChild(transparentCheckbox(mediaObj));
+    } else {
+      if (opts.allowPlayer) {
+        var modeRow = document.createElement("div"); modeRow.className = "radiorow";
+        [["loop", "Silent loop"], ["player", "Player (sound)"]].forEach(function (pair) {
+          var lab = document.createElement("label");
+          var inp = document.createElement("input");
+          inp.type = "radio"; inp.name = opts.name + "-vmode"; inp.value = pair[0];
+          inp.checked = (mediaObj.videoMode || "loop") === pair[0];
+          inp.addEventListener("change", function () { mediaObj.videoMode = pair[0]; scheduleUpdate(); });
+          var span = document.createElement("span"); span.textContent = pair[1];
+          lab.appendChild(inp); lab.appendChild(span);
+          modeRow.appendChild(lab);
+        });
+        wrap.appendChild(modeRow);
+      }
+      wrap.appendChild(field("Video path (.webm or .mp4)", mediaObj.videoSrc, "../images/example.webm", function (v) { mediaObj.videoSrc = v; }));
+      wrap.appendChild(field("Poster image", mediaObj.poster, "../images/example-poster.jpg", function (v) { mediaObj.poster = v; }));
+    }
+    container.appendChild(wrap);
+  }
+
+  // =====================================================================
+  // Body block editor
+  // =====================================================================
+  var blocksEl = document.getElementById("blocks");
+
+  function blockLabel(type) {
+    return { p: "Paragraph", h2: "Heading", media: "Media", row: "Row" }[type] || type;
+  }
+
+  function renderBlocks() {
+    blocksEl.innerHTML = "";
+    state.body.forEach(function (block, idx) {
+      var wrap = document.createElement("div");
+      wrap.className = "block";
+
+      var head = document.createElement("div");
+      head.className = "block__head";
+      var tag = document.createElement("span");
+      tag.className = "block__tag";
+      tag.textContent = blockLabel(block.type);
+      head.appendChild(tag);
+      var spacer = document.createElement("span");
+      spacer.className = "block__spacer";
+      head.appendChild(spacer);
+
+      [["\u25B2", "Move up", idx > 0, function () { moveBlock(idx, -1); }],
+       ["\u25BC", "Move down", idx < state.body.length - 1, function () { moveBlock(idx, 1); }],
+       ["\u00D7", "Remove", true, function () { removeBlock(idx); }]
+      ].forEach(function (btnDef) {
+        var b = document.createElement("button");
+        b.type = "button"; b.className = "btn btn--small btn--ghost";
+        b.textContent = btnDef[0]; b.title = btnDef[1]; b.setAttribute("aria-label", btnDef[1]);
+        b.disabled = !btnDef[2];
+        b.addEventListener("click", btnDef[3]);
+        head.appendChild(b);
+      });
+      wrap.appendChild(head);
+
+      if (block.type === "p" || block.type === "h2") {
+        var input = document.createElement(block.type === "p" ? "textarea" : "input");
+        if (block.type === "p") input.rows = 3; else input.type = "text";
+        input.value = block.text;
+        input.placeholder = block.type === "p" ? "Paragraph text" : "Section heading";
+        input.addEventListener("input", function () { block.text = input.value; scheduleUpdate(); });
+        wrap.appendChild(input);
+      } else if (block.type === "media") {
+        var mediaWrap = document.createElement("div");
+        buildMediaTypeAndFields(mediaWrap, block.media, { allowPlaceholder: true, allowPlayer: true, allowText: false, name: "media-" + block.id });
+        wrap.appendChild(mediaWrap);
+      } else if (block.type === "row") {
+        var colToggle = document.createElement("div");
+        colToggle.className = "radiorow";
+        [[2, "2 columns"], [3, "3 columns"]].forEach(function (pair) {
+          var lab = document.createElement("label");
+          var inp = document.createElement("input");
+          inp.type = "radio"; inp.name = "row-cols-" + block.id; inp.value = pair[0];
+          inp.checked = block.cols === pair[0];
+          inp.addEventListener("change", function () {
+            block.cols = pair[0];
+            while (block.items.length < block.cols) block.items.push(blankColItem());
+            block.items.length = block.cols;
+            renderBlocks();
+            scheduleUpdate();
+          });
+          var span = document.createElement("span"); span.textContent = pair[1];
+          lab.appendChild(inp); lab.appendChild(span);
+          colToggle.appendChild(lab);
+        });
+        wrap.appendChild(colToggle);
+
+        block.items.forEach(function (item, ci) {
+          var colWrap = document.createElement("div");
+          colWrap.className = "col-item";
+          var lab = document.createElement("div");
+          lab.className = "col-item__label";
+          lab.textContent = "Column " + (ci + 1);
+          colWrap.appendChild(lab);
+          var fieldsWrap = document.createElement("div");
+          buildMediaTypeAndFields(fieldsWrap, item, { allowPlaceholder: false, allowPlayer: true, allowText: true, name: "row-" + block.id + "-" + ci });
+          colWrap.appendChild(fieldsWrap);
+          wrap.appendChild(colWrap);
+        });
+      }
+
+      blocksEl.appendChild(wrap);
+    });
+  }
+
+  function moveBlock(idx, dir) {
+    var to = idx + dir;
+    if (to < 0 || to >= state.body.length) return;
+    var tmp = state.body[idx]; state.body[idx] = state.body[to]; state.body[to] = tmp;
+    renderBlocks(); scheduleUpdate();
+  }
+  function removeBlock(idx) { state.body.splice(idx, 1); renderBlocks(); scheduleUpdate(); }
+
+  document.querySelectorAll("[data-add]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      state.body.push(newBlock(btn.dataset.add));
+      renderBlocks(); scheduleUpdate();
+    });
+  });
+
+  // =====================================================================
+  // Video player module — shared CSS + JS, used both by the exported
+  // page (inlined once, only if a player-mode video is present) and by
+  // this tool's own live preview (so the preview is really interactive).
+  // Deliberately does NOT touch any ancestor section or dim the page —
+  // that expand/dim behavior belongs only to the homepage showreel.
+  // =====================================================================
+  var PLAYER_CSS =
+'.case-player{position:relative;border-radius:var(--radius,10px);overflow:hidden;background:#14110f;aspect-ratio:16/9;outline:none}' +
+'.case-player .case-player__video{display:block;width:100%;height:100%;object-fit:cover;cursor:pointer;background:#14110f}' +
+'.case-player__bigplay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border:0;padding:0;background:transparent;cursor:pointer}' +
+'.case-player.is-started .case-player__bigplay{display:none}' +
+'.case-player__bigplay-icon{display:grid;place-items:center;width:4.5rem;height:4.5rem;border-radius:50%;background:#fff;color:#14110f;box-shadow:0 2px 6px rgba(20,17,15,.28),0 12px 32px rgba(20,17,15,.38);transition:background .2s ease,transform .2s ease}' +
+'.case-player__bigplay:hover .case-player__bigplay-icon{background:#2f5de3;color:#fff;transform:scale(1.06)}' +
+'.case-player__bigplay-icon svg{width:1.9rem;height:1.9rem;fill:currentColor;margin-left:.2rem}' +
+'.case-player__controls{position:absolute;left:0;right:0;bottom:0;display:none;align-items:center;gap:.5rem;padding:2.5rem .75rem .6rem;background:linear-gradient(to top,rgba(20,17,15,.72),rgba(20,17,15,0));color:#fff;transition:opacity .3s ease}' +
+'.case-player.is-started .case-player__controls{display:flex}' +
+'.case-player.is-idle .case-player__controls{opacity:0;pointer-events:none}' +
+'.case-player.is-idle,.case-player.is-idle .case-player__video{cursor:none}' +
+'.case-player__btn{flex:none;display:grid;place-items:center;width:2.25rem;height:2.25rem;padding:0;border:0;border-radius:50%;background:transparent;color:inherit;cursor:pointer}' +
+'.case-player__btn:hover{background:rgba(255,255,255,.16)}' +
+'.case-player__btn svg{width:1.3rem;height:1.3rem;fill:currentColor}' +
+'.case-player .i-play,.case-player .i-muted{display:none}' +
+'.case-player.is-paused .i-play{display:block}.case-player.is-paused .i-pause{display:none}' +
+'.case-player.is-muted .i-muted{display:block}.case-player.is-muted .i-sound{display:none}' +
+'.case-player__time{flex:none;font-family:var(--font-display,sans-serif);font-weight:600;font-size:.8rem;letter-spacing:.02em;font-variant-numeric:tabular-nums;margin:0 .35rem 0 .15rem;white-space:nowrap}' +
+'.case-player__seek{--progress:0%;flex:1 1 auto;min-width:0;height:1.5rem;margin:0 .35rem;background:transparent;cursor:pointer;-webkit-appearance:none;appearance:none}' +
+'.case-player__seek::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:linear-gradient(to right,#fff var(--progress),rgba(255,255,255,.3) var(--progress))}' +
+'.case-player__seek::-moz-range-track{height:4px;border-radius:2px;background:linear-gradient(to right,#fff var(--progress),rgba(255,255,255,.3) var(--progress))}' +
+'.case-player__seek::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;margin-top:-5px;border:0;border-radius:50%;background:#fff}' +
+'.case-player__seek::-moz-range-thumb{width:14px;height:14px;border:0;border-radius:50%;background:#fff}' +
+'.case-player.is-fullscreen{border-radius:0;aspect-ratio:auto}' +
+'.case-player.is-fullscreen .case-player__video{object-fit:contain}' +
+'.case-visual__frame .case-player{aspect-ratio:auto 16/9;border-radius:0}' +
+/* While the film is being loaded into memory so it can be scrubbed
+   (only on servers without range-request support), the bar pulses. */
+'.case-player.is-loading .case-player__seek{animation:case-player-pulse .9s ease-in-out infinite alternate}' +
+'@keyframes case-player-pulse{from{opacity:1}to{opacity:.4}}' +
+'@media (prefers-reduced-motion: reduce){.case-player.is-loading .case-player__seek{animation:none;opacity:.6}}';
+
+  // A video's real size isn't known until its "loadedmetadata" event
+  // fires, which can happen very fast for a small file — sometimes
+  // before the main player script below (which only runs once it
+  // reaches the bottom of the page) has even attached its own
+  // listener for it. So this small, self-contained script is placed
+  // in <head> instead, before any <video> tag exists to fire that
+  // event, and listens for it at the document level in the capture
+  // phase (the same technique used for the broken-image fallback
+  // elsewhere on this site) — which reliably catches it regardless of
+  // how fast the video loads.
+  var PLAYER_EARLY_JS =
+'document.addEventListener("loadedmetadata",function(e){' +
+'var v=e.target;if(!v.classList||!v.classList.contains("case-player__video"))return;' +
+'var root=v.closest(".case-player");if(!root)return;' +
+'if(v.videoWidth&&v.videoHeight)root.style.aspectRatio=v.videoWidth+"/"+v.videoHeight;' +
+'var dur=root.querySelector("[data-dur]");if(dur){var d=Math.max(0,Math.floor(v.duration||0));dur.textContent=Math.floor(d/60)+":"+("0"+(d%60)).slice(-2)}' +
+'},true);';
+
+  var PLAYER_JS =
+'document.querySelectorAll(".case-player").forEach(function(root){' +
+'var video=root.querySelector("video"),seek=root.querySelector(".case-player__seek"),cur=root.querySelector("[data-cur]"),dur=root.querySelector("[data-dur]"),toggleBtn=root.querySelector(\'[data-action="toggle"]\'),muteBtn=root.querySelector(\'[data-action="mute"]\'),fsBtn=root.querySelector(\'[data-action="fullscreen"]\'),bigplay=root.querySelector(".case-player__bigplay");' +
+'if(!video)return;' +
+'function fmt(t){t=Math.max(0,Math.floor(t||0));return Math.floor(t/60)+":"+("0"+(t%60)).slice(-2)}' +
+'function scrubTime(){var d=video.duration||0;return Math.min((seek.value/1000)*d,Math.max(0,d-1))}' +
+'var dragging=false,resumeAfterDrag=false,scrubPauses=0,pendingSeek=null,waitingForFile=false,wholeFile=false,swapping=false;' +
+'function paint(){var d=video.duration||0,t=dragging?scrubTime():video.currentTime,pct=d?(t/d)*100:0;if(!dragging)seek.value=Math.round(pct*10);seek.style.setProperty("--progress",(dragging?seek.value/10:pct)+"%");cur.textContent=fmt(t)}' +
+'video.addEventListener("loadedmetadata",paint);' +
+'function togglePlay(){if(video.paused||video.ended)video.play();else video.pause()}' +
+'function start(){root.classList.add("is-started");var p=video.play();if(p&&p.catch)p.catch(function(){})}' +
+'bigplay.addEventListener("click",start);' +
+'video.addEventListener("click",function(){if(tapOnlyRevealed){tapOnlyRevealed=false;return}togglePlay()});' +
+'toggleBtn.addEventListener("click",togglePlay);' +
+'video.addEventListener("play",function(){root.classList.remove("is-paused");wake()});' +
+'video.addEventListener("pause",function(){if(swapping)return;if(scrubPauses>0){scrubPauses--;return}root.classList.add("is-paused")});' +
+'video.addEventListener("ended",function(){root.classList.remove("is-started");root.classList.add("is-paused");video.currentTime=0});' +
+'video.addEventListener("timeupdate",paint);' +
+'video.addEventListener("volumechange",function(){root.classList.toggle("is-muted",video.muted||video.volume===0)});' +
+'muteBtn.addEventListener("click",function(){video.muted=!video.muted});' +
+'function canSeekTo(t){if(video.readyState<1)return true;var s=video.seekable,d=video.duration||0;if(!s.length)return false;if(s.end(s.length-1)>=d-1)return true;for(var i=0;i<s.length;i++){if(t>=s.start(i)&&t<=s.end(i))return true}return false}' +
+'function seekTo(t){if(canSeekTo(t)){video.currentTime=t;return}loadWholeFile(t)}' +
+'function loadWholeFile(t){pendingSeek=t;if(waitingForFile||wholeFile)return;waitingForFile=true;root.classList.add("is-loading");fetch(video.currentSrc).then(function(r){if(!r.ok)throw new Error(r.status);return r.blob()}).then(function(blob){swapping=true;video.addEventListener("loadedmetadata",function once(){video.removeEventListener("loadedmetadata",once);video.currentTime=pendingSeek!==null?pendingSeek:0;pendingSeek=null;wholeFile=true;swapping=false;if(!dragging&&resumeAfterDrag){resumeAfterDrag=false;var p=video.play();if(p&&p.catch)p.catch(function(){})}paint()});video.src=URL.createObjectURL(blob)}).catch(function(){pendingSeek=null;swapping=false}).then(function(){waitingForFile=false;root.classList.remove("is-loading");paint()})}' +
+'seek.addEventListener("pointerdown",function(){dragging=true;resumeAfterDrag=!video.paused&&!video.ended;if(resumeAfterDrag){scrubPauses++;video.pause()}});' +
+'seek.addEventListener("input",function(){seekTo(scrubTime());paint()});' +
+'function endDrag(){if(!dragging)return;dragging=false;if(resumeAfterDrag&&!waitingForFile){resumeAfterDrag=false;var p=video.play();if(p&&p.catch)p.catch(function(){})}paint()}' +
+'window.addEventListener("pointerup",endDrag);window.addEventListener("pointercancel",endDrag);seek.addEventListener("change",endDrag);' +
+'fsBtn.addEventListener("click",function(){var fsEl=document.fullscreenElement||document.webkitFullscreenElement;if(fsEl){(document.exitFullscreen||document.webkitExitFullscreen).call(document)}else if(root.requestFullscreen){root.requestFullscreen()}else if(root.webkitRequestFullscreen){root.webkitRequestFullscreen()}else if(video.webkitEnterFullscreen){video.webkitEnterFullscreen()}});' +
+'function onFs(){root.classList.toggle("is-fullscreen",(document.fullscreenElement||document.webkitFullscreenElement)===root)}' +
+'document.addEventListener("fullscreenchange",onFs);document.addEventListener("webkitfullscreenchange",onFs);' +
+'var idleTimer=null,touching=false,tapOnlyRevealed=false;' +
+'function wake(){root.classList.remove("is-idle");clearTimeout(idleTimer);idleTimer=setTimeout(function(){if(!video.paused&&!dragging&&!root.querySelector(":focus-visible"))root.classList.add("is-idle")},touching?3500:2500)}' +
+'root.addEventListener("pointermove",function(e){touching=e.pointerType!=="mouse";wake()});' +
+'root.addEventListener("pointerdown",function(e){touching=e.pointerType!=="mouse";tapOnlyRevealed=touching&&root.classList.contains("is-idle");if(tapOnlyRevealed)setTimeout(function(){tapOnlyRevealed=false},700);wake()},true);' +
+'root.addEventListener("click",function(e){if(tapOnlyRevealed){tapOnlyRevealed=false;e.stopPropagation();e.preventDefault()}},true);' +
+'root.addEventListener("focusin",wake);' +
+'root.addEventListener("pointerleave",function(e){if(e.pointerType!=="mouse")return;if(!video.paused){clearTimeout(idleTimer);root.classList.add("is-idle")}});' +
+'root.setAttribute("tabindex","-1");' +
+'root.addEventListener("keydown",function(e){if(e.altKey||e.ctrlKey||e.metaKey)return;var handled=true;switch(e.key){case " ":case "k":case "K":togglePlay();break;case "ArrowLeft":seekTo(Math.max(0,video.currentTime-5));break;case "ArrowRight":seekTo(Math.min((video.duration||0)-1,video.currentTime+5));break;case "m":case "M":muteBtn.click();break;case "f":case "F":fsBtn.click();break;default:handled=false}if(handled){e.preventDefault();wake()}});' +
+'root.classList.add("is-paused");' +
+'});';
+
+  function playerMarkup(m, nested) {
+    var poster = m.poster ? ' poster="' + escAttr(m.poster) + '"' : "";
+    // Nested inside a .case-visual__frame: the player takes on the
+    // real video's own shape (like plain video/image do), with 16:9
+    // as a guess until the video's metadata loads.
+    var style = nested ? ' style="aspect-ratio:auto 16/9;border-radius:0"' : "";
+    return '<div class="case-player"' + style + '>\n' +
+'  <video class="case-player__video" playsinline' + poster + '>\n' +
+'    <source src="' + escAttr(m.videoSrc) + '" type="' + videoMimeType(m.videoSrc) + '">\n' +
+'  </video>\n' +
+'  <button class="case-player__bigplay" type="button" aria-label="Play video">\n' +
+'    <span class="case-player__bigplay-icon"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg></span>\n' +
+'  </button>\n' +
+'  <div class="case-player__controls">\n' +
+'    <button class="case-player__btn" type="button" data-action="toggle" aria-label="Pause">\n' +
+'      <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>\n' +
+'      <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>\n' +
+'    </button>\n' +
+'    <span class="case-player__time" aria-hidden="true"><span data-cur>0:00</span> / <span data-dur>0:00</span></span>\n' +
+'    <input class="case-player__seek" type="range" min="0" max="1000" step="1" value="0" aria-label="Seek">\n' +
+'    <button class="case-player__btn" type="button" data-action="mute" aria-label="Mute">\n' +
+'      <svg class="i-sound" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15 9a4.2 4.2 0 0 1 0 6M17.5 6.5a7.8 7.8 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>\n' +
+'      <svg class="i-muted" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9.5l5 5M20.5 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>\n' +
+'    </button>\n' +
+'    <button class="case-player__btn" type="button" data-action="fullscreen" aria-label="Full screen">\n' +
+'      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 9V4.5H9M15 4.5h4.5V9M19.5 15v4.5H15M9 19.5H4.5V15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>\n' +
+'    </button>\n' +
+'  </div>\n' +
+'</div>';
+  }
+
+  // =====================================================================
+  // Markup builders — mirror the real site's markup exactly
+  // =====================================================================
+  var LOGO_BLOCK =
+'    <span class="masthead__logo logo-motion" role="img" aria-label="Sahil \u2014 back to index">\n' +
+'      <picture class="logo-motion__ext">\n' +
+'        <source media="(min-width: 684px)" srcset="../images/sahil-logo-ext.webp" width="3473" height="2484">\n' +
+'        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="">\n' +
+'      </picture>\n' +
+'      <picture class="logo-motion__still">\n' +
+'        <source media="(min-width: 684px)" srcset="../images/sahil-logo-still-ss02.webp" width="2000" height="1000">\n' +
+'        <img src="../images/sahil-logo-mobile-still-ss04.webp" alt="" width="1200" height="470">\n' +
+'      </picture>\n' +
+'      <canvas class="logo-motion__anim" aria-hidden="true"\n' +
+'        data-src-wide="../images/sahil-logo-motion-ss02.mp4"\n' +
+'        data-src-narrow="../images/sahil-logo-motion-mobile-ss04.mp4"></canvas>\n' +
+'    </span>';
+
+  function hasClearBg(m) { return !!(m && m.type === "image" && m.transparentBg); }
+  function frameOpenTag(m) {
+    return '<div class="case-visual__frame"' + (hasClearBg(m) ? ' style="background:transparent"' : '') + '>';
+  }
+
+  function mediaFrameInner(m, indent) {
+    var i = indent;
+    if (m.type === "image" && m.src) return i + '<img src="' + escAttr(m.src) + '" alt="' + escAttr(m.alt) + '">';
+    if (m.type === "video" && m.videoSrc) {
+      if (m.videoMode === "player") return i + playerMarkup(m, true).split("\n").join("\n" + i);
+      var poster = m.poster ? ' poster="' + escAttr(m.poster) + '"' : "";
+      return i + '<video autoplay muted loop playsinline' + poster + '>\n' + i + '  <source src="' + escAttr(m.videoSrc) + '" type="' + videoMimeType(m.videoSrc) + '">\n' + i + '</video>';
+    }
+    return i + '<span class="case-card__media-placeholder">Add an image or video \u00B7 16:9</span>';
+  }
+
+  function heroFrameMarkup(indent) {
+    if (state.hero.type === "image" || state.hero.type === "video") return mediaFrameInner(state.hero, indent);
+    return indent + '<span class="case-card__media-placeholder">Add a hero image or video \u00B7 16:9</span>\n' +
+      indent + '<!-- Image example:\n' + indent + '<img src="../images/example.jpg" alt="Describe the image">\n' + indent + '-->\n' +
+      indent + '<!-- Video example (silent, autoplay, looping; .webm or .mp4 both work):\n' + indent + '<video autoplay muted loop playsinline poster="../images/example-poster.jpg">\n' +
+      indent + '  <source src="../images/example.webm" type="video/webm">\n' + indent + '</video>\n' + indent + '-->';
+  }
+
+  function rowColumnWidth(cols) { return cols === 3 ? "180px" : "260px"; }
+
+  function rowItemMarkup(item, indent) {
+    var i = indent;
+    if (item.type === "text") return i + "<p style=\"margin:0;color:var(--ink-dim);font-size:var(--text-body)\">" + esc(item.text).trim() + "</p>";
+    return i + frameOpenTag(item) + '\n' + mediaFrameInner(item, i + "  ") + "\n" + i + '</div>';
+  }
+
+  function bodyMarkup(indent) {
+    var i = indent;
+    return state.body.map(function (b) {
+      if (b.type === "h2") return i + "<h2>" + esc(b.text) + "</h2>";
+      if (b.type === "media") {
+        return i + '<div class="case-visual">\n' + i + '  ' + frameOpenTag(b.media) + '\n' +
+               mediaFrameInner(b.media, i + "    ") + "\n" + i + '  </div>\n' + i + '</div>';
+      }
+      if (b.type === "row") {
+        var w = rowColumnWidth(b.cols);
+        var open = i + '<div class="case-row" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(' + w + ',1fr));gap:var(--grid-gap,1.75rem);margin:2rem 0">';
+        var cells = b.items.map(function (item) {
+          return i + "  <div>\n" + rowItemMarkup(item, i + "    ") + "\n" + i + "  </div>";
+        }).join("\n");
+        return open + "\n" + cells + "\n" + i + "</div>";
+      }
+      return i + "<p>\n" + i + "  " + esc(b.text).trim() + "\n" + i + "</p>";
+    }).join("\n\n");
+  }
+
+  function buildCasePageHTML() {
+    var title = state.title || "Case Title";
+    var desc = state.oneLiner || "One-sentence summary of the project.";
+    var tagsText = tagsJoined() || "Tag one, Tag two";
+    var needsPlayer = usesPlayerAnywhere();
+    var playerAssets = needsPlayer
+      ? '<style>\n' + PLAYER_CSS.replace(/\}/g, "}\n") + '</style>\n<script>\n' + PLAYER_EARLY_JS + '\n<' + '/script>\n'
+      : "";
+    var playerScript = needsPlayer
+      ? '<script>\n' + PLAYER_JS + '\n<' + '/script>\n'
+      : "";
+
+    return '<!DOCTYPE html>\n' +
+'<html lang="en">\n' +
+'<head>\n' +
+'<meta charset="UTF-8">\n' +
+'<meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
+'<title>' + esc(title) + ' \u2014 Sahil</title>\n' +
+'<meta name="description" content="' + escAttr(desc) + '">\n' +
+'<meta name="theme-color" content="#286a6d">\n' +
+'<link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32-light.png" media="(prefers-color-scheme: light)">\n'  +
+'<link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32-dark.png" media="(prefers-color-scheme: dark)">\n' + 
+'<link rel="apple-touch-icon" href="../images/apple-touch-icon.png">\n\n' +
+'<!-- Link previews (LinkedIn, Slack, iMessage, etc.). Once the site has\n' +
+'     a web address, change og:image to the full address of the image,\n' +
+'     e.g. https://your-domain.com/images/og-image-ss02.jpg \u2014 most preview\n' +
+'     services ignore relative paths. See README \u2192 "Link previews". -->\n' +
+'<meta property="og:type" content="article">\n' +
+'<meta property="og:title" content="' + esc(title) + ' \u2014 Sahil">\n' +
+'<meta property="og:description" content="' + escAttr(desc) + '">\n' +
+'<meta property="og:image" content="../images/og-image-ss02.jpg">\n' +
+'<meta name="twitter:card" content="summary_large_image">\n\n' +
+'<link rel="preconnect" href="https://fonts.googleapis.com">\n' +
+'<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n' +
+'<link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">\n\n' +
+'<link rel="stylesheet" href="../assets/style.css">\n' +
+(needsPlayer ? '\n<!-- Video player module (see the Case Page Builder tool). Self-\n     contained: no other file needs to change for this to work. -->\n' + playerAssets : '') +
+'</head>\n' +
+'<body>\n\n' +
+'<!-- The header band (lighter teal): logo, title and details. The\n' +
+'     rest of the page sits on the deeper teal. -->\n' +
+'<header class="stage">\n\n' +
+'<div class="case-topbar">\n' +
+'  <a href="../index.html" class="case-topbar__logo-link">\n' +
+LOGO_BLOCK + '\n' +
+'  </a>\n' +
+'  <a class="back-link" href="../index.html">Index</a>\n' +
+'</div>\n\n' +
+'  <div class="case-header">\n' +
+'    <h1 class="case-header__title">' + esc(title) + '</h1>\n\n' +
+'    <dl class="case-meta">\n' +
+'      <div>\n' + '        <dt>Role</dt>\n' + '        <dd>' + esc(state.role || "Your role") + '</dd>\n' + '      </div>\n' +
+'      <div>\n' + '        <dt>Year</dt>\n' + '        <dd>' + esc(state.year || "Year") + '</dd>\n' + '      </div>\n' +
+'      <div>\n' + '        <dt>Tools</dt>\n' + '        <dd>' + esc(state.tools || "Tools used") + '</dd>\n' + '      </div>\n' +
+'      <div>\n' + '        <dt>Tags</dt>\n' + '        <dd>' + esc(tagsText) + '</dd>\n' + '      </div>\n' +
+'    </dl>\n' +
+'  </div>\n\n' +
+'</header>\n\n' +
+'<main>\n\n' +
+'  <div class="case-visual">\n' +
+'    ' + frameOpenTag(state.hero) + '\n' +
+heroFrameMarkup("      ") + '\n' +
+'    </div>\n' +
+'  </div>\n\n' +
+'  <article class="case-body">\n' +
+bodyMarkup("    ") + '\n' +
+'  </article>\n\n' +
+'  <!-- Filled in by assets/cases.js from cases/manifest.json — no\n' +
+'       need to pick a prev/next case by hand. -->\n' +
+'  <nav class="case-nav"></nav>\n\n' +
+'</main>\n\n' +
+(needsPlayer ? playerScript : "") +
+'<script src="../assets/cases.js" defer><' + '/script>\n' +
+'<script src="../assets/logo-motion.js" defer><' + '/script>\n' +
+'</body>\n' +
+'</html>\n';
+  }
+
+  function buildManifestEntry() {
+    var entry = {
+      file: filename(),
+      title: state.title || "Case Title",
+      desc: state.oneLiner || "One or two sentences about the project.",
+      tags: tagList().length ? tagList() : ["Tag one", "Tag two"],
+      media: cardMediaObject()
+    };
+    return JSON.stringify(entry, null, 2);
+  }
+
+  function cardMediaObject() {
+    var m = state.card;
+    if (m.type === "image" && m.src) {
+      var obj = { type: "image", src: m.src };
+      if (m.alt) obj.alt = m.alt;
+      return obj;
+    }
+    if (m.type === "video" && m.videoSrc) {
+      var obj2 = { type: "video", src: m.videoSrc, mime: videoMimeType(m.videoSrc) };
+      if (m.poster) obj2.poster = m.poster;
+      return obj2;
+    }
+    return { type: "placeholder" };
+  }
+
+  // =====================================================================
+  // Live preview (own condensed stylesheet, faithful to the real tokens)
+  // =====================================================================
+  var PREVIEW_CSS = '\n' +
+'  :root {\n' +
+'    --licorice:#14110f; --paper:#ffffff; --signal-blue:#2f5de3; --ash:#8a8580;\n' +
+'    --bg:#286a6d; --bg-deep:#123c3e; --surface:#fff; --surface-hover:#f3f3f1; --media-fill:#fff;\n' +
+'    --line:rgba(255,255,255,.16); --line-strong:#8a8580; --radius:10px; --grid-gap:1.75rem;\n' +
+'    --ink:#ede8e0; --ink-dim:#d4d1cd; --ink-faint:#c2beb9; --accent:#a5b9f3;\n' +
+'    --font-display:"Archivo Narrow","Arial Narrow",sans-serif; --font-body:"IBM Plex Sans",-apple-system,sans-serif;\n' +
+'    --text-display:2.6rem; --text-h2:1.5rem; --text-h3:1.1875rem; --text-body:1rem; --text-body-sm:.9375rem; --text-label:.875rem; --tracking-label:.08em;\n' +
+'  }\n' +
+'  * { box-sizing: border-box; }\n' +
+'  html,body { margin:0; }\n' +
+'  body { background:var(--bg-deep); color:var(--ink); font-family:var(--font-body); line-height:1.6; }\n' +
+'  a { color:inherit; text-decoration:none; }\n' +
+'  .case-card, .fake-card2 { --ink:#14110f; --ink-dim:#4a4642; --ink-faint:#6b6660; --accent:var(--signal-blue); --line:rgba(20,17,15,.14); }\n' +
+'  .stage { --ink:#f5f2ec; --ink-dim:#e8e5e1; --ink-faint:#e0ddd8; --accent:#d3ddfb; --line:rgba(255,255,255,.24); background:var(--bg); }\n' +
+'  .case-topbar { position:relative; max-width:900px; margin:0 auto; padding:2.25rem 1.75rem 1.25rem; display:flex; align-items:flex-start; justify-content:space-between; }\n' +
+'  .wordmark { font-family:var(--font-display); font-weight:700; font-size:1.6rem; letter-spacing:.02em; color:var(--ink); border:1px dashed rgba(255,255,255,.4); padding:.3rem .6rem; border-radius:6px; }\n' +
+'  .wordmark small { display:block; font-family:var(--font-body); font-weight:400; font-size:.62rem; letter-spacing:.03em; text-transform:none; color:var(--ink-dim); margin-top:.15rem; }\n' +
+'  .back-link { font-family:var(--font-display); font-weight:600; font-size:var(--text-label); letter-spacing:var(--tracking-label); text-transform:uppercase; color:var(--ink-dim); }\n' +
+'  .case-header { max-width:900px; margin:0 auto; padding:.5rem 1.75rem 3rem; }\n' +
+'  .case-header__title { font-family:var(--font-body); font-weight:600; font-size:var(--text-display); line-height:1.08; margin:0 0 2rem; color:var(--ink); }\n' +
+'  .case-meta { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1.5rem; border-top:1px solid var(--line); padding:1.5rem 0 0; margin:0; }\n' +
+'  .case-meta dt { font-family:var(--font-display); font-weight:600; font-size:var(--text-label); letter-spacing:var(--tracking-label); text-transform:uppercase; color:var(--ink-faint); margin-bottom:.4em; }\n' +
+'  .case-meta dd { margin:0; font-size:var(--text-body-sm); color:var(--ink); }\n' +
+'  main { display:block; }\n' +
+'  .case-visual { max-width:900px; margin:3rem auto; padding:0 1.75rem; }\n' +
+'  .case-visual__frame { border-radius:var(--radius); overflow:hidden; background:var(--media-fill); }\n' +
+'  .case-visual__frame:not(:has(img, video)) { aspect-ratio:16/9; display:flex; align-items:center; justify-content:center; }\n' +
+'  .case-visual__frame img, .case-visual__frame video { display:block; width:100%; height:auto; }\n' +
+'  .case-visual__frame video { aspect-ratio:auto 16/9; }\n' +
+'  .case-card__media-placeholder { font-family:var(--font-display); font-weight:600; font-size:var(--text-label); letter-spacing:var(--tracking-label); text-transform:uppercase; color:#8a8580; text-align:center; padding:0 1rem; }\n' +
+'  .case-body { max-width:700px; margin:0 auto; padding:0 1.75rem 4rem; color:var(--ink-dim); }\n' +
+'  .case-body p { margin:0 0 1.4em; font-size:var(--text-body); }\n' +
+'  .case-body h2 { font-family:var(--font-body); font-weight:600; color:var(--ink); font-size:var(--text-h2); margin:2.2em 0 .7em; }\n' +
+'  .case-nav { max-width:900px; margin:0 auto; padding:2.5rem 1.75rem 4rem; display:flex; justify-content:space-between; gap:1.5rem; border-top:1px solid var(--line); }\n' +
+'  .case-nav a { font-family:var(--font-display); font-weight:600; font-size:var(--text-label); letter-spacing:var(--tracking-label); text-transform:uppercase; color:var(--ink-dim); }\n' +
+'  .case-nav__next { text-align:right; }\n' +
+'  .cardstage { background:var(--bg-deep); padding:2.5rem; display:flex; gap:1.75rem; align-items:flex-start; flex-wrap:wrap; }\n' +
+'  .case-card { display:flex; flex-direction:column; width:320px; flex:none; border-radius:var(--radius); border:1px solid var(--line-strong); background:var(--surface); overflow:hidden; }\n' +
+'  .case-card__media { position:relative; aspect-ratio:4/3; overflow:hidden; background:var(--media-fill); display:flex; align-items:center; justify-content:center; }\n' +
+'  .case-card__media img, .case-card__media video { width:100%; height:100%; object-fit:cover; display:block; }\n' +
+'  .case-card__body { display:flex; flex-direction:column; gap:.7rem; flex-grow:1; padding:1.6rem 1.6rem 1.85rem; }\n' +
+'  .case-card__title { font-family:var(--font-body); font-weight:600; font-size:var(--text-h3); margin:0; color:var(--ink); }\n' +
+'  .case-card__desc { color:var(--ink-dim); font-size:var(--text-body-sm); margin:0; flex-grow:1; }\n' +
+'  .case-card__tags { display:flex; flex-wrap:wrap; gap:.5em; font-family:var(--font-display); font-weight:600; font-size:var(--text-label); letter-spacing:var(--tracking-label); text-transform:uppercase; color:var(--signal-blue); }\n' +
+'  .case-card__tags span:not(:last-child)::after { content:"\u00B7"; margin-left:.5em; color:var(--ink-faint); }\n' +
+'  .case-card__arrow { font-family:var(--font-display); font-weight:600; font-size:var(--text-label); letter-spacing:var(--tracking-label); text-transform:uppercase; color:var(--ink-dim); }\n' +
+'  .fake-card2 .case-card__title, .fake-card2 .case-card__desc, .fake-card2 .case-card__arrow { filter: blur(.5px); }\n' +
+PLAYER_CSS + '\n';
+
+  // Attached inside each preview iframe: swaps a broken image path for a
+  // placeholder naming the missing file. Uses event delegation on
+  // document, in the capture phase, placed at the very top of <head> —
+  // 'error' events on <img> don't bubble, but they do propagate during
+  // capture, so this catches failures even when they happen very fast
+  // (a local file that 404s almost instantly can otherwise fail and
+  // finish loading before a later, per-image listener even attaches).
+  var PREVIEW_IMG_FALLBACK_SCRIPT =
+    '<script>' +
+    'document.addEventListener("error",function(e){' +
+    'var img=e.target;' +
+    'if(!img.classList||!img.classList.contains("pv-img"))return;' +
+    'var span=document.createElement("span");' +
+    'span.className="case-card__media-placeholder";' +
+    'span.textContent="Can\'t load: "+(img.dataset.fallback||"");' +
+    'img.replaceWith(span);' +
+    '},true);' +
+    '<' + '/script>';
+
+  function fontLinkTag() {
+    return '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">';
+  }
+
+  function previewImg(src, alt) {
+    return '<img class="pv-img" data-fallback="' + escAttr(src.split("/").pop()) + '" src="' + escAttr(src) + '" alt="' + escAttr(alt || "") + '">';
+  }
+
+  function previewMediaInner(m, placeholderText) {
+    if (m.type === "image" && m.src) return previewImg(m.src, m.alt);
+    if (m.type === "video" && m.videoSrc) {
+      if (m.videoMode === "player") return playerMarkup(m, true);
+      // Silent loop: the real page autoplays the actual clip, which this
+      // preview can't do reliably — so the poster is shown as a
+      // stand-in thumbnail instead, exactly as it appears for a moment
+      // on the real page before the video takes over.
+      if (m.poster) {
+        return '<div style="position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center">' + previewImg(m.poster, "") +
+          '<span style="position:absolute;left:.5rem;bottom:.5rem;background:rgba(20,17,15,.72);color:#fff;font-family:var(--font-display);font-weight:600;font-size:.68rem;letter-spacing:.04em;text-transform:uppercase;padding:.3em .55em;border-radius:4px">Loops automatically</span></div>';
+      }
+      return '<span class="case-card__media-placeholder">Video (loop): ' + esc(m.videoSrc.split("/").pop()) + ' \u2014 add a poster to preview a thumbnail</span>';
+    }
+    if (m.type === "text") return "<p style=\"margin:0;color:var(--ink-dim)\">" + esc(m.text || "Text") + "</p>";
+    return '<span class="case-card__media-placeholder">' + esc(placeholderText) + '</span>';
+  }
+
+  function previewRowInner(b) {
+    var w = rowColumnWidth(b.cols);
+    var cells = b.items.map(function (item) {
+      if (item.type === "text") return '<div>' + previewMediaInner(item, "") + '</div>';
+      return frameOpenTag(item) + previewMediaInner(item, "Add content") + '</div>';
+    }).join("");
+    return '<div class="case-row" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(' + w + ',1fr));gap:var(--grid-gap);margin:2rem 0">' + cells + '</div>';
+  }
+
+  function bodyPreviewInner() {
+    return state.body.map(function (b) {
+      if (b.type === "h2") return "<h2>" + esc(b.text || "Heading") + "</h2>";
+      if (b.type === "media") return '<div class="case-visual">' + frameOpenTag(b.media) + previewMediaInner(b.media, "Add an image or video") + '</div></div>';
+      if (b.type === "row") return previewRowInner(b);
+      return "<p>" + esc(b.text || "\u2026") + "</p>";
+    }).join("");
+  }
+
+  function casePreviewDoc() {
+    var title = state.title || "Case Title";
+    var needsPlayer = usesPlayerAnywhere();
+    return '<!DOCTYPE html><html><head><meta charset="UTF-8">' + PREVIEW_IMG_FALLBACK_SCRIPT + (needsPlayer ? '<script>' + PLAYER_EARLY_JS + '<' + '/script>' : '') + fontLinkTag() +
+      '<style>' + PREVIEW_CSS + '</style></head><body>' +
+      '<header class="stage">' +
+      '<div class="case-topbar">' +
+      '<span class="wordmark">Sahil<small>logo (animated on the real page)</small></span>' +
+      '<a class="back-link">Index</a>' +
+      '</div>' +
+      '<div class="case-header">' +
+      '<h1 class="case-header__title">' + esc(title) + '</h1>' +
+      '<dl class="case-meta">' +
+      '<div><dt>Role</dt><dd>' + esc(state.role || "Your role") + '</dd></div>' +
+      '<div><dt>Year</dt><dd>' + esc(state.year || "Year") + '</dd></div>' +
+      '<div><dt>Tools</dt><dd>' + esc(state.tools || "Tools used") + '</dd></div>' +
+      '<div><dt>Tags</dt><dd>' + esc(tagsJoined() || "Tag one, Tag two") + '</dd></div>' +
+      '</dl></div></header>' +
+      '<main>' +
+      '<div class="case-visual">' + frameOpenTag(state.hero) + previewMediaInner(state.hero, "Add a hero image or video \u00B7 16:9") + '</div></div>' +
+      '<article class="case-body">' + bodyPreviewInner() + '</article>' +
+      '<nav class="case-nav" style="opacity:.55">' +
+      '<a class="case-nav__prev">&larr; Previous case</a>' +
+      '<a class="case-nav__next">Next case &rarr;</a>' +
+      '</nav>' +
+      '<p style="max-width:900px;margin:-2.5rem auto 0;padding:0 1.75rem;font-size:.8rem;color:var(--ink-faint)">Prev/Next links like these are added automatically on the real site, from cases/manifest.json — see the Case Page Builder\u2019s "Homepage card" tab.</p>' +
+      '</main>' + (needsPlayer ? '<script>' + PLAYER_JS + '<' + '/script>' : '') + '</body></html>';
+  }
+
+  function cardPreviewDoc() {
+    var title = state.title || "Case Title";
+    var desc = state.oneLiner || "One or two sentences about the project.";
+    var tags = tagList();
+    var tagsHTML = tags.length ? tags.map(function (t) { return "<span>" + esc(t) + "</span>"; }).join("") : "<span>Tag one</span><span>Tag two</span>";
+    return '<!DOCTYPE html><html><head><meta charset="UTF-8">' + PREVIEW_IMG_FALLBACK_SCRIPT + fontLinkTag() +
+      '<style>' + PREVIEW_CSS + '</style></head><body>' +
+      '<div class="cardstage">' +
+      '<a class="case-card">' +
+      '<div class="case-card__media">' + previewMediaInner(state.card, "Add preview") + '</div>' +
+      '<div class="case-card__body">' +
+      '<h3 class="case-card__title">' + esc(title) + '</h3>' +
+      '<p class="case-card__desc">' + esc(desc) + '</p>' +
+      '<div class="case-card__tags">' + tagsHTML + '</div>' +
+      '<span class="case-card__arrow">View file \u2192</span>' +
+      '</div></a>' +
+      '<a class="case-card fake-card2">' +
+      '<div class="case-card__media"><span class="case-card__media-placeholder">Another case</span></div>' +
+      '<div class="case-card__body"><h3 class="case-card__title">A neighboring case</h3><p class="case-card__desc">Shown for scale only.</p><div class="case-card__tags"><span>Tag</span></div><span class="case-card__arrow">View file \u2192</span></div>' +
+      '</a></div></body></html>';
+  }
+
+  // =====================================================================
+  // Import — reads a case page HTML file back into the form
+  // =====================================================================
+  function classifyFrame(frameEl) {
+    if (!frameEl) return blankMedia();
+    var player = frameEl.querySelector(":scope > .case-player");
+    if (player) {
+      var vid = player.querySelector("video"), src = player.querySelector("source");
+      return { type: "video", videoMode: "player", src: "", alt: "", videoSrc: src ? src.getAttribute("src") || "" : "", poster: vid ? vid.getAttribute("poster") || "" : "" };
+    }
+    var video = frameEl.querySelector(":scope > video");
+    if (video) {
+      var s2 = video.querySelector("source");
+      return { type: "video", videoMode: "loop", src: "", alt: "", videoSrc: s2 ? s2.getAttribute("src") || "" : "", poster: video.getAttribute("poster") || "" };
+    }
+    var img = frameEl.querySelector(":scope > img");
+    if (img) return { type: "image", src: img.getAttribute("src") || "", alt: img.getAttribute("alt") || "", videoMode: "loop", videoSrc: "", poster: "",
+      transparentBg: /background(-color)?\s*:\s*transparent/i.test(frameEl.getAttribute("style") || "") };
+    return blankMedia();
+  }
+  function classifyColItem(cellEl) {
+    var p = cellEl.querySelector(":scope > p");
+    if (p) { var m = blankColItem(); m.type = "text"; m.text = p.textContent.trim(); return m; }
+    // Row items wrap their image/video one level deeper, in their own
+    // .case-visual__frame — same as everywhere else on the site —
+    // so that's what needs classifying, not the bare grid cell itself.
+    var frame = cellEl.querySelector(":scope > .case-visual__frame");
+    var m2 = classifyFrame(frame);
+    m2.text = "";
+    return m2;
+  }
+
+  function parseCasePageHTML(html, fallbackFilename) {
+    var doc = new DOMParser().parseFromString(html, "text/html");
+    var s = defaultState();
+    s.body = [];
+    s.filename = fallbackFilename || "";
+    s.filenameTouched = !!fallbackFilename;
+
+    var titleEl = doc.querySelector(".case-header__title");
+    s.title = titleEl ? titleEl.textContent.trim() : "";
+
+    var descMeta = doc.querySelector('meta[name="description"]');
+    s.oneLiner = descMeta ? (descMeta.getAttribute("content") || "").trim() : "";
+
+    doc.querySelectorAll(".case-meta > div").forEach(function (row) {
+      var dt = row.querySelector("dt"), dd = row.querySelector("dd");
+      if (!dt || !dd) return;
+      var key = dt.textContent.trim().toLowerCase();
+      var val = dd.textContent.trim();
+      if (key === "role") s.role = val;
+      else if (key === "year") s.year = val;
+      else if (key === "tools") s.tools = val;
+      else if (key === "tags") s.tagsRaw = val;
+    });
+
+    var heroFrame = doc.querySelector("main > .case-visual .case-visual__frame");
+    s.hero = classifyFrame(heroFrame);
+
+    var article = doc.querySelector(".case-body");
+    if (article) {
+      Array.prototype.forEach.call(article.children, function (el) {
+        if (el.tagName === "H2") { var hb = newBlockLocal("h2"); hb.text = el.textContent.trim(); s.body.push(hb); }
+        else if (el.tagName === "P") { var pb = newBlockLocal("p"); pb.text = el.textContent.replace(/\s+/g, " ").trim(); s.body.push(pb); }
+        else if (el.tagName === "DIV" && el.classList.contains("case-visual")) {
+          var mb = newBlockLocal("media");
+          mb.media = classifyFrame(el.querySelector(".case-visual__frame"));
+          s.body.push(mb);
+        } else if (el.tagName === "DIV" && el.classList.contains("case-row")) {
+          var cells = el.children;
+          var rb = newBlockLocal("row");
+          rb.cols = cells.length >= 3 ? 3 : 2;
+          rb.items = Array.prototype.map.call(cells, function (cell) { return classifyColItem(cell); });
+          while (rb.items.length < rb.cols) rb.items.push(blankColItem());
+          s.body.push(rb);
+        }
+      });
+    }
+    if (!s.body.length) s.body = [newBlockLocal("p")];
+
+    return s;
+    function newBlockLocal(type) { return newBlock(type); }
+  }
+
+  var loadBtn = document.getElementById("loadBtn");
+  var fileInput = document.getElementById("fileInput");
+  loadBtn.addEventListener("click", function () { fileInput.click(); });
+  fileInput.addEventListener("change", function () {
+    var file = fileInput.files && fileInput.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      try {
+        state = parseCasePageHTML(String(reader.result), file.name);
+        fillSimpleFields();
+        renderHeroCardFields();
+        renderBlocks();
+        scheduleUpdate();
+        saveDraft();
+        draftNote.textContent = "Loaded " + file.name + ".";
+      } catch (e) {
+        alert("Couldn't read that file as a case page. Make sure it's an HTML file built by this tool (or matching its structure).");
+      }
+    };
+    reader.readAsText(file);
+    fileInput.value = "";
+  });
+
+  // =====================================================================
+  // Render loop
+  // =====================================================================
+  var previewCase = document.getElementById("previewCase");
+  var previewCard = document.getElementById("previewCard");
+  var codeCase = document.getElementById("codeCase");
+  var codeCard = document.getElementById("codeCard");
+  var raf = null;
+
+  function scheduleUpdate() {
+    saveDraft();
+    if (raf) return;
+    raf = requestAnimationFrame(function () { raf = null; render(); });
+  }
+
+  // Keep the preview's scroll position across re-renders. Assigning
+  // srcdoc loads a fresh document (which always starts at the top), so we
+  // read the current scroll offset first and bake a tiny script into the
+  // new document that jumps straight back there — once as soon as the
+  // DOM is parsed, and again after images/fonts finish loading (they can
+  // change the page height), unless the user has scrolled in between.
+  // Also skips the reload entirely when the preview markup hasn't changed.
+  function setPreview(frame, doc) {
+    if (frame._lastDoc === doc) return;
+    frame._lastDoc = doc;
+    var x = 0, y = 0;
+    try {
+      var w = frame.contentWindow;
+      if (w && w.document && w.document.documentElement) {
+        x = w.scrollX || w.pageXOffset || 0;
+        y = w.scrollY || w.pageYOffset || 0;
+      }
+    } catch (e) { /* not accessible — fall back to stored value */ }
+    if (!y && frame._scrollY) { x = frame._scrollX || 0; y = frame._scrollY; }
+    frame._scrollX = x; frame._scrollY = y;
+    if (y || x) {
+      var restore =
+        '<script>(function(){var X=' + Math.round(x) + ',Y=' + Math.round(y) + ',moved=false,done=false;' +
+        'function go(){if(moved)return;done=true;' +
+        'document.documentElement.style.scrollBehavior="auto";' +
+        'window.scrollTo(X,Y);}' +
+        'document.addEventListener("DOMContentLoaded",go);' +
+        'window.addEventListener("load",function(){go();' +
+        'setTimeout(function(){window.addEventListener("scroll",function(){moved=true;},{passive:true});},0);});' +
+        'window.addEventListener("wheel",function(){moved=true;},{passive:true});' +
+        'window.addEventListener("touchmove",function(){moved=true;},{passive:true});' +
+        'window.addEventListener("keydown",function(){moved=true;});' +
+        '})();<' + '/script>';
+      doc = doc.replace('<meta charset="UTF-8">', '<meta charset="UTF-8">' + restore);
+    }
+    var base = new URL(frame === previewCard ? "../" : "../cases/", location.href).href;
+    doc = doc.replace('<meta charset="UTF-8">', '<meta charset="UTF-8"><base href="' + base + '">');
+    frame.srcdoc = doc;
+  }
+
+  // Remember the latest scroll offset of each preview as the user scrolls,
+  // so it survives even if a re-render happens mid-load.
+  [previewCase, previewCard].forEach(function (frame) {
+    frame.addEventListener("load", function () {
+      try {
+        var w = frame.contentWindow;
+        w.addEventListener("scroll", function () {
+          frame._scrollX = w.scrollX; frame._scrollY = w.scrollY;
+        }, { passive: true });
+      } catch (e) {}
+    });
+  });
+
+  function render() {
+    var fn = filename();
+    document.getElementById("filePill").textContent = "cases/" + fn;
+    document.getElementById("fnLabel1").textContent = "cases/" + fn;
+    document.getElementById("dlName1").textContent = fn;
+    if (!state.filenameTouched) filenameInput.value = suggestedFilename();
+
+    setPreview(previewCase, casePreviewDoc());
+    setPreview(previewCard, cardPreviewDoc());
+    codeCase.value = buildCasePageHTML();
+    codeCard.value = buildManifestEntry();
+    document.dispatchEvent(new Event("casecode"));
+  }
+
+  // =====================================================================
+  // Tabs
+  // =====================================================================
+  var tabCasePage = document.getElementById("tabCasePage");
+  var tabCard = document.getElementById("tabCard");
+  var panelCasePage = document.getElementById("panelCasePage");
+  var panelCard = document.getElementById("panelCard");
+  function selectTab(which) {
+    var onCase = which === "case";
+    tabCasePage.setAttribute("aria-selected", onCase ? "true" : "false");
+    tabCard.setAttribute("aria-selected", onCase ? "false" : "true");
+    panelCasePage.style.display = onCase ? "" : "none";
+    panelCard.style.display = onCase ? "none" : "";
+  }
+  tabCasePage.addEventListener("click", function () { selectTab("case"); });
+  tabCard.addEventListener("click", function () { selectTab("card"); });
+
+  // =====================================================================
+  // Export actions
+  // =====================================================================
+  function showStatus(el, ok, msg) {
+    el.textContent = msg; el.className = "status " + (ok ? "ok" : "err");
+    clearTimeout(el._t); el._t = setTimeout(function () { el.textContent = ""; }, 4000);
+  }
+  function tryDownload(name, text, statusEl) {
+    try {
+      var blob = new Blob([text], { type: "text/html" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url; a.download = name;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+      showStatus(statusEl, true, "Downloaded " + name + ".");
+    } catch (e) {
+      showStatus(statusEl, false, "Couldn't start the download here \u2014 select the code below and copy it into a new file named " + name + ".");
+    }
+  }
+  function tryCopy(textarea, statusEl) {
+    var text = textarea.value;
+    function ok() { showStatus(statusEl, true, "Copied."); }
+    function fail() {
+      textarea.focus(); textarea.select();
+      try { if (document.execCommand("copy")) { ok(); return; } } catch (e) {}
+      showStatus(statusEl, false, "Couldn't copy automatically \u2014 the text is selected above; copy it with your keyboard (Ctrl/Cmd+C).");
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(ok).catch(fail);
+    else fail();
+  }
+  document.getElementById("downloadCase").addEventListener("click", function () { tryDownload(filename(), codeCase.value, document.getElementById("statusCase")); });
+  document.getElementById("copyCase").addEventListener("click", function () { tryCopy(codeCase, document.getElementById("statusCase")); });
+  document.getElementById("selectCase").addEventListener("click", function () { codeCase.focus(); codeCase.select(); });
+  document.getElementById("copyCardBtn").addEventListener("click", function () { tryCopy(codeCard, document.getElementById("statusCardCode")); });
+  document.getElementById("selectCardBtn").addEventListener("click", function () { codeCard.focus(); codeCard.select(); });
+
+  // =====================================================================
+  // Init
+  // =====================================================================
+  fillSimpleFields();
+  renderHeroCardFields();
+  renderBlocks();
+  render();
+})();
+</script>
+
+<script>
+/* Preview size. The preview renders at a real screen width — desktop
+   (1280 x 800) or phone (390 x 844) — so it shows the layout visitors
+   actually get, and is scaled down to fit the column. The choice is
+   remembered in this browser. */
+(function () {
+  var col = document.querySelector(".preview-col");
+  var layout = document.querySelector(".layout");
+  var bar = document.getElementById("pvBar");
+  var sizeLabel = document.getElementById("pvSize");
+  var devBtns = Array.prototype.slice.call(bar.querySelectorAll("[data-device]"));
+  var wraps = Array.prototype.slice.call(document.querySelectorAll(".preview-frame-wrap"));
+  var DEVICES = { desktop: { w: 1280, h: 800 }, mobile: { w: 390, h: 844 } };
+  var KEY = "case-builder-preview-v3";
+  var pref = { device: "desktop" };
+  try {
+    var saved = JSON.parse(localStorage.getItem(KEY) || "null");
+    if (saved && DEVICES[saved.device]) pref = { device: saved.device };
+  } catch (e) { /* remembering is a convenience only */ }
+
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(pref)); } catch (e) {} }
+
+  function fit() {
+    var d = DEVICES[pref.device];
+    var split = getComputedStyle(layout).gridTemplateColumns.trim().split(/\s+/).length > 1;
+    var availW = col.clientWidth - 2; // the frame's border
+    if (availW <= 0) return;
+    // In the side-by-side layout the frame fits under the controls; when
+    // stacked (narrow windows) the page scrolls, so use most of the window.
+    // Side by side, the preview column sticks to the top of the window,
+    // so the frame gets whatever height the window has left after the
+    // controls and the note under it. Stacked, the page just scrolls.
+    var shown = wraps.filter(function (w) { return w.offsetParent; })[0];
+    var rest = shown ? col.offsetHeight - shown.offsetHeight : bar.offsetHeight;
+    var availH = split ? window.innerHeight - 32 - rest : window.innerHeight * 0.8;
+    var s = Math.min(1, availW / d.w);
+    var h = Math.max(320, Math.min(d.h * s, availH));
+    wraps.forEach(function (wrap) {
+      var f = wrap.querySelector("iframe");
+      wrap.style.width = Math.floor(d.w * s) + "px";
+      wrap.style.height = Math.floor(h) + "px";
+      f.style.width = d.w + "px";
+      f.style.height = Math.ceil(h / s) + "px";
+      f.style.transform = s < 1 ? "scale(" + s + ")" : "none";
+    });
+    sizeLabel.textContent = d.w + " px wide \u00b7 shown at " + Math.round(s * 100) + "%";
+  }
+
+  function apply() {
+    devBtns.forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.device === pref.device)); });
+    col.classList.toggle("is-mobile", pref.device === "mobile");
+    fit();
+  }
+
+  devBtns.forEach(function (b) {
+    b.addEventListener("click", function () { pref.device = b.dataset.device; save(); apply(); });
+  });
+  if (window.ResizeObserver) new ResizeObserver(fit).observe(col);
+  ["tabCasePage", "tabCard"].forEach(function (id) { document.getElementById(id).addEventListener("click", fit); });
+
+  // The export code is shown in full: each box grows to fit its code.
+  var boxes = [document.getElementById("codeCase"), document.getElementById("codeCard")];
+  function grow() {
+    boxes.forEach(function (t) { t.style.height = "auto"; t.style.height = (t.scrollHeight + 2) + "px"; });
+  }
+  document.addEventListener("casecode", grow);
+  window.addEventListener("resize", grow);
+  grow();
+  window.addEventListener("resize", fit);
+  apply();
+})();
+</script>
+
+<script src="../assets/logo-motion.js" defer></script>
+</body>
+</html>

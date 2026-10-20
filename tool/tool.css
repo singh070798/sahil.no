@@ -1,0 +1,333 @@
+/* =====================================================================
+   TOOLS — shared look for every page in /tool/.
+   Loaded after ../assets/style.css, so the header band, logo, colors
+   and fonts are the site's own. This file adds two things:
+     1. a wider frame: tools use the homepage width (1100px) rather
+        than the case pages' 900px, so the header lines up with the
+        tool below it;
+     2. the parts every tool shares: white panels, buttons, form
+        fields, labels, drop zones and the little pop-up message.
+   Each tool keeps a short <style> of its own for its layout only.
+   ===================================================================== */
+
+/* ---- tokens on the deep teal (the page) ---- */
+.tool {
+  --line-strong: rgba(255, 255, 255, 0.32);
+  --field-bg: rgba(255, 255, 255, 0.06);
+  --field-line: rgba(255, 255, 255, 0.32);
+  --sunk: rgba(255, 255, 255, 0.05);
+  --on-accent: var(--licorice);
+  --primary-hover-bg: var(--paper);
+  --primary-hover-ink: var(--licorice);
+  --ok: #8fd6a8;
+  --danger: #ff9a8a;
+  --warn: #f4d58d;
+  color-scheme: dark;
+}
+
+/* ---- tokens inside a white panel: dark text, Signal Blue accent —
+   the same flip the homepage cards use ---- */
+.tool-panel {
+  --ink: #14110f;
+  --ink-dim: #4a4642;
+  --ink-faint: #6b6660;
+  --accent: var(--signal-blue);
+  --line: rgba(20, 17, 15, 0.14);
+  --line-strong: rgba(20, 17, 15, 0.28);
+  --field-bg: var(--paper);
+  --field-line: rgba(20, 17, 15, 0.24);
+  --sunk: #f3f3f1;
+  --on-accent: var(--paper);
+  --primary-hover-bg: var(--licorice);
+  --primary-hover-ink: var(--paper);
+  --ok: #157a4a;
+  --danger: #c8321e;
+  --warn: #a4501b;
+  color-scheme: light;
+  background: var(--surface);
+  color: var(--ink);
+  border-radius: var(--radius);
+}
+
+/* The site glides between anchor links. The tools scroll the page
+   themselves (to keep your place when they redraw), which needs to
+   be instant, as it was when they were standalone pages. */
+html:has(body.tool-page) { scroll-behavior: auto; }
+
+/* ---------------------------------------------------------------------
+   Frame — header and tool share the homepage's 1100px width.
+   --------------------------------------------------------------------- */
+.tool-page .case-topbar,
+.tool-page .case-header {
+  max-width: var(--page-width);
+}
+
+/* The case pages pull the logo left to make up for their narrower
+   frame. Here the frame is already the homepage's, so no shift. */
+@media (min-width: 684px) {
+  .tool-page .case-topbar { --logo-shift: 0px; }
+}
+
+.tool-page .case-header__title {
+  margin-bottom: 1rem;
+}
+
+.tool-lede {
+  max-width: 62ch;
+  margin: 0 0 2rem;
+  font-size: var(--text-lead);
+  color: var(--ink-dim);
+}
+
+.tool {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: calc(var(--section-gap) / 2) 1.75rem 6rem;
+  font-size: var(--text-body-sm);
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 640px) {
+  .tool-page .case-header { padding-inline: 1.25rem; }
+  .tool { padding-inline: 1.25rem; }
+}
+
+.tool p { margin: 0; }
+
+.tool code {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.86em;
+  background: var(--sunk);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+}
+
+.tool-panel code { color: var(--ink); }
+
+/* ---------------------------------------------------------------------
+   Labels and headings
+   --------------------------------------------------------------------- */
+.tool-label {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.8125rem;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.tool-heading {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 0.9rem;
+}
+
+.tool-hint {
+  font-size: 0.875rem;
+  color: var(--ink-faint);
+}
+
+/* ---------------------------------------------------------------------
+   Buttons — the site's button, in a compact size for toolbars.
+     .btn              outlined (the default)
+     .btn--primary     filled with the accent
+     .btn--quiet       no border until hovered
+     .btn--danger      for removing things
+     .btn--small       tighter still
+   --------------------------------------------------------------------- */
+.tool .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  font-size: 0.8125rem;
+  line-height: 1;
+  text-box: normal;
+  padding: calc(0.85em + var(--btn-nudge)) 1.15em calc(0.85em - var(--btn-nudge));
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  color: var(--ink);
+  border-radius: 6px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.tool .btn:hover:not(:disabled),
+.tool .btn:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.tool .btn--primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.tool .btn--primary:hover:not(:disabled),
+.tool .btn--primary:focus-visible {
+  background: var(--primary-hover-bg);
+  border-color: var(--primary-hover-bg);
+  color: var(--primary-hover-ink);
+}
+
+.tool .btn--quiet {
+  border-color: transparent;
+  color: var(--ink-dim);
+}
+
+.tool .btn--quiet:hover:not(:disabled) {
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+
+.tool .btn--danger { color: var(--danger); }
+.tool .btn--danger:hover:not(:disabled) { border-color: var(--danger); color: var(--danger); }
+
+.tool .btn--small {
+  font-size: 0.75rem;
+  padding: calc(0.6em + var(--btn-nudge)) 0.8em calc(0.6em - var(--btn-nudge));
+}
+
+.tool .btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.tool .btn svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+
+/* ---------------------------------------------------------------------
+   Form fields
+   --------------------------------------------------------------------- */
+.tool input:not([type="checkbox"], [type="radio"], [type="range"], [type="file"], [type="color"]),
+.tool select,
+.tool textarea {
+  font: inherit;
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  color: var(--ink);
+  background: var(--field-bg);
+  border: 1px solid var(--field-line);
+  border-radius: 6px;
+  padding: 0.5em 0.65em;
+  min-width: 0;
+}
+
+.tool textarea { resize: vertical; line-height: 1.5; }
+
+.tool select option {
+  color: var(--licorice);
+  background: var(--paper);
+}
+
+.tool input:focus,
+.tool select:focus,
+.tool textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.tool input[type="checkbox"],
+.tool input[type="radio"] {
+  accent-color: var(--accent);
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+
+.tool button:focus-visible,
+.tool summary:focus-visible,
+.tool a:focus-visible,
+.tool input[type="checkbox"]:focus-visible,
+.tool input[type="radio"]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------
+   Drop zone — a dashed box that takes files
+   --------------------------------------------------------------------- */
+.tool-drop {
+  display: block;
+  position: relative;
+  border: 2px dashed var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--sunk);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.tool-drop:hover,
+.tool-drop.over,
+.tool-drop.dragover {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.tool-drop strong {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: var(--ink);
+  margin-bottom: 0.25rem;
+}
+
+.tool-drop span {
+  color: var(--ink-dim);
+  font-size: 0.9375rem;
+}
+
+/* ---------------------------------------------------------------------
+   Pop-up message, bottom centre
+   --------------------------------------------------------------------- */
+.tool-toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  max-width: min(520px, calc(100% - 2rem));
+  background: var(--paper);
+  color: var(--licorice);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}
+
+.tool-toast[hidden] { display: none; }
+
+/* ---------------------------------------------------------------------
+   Tool pages that work like an app (fixed-height workspace). The
+   workspace fills the window once the header has scrolled away.
+   --------------------------------------------------------------------- */
+.tool-workspace {
+  height: calc(100vh - 3rem);
+  height: calc(100svh - 3rem);
+  min-height: 560px;
+}
+
+/* Width. Tools sit in the site's 1100px column, like the header. Two
+   exceptions, both keeping the side gutters:
+     .tool--full  always uses the whole window — for workbenches where
+                  the content's size is set from outside the page
+                  (ad dimensions): banner animator, banner tester.
+     .is-wide     the same, switched on by a "Full width" button —
+                  the case page builder, for a bigger preview. */
+.tool.tool--full,
+.tool.is-wide { max-width: none; }

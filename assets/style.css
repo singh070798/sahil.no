@@ -230,7 +230,7 @@ a { color: inherit; text-decoration: none; }
   grid-column: 1 / -1;
 }
 
-.profile-card {
+.profile-flip {
   grid-column: -2 / -1;
 }
 
@@ -245,6 +245,15 @@ a { color: inherit; text-decoration: none; }
   font-size: var(--text-body);
   line-height: 1.6;
   color: var(--ink-dim);
+}
+
+/* Phones: a little more room between the bio and the card, so the
+   hidden tools button (above the card's corner) sits clear of the
+   bio's last line. */
+@media (max-width: 683px) {
+  .masthead__bio {
+    margin-bottom: 2.75rem;
+  }
 }
 
 @media (min-width: 684px) {
@@ -449,7 +458,7 @@ a { color: inherit; text-decoration: none; }
     align-self: stretch;
   }
 
-  .profile-card {
+  .profile-flip {
     grid-row: 1 / 3;
     align-self: center;
   }
@@ -633,6 +642,189 @@ a { color: inherit; text-decoration: none; }
 .profile-card__contact a:focus-visible {
   color: var(--accent);
   border-bottom-color: var(--accent);
+}
+
+/* ---------------------------------------------------------------------
+   The hidden tools card — the profile card's back, listing the tools
+   in tool/. A button just above the card's top-right corner turns it
+   over: invisible until hovered or focused (it sits outside the grid,
+   where nobody's pointer goes by accident), but clickable and tappable
+   all the same. sahil.no/#tools opens the page with the card turned.
+   The list comes from tool/manifest.json via assets/tools-card.js.
+   With "reduce motion" on, the card swaps without turning.
+   --------------------------------------------------------------------- */
+.profile-flip {
+  position: relative;
+  z-index: 1;
+  perspective: 1600px;
+}
+
+.profile-flip__inner {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.7s cubic-bezier(0.3, 0.7, 0.2, 1);
+}
+
+.profile-flip.is-flipped .profile-flip__inner {
+  transform: rotateY(180deg);
+}
+
+.profile-flip.is-instant .profile-flip__inner,
+.profile-flip.is-instant .tools-toggle svg {
+  transition: none;
+}
+
+/* Both faces. The front sets the size; the back is laid over it. */
+.profile-flip__front,
+.tools-card {
+  z-index: auto;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.tools-card {
+  position: absolute;
+  inset: 0;
+  transform: rotateY(180deg);
+  padding: 1.25rem 1.35rem 1.1rem;
+  overflow-y: auto; /* a last resort; the rules below keep the list inside */
+  container: tools-card / size;
+}
+
+.tools-card__head {
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.tools-card__eyebrow {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.tools-card__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+}
+
+.tools-card__list li {
+  border-bottom: 1px solid var(--line);
+}
+
+.tools-card__list a {
+  display: block;
+  padding: 0.45rem 0;
+}
+
+.tools-card__name {
+  display: block;
+  font-size: var(--text-body-sm);
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--ink);
+  transition: color 0.15s ease;
+}
+
+.tools-card__desc {
+  display: block;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--ink-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tools-card__list a:hover .tools-card__name,
+.tools-card__list a:focus-visible .tools-card__name {
+  color: var(--accent);
+}
+
+.tools-card__list a:focus-visible,
+.tools-card__all:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.tools-card__empty {
+  padding: 0.75rem 0;
+  font-size: var(--text-body-sm);
+  color: var(--ink-dim);
+}
+
+.tools-card__all {
+  margin-top: 0.7rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* When the card is short (the landing screen crops the portrait on
+   low windows), the descriptions step aside and only the names show,
+   so the list always fits on the card. */
+@container tools-card (max-height: 525px) {
+  .tools-card__desc { display: none; }
+  .tools-card__list a { padding: 0.5rem 0; }
+}
+
+/* The button: a "reverse" sign, just above the card's top-right
+   corner, outside the site's alignment. */
+.tools-toggle {
+  position: absolute;
+  z-index: 2;
+  top: -2.6rem;
+  right: -0.4rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0.45rem;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease, background 0.2s ease;
+}
+
+.tools-toggle svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.7s cubic-bezier(0.3, 0.7, 0.2, 1);
+}
+
+.tools-toggle:hover,
+.tools-toggle:focus-visible,
+.profile-flip.is-flipped .tools-toggle {
+  opacity: 1;
+}
+
+.tools-toggle:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.tools-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.profile-flip.is-flipped .tools-toggle svg {
+  transform: rotate(180deg);
 }
 
 /* ---------------------------------------------------------------------

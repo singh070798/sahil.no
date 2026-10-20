@@ -38,6 +38,9 @@ portfolio-site/
 │   └── showreel-poster.webp            ← still shown before it plays
 ├── files/
 │   └── Sahil_Singh_CV_2026.pdf   ← downloaded by the "Full Resume" button
+├── tool/                     ← small browser tools, at /tool/ (Section 12)
+├── sitemap.xml               ← every page, for search engines (Section 12)
+├── robots.txt                ← points search engines to the sitemap
 └── cases/
     ├── manifest.json         ← the ordered list of cases — the one file you edit to add, remove or reorder one (Section 8)
     ├── template.html        ← blank starting point for a NEW case
@@ -340,6 +343,32 @@ need more pixels than that to look sharp — the current photo is 563px,
 which is fine but not crisp on phones). Save it as both
 `images/sahil-profile.webp` and `images/sahil-profile.jpg`, and update
 the `width`/`height` on the `<img>` tag.
+
+### The hidden tools card
+
+The profile card has a back that lists the tools in `tool/` (Section
+12). Two ways to turn it over:
+
+- **The hidden button.** Just above the card's top-right corner, outside
+  the site's alignment, sits a small "reverse" icon. It's invisible until
+  the pointer is over it (or it's reached with the Tab key), but it can
+  be clicked or tapped all the same. Click it again to turn the card
+  back, or press Escape.
+- **The address `sahil.no/#tools`.** Opens the homepage with the card
+  already turned. Handy as a bookmark on your phone.
+
+The list comes from `tool/manifest.json`, so adding a tool there adds
+it here too. On short windows (where the landing screen crops the
+portrait) the descriptions step aside and only the tool names show, so
+the list always fits on the card. If you open a tool from the card and
+come back, the card is still turned.
+
+The code is `assets/tools-card.js`, plus the "hidden tools card" block
+in `assets/style.css`. On phones the bio has a little extra space under
+it so the button sits clear of the text.
+
+The tools are tucked away, not private: they're also listed in
+`sitemap.xml` and reachable at `/tool/`.
 
 ### The animated logo
 
@@ -1080,3 +1109,99 @@ home-screen icon is `images/apple-touch-icon.png` (180 × 180). They're
 a simple white condensed "S" on the teal — replace them with your own
 at the same sizes if you have a mark you'd rather use.
 
+---
+
+## 12. The tools folder
+
+`tool/` holds a few browser tools that live on the site but aren't
+linked from the homepage. Each one is a page you open by its address:
+
+```
+tool/
+├── index.html              ← /tool/ — the list of tools, built from manifest.json
+├── manifest.json           ← the list itself: edit this to add, remove, reorder or reword a tool
+├── tools.js                ← builds the cards on index.html from manifest.json
+├── tool.css                ← the look all the tools share (loaded after assets/style.css)
+├── banner-animator.html    ← designs and animates a banner across ad sizes, exports zips and MP4
+├── banner-compressor.html  ← shrinks HTML5 banner zips to a size limit
+├── banner-tester.html      ← previews banners side by side, flags missing files
+├── case-editor.html        ← builds a case page and its manifest entry
+├── frame-grabber.html      ← saves one frame of a video as a PNG or JPG
+├── file-converter.html     ← converts images, video, audio, PDFs, docs and data
+└── cv-editor.html          ← edits the CV and downloads it as a PDF
+```
+
+Every tool page has the same header band as a case page (logo, a
+"Tools" link back to the list, the name, a one-line description and a
+details row), then the tool below on the deeper teal, at the
+homepage's 1100px width. The shared parts (white panels, buttons,
+fields, drop zones and the pop-up message) are in `tool/tool.css`;
+each page keeps a short `<style>` of its own for its layout only.
+
+### The list of tools
+
+`tool/manifest.json` works like `cases/manifest.json`: one entry per
+tool, in the order they appear on `/tool/`.
+
+```json
+{
+  "file": "banner-compressor.html",
+  "title": "Banner compressor",
+  "desc": "One or two sentences about what it does.",
+  "tags": ["Banners", "Compression"]
+}
+```
+
+`tags` is optional, and so is `media`, a preview image or video for
+the card in the same format as the case manifest (Section 9).
+
+### Adding a tool
+
+1. Copy the `<head>` and `<header>` from one of the existing tool
+   pages into your new page, and change the title, description,
+   canonical address and the details row.
+2. Put the tool inside `<main class="tool">`.
+3. Add an entry for it to `tool/manifest.json`.
+4. Add its address to `sitemap.xml`.
+
+### Width
+
+Every tool's header sits in the homepage's 1100px column. Below it,
+most tools stay in that column too, but two use the whole window
+width: the **banner animator** and the **banner tester**. Both show ads
+at their real pixel sizes side by side, so they need the room. That's
+the class `tool--full` on their `<main>`. The rule of thumb for a new
+tool: if the content's size is set by something outside the page
+(like ad dimensions), make it full width; if it's a form or a list,
+keep it in the column.
+
+The case page builder sits in the column but has a **Full width**
+button for a bigger preview, remembered in that browser.
+
+### The case page builder's preview
+
+The preview shows the page at a real screen width: **Desktop** (1280px)
+or **Mobile** (390px), scaled down to fit, with the scale shown next to
+the buttons. **Full width** lets the workspace use the whole window, so
+the desktop preview can be shown bigger (at 100% on a wide enough
+screen). The builder remembers both choices in that browser.
+
+### Search engines
+
+Each tool page has its own title and description, a canonical address,
+full-address link-preview tags and structured data (schema.org
+`WebApplication`) describing the tool. The list page describes itself
+as a collection and, once the manifest loads, adds the list of tools
+as structured data too.
+
+Nothing on the homepage links to the tools, so search engines find
+them through `sitemap.xml`, which lists every page on the site.
+Add a line to it when you add a case or a tool. Once the site is live,
+submit `https://sahil.no/sitemap.xml` in Google Search Console to have
+it read straight away.
+
+### Saved work
+
+Everything runs in the visitor's browser and nothing is uploaded. The
+case builder and the CV editor keep drafts in the browser they were
+used in, so use their export buttons to move work between computers.

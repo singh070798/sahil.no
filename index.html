@@ -55,7 +55,18 @@
     </span>
   </h1>
   <p class="masthead__bio">Motion designer, 3D generalist and editor with broad experience in product visualization, advertising and digital campaigns. I work where design meets technical execution, bringing visual identities to life through strategic use of motion and 3D, so brands both communicate and sell across every surface.</p>
-  <div class="profile-card">
+  <!-- The profile card has a back: a list of the tools in tool/. It's
+       turned by a hidden button just above the card's top-right corner
+       (invisible until hovered or focused, but clickable and tappable
+       all the same), or by opening the homepage as sahil.no/#tools.
+       The list comes from tool/manifest.json, via assets/tools-card.js.
+       See README.md → "The hidden tools card". -->
+  <div class="profile-flip" id="tools">
+    <button class="tools-toggle" type="button" aria-expanded="false" aria-controls="tools-card" aria-label="Show tools">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 13.5a7.5 7.5 0 0 1 12.4-6.6"/><path d="M17.6 3.2v4.4h-4.4"/><path d="M19.5 10.5a7.5 7.5 0 0 1-12.4 6.6"/><path d="M6.4 20.8v-4.4h4.4"/></svg>
+    </button>
+    <div class="profile-flip__inner">
+  <div class="profile-card profile-flip__front">
     <picture>
       <source srcset="images/sahil-profile.webp" type="image/webp">
       <img class="profile-card__photo" src="images/sahil-profile.jpg" alt="Portrait of Sahil" width="563" height="563">
@@ -78,6 +89,17 @@
           <dd><a href="#intro" data-play-reel>Watch showreel</a></dd>
         </div>
       </dl>
+    </div>
+  </div>
+      <div class="profile-card tools-card" id="tools-card" inert>
+        <div class="tools-card__head">
+          <p class="tools-card__eyebrow">Behind the card</p>
+          <p class="profile-card__name">Tools</p>
+          <p class="profile-card__place">Small browser tools I use for work. Nothing is uploaded.</p>
+        </div>
+        <ul class="tools-card__list"></ul>
+        <a class="tools-card__all" href="tool/">All tools <span aria-hidden="true">&rarr;</span></a>
+      </div>
     </div>
   </div>
   </div>
@@ -540,5 +562,6 @@
 </script>
 <script src="assets/cases.js" defer></script>
 <script src="assets/logo-motion.js" defer></script>
+<script src="assets/tools-card.js" defer></script>
 </body>
 </html>

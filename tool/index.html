@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Tools — Sahil</title>
+<meta name="description" content="Free browser tools by Sahil Singh: an HTML5 banner animator, compressor and tester, a frame grabber, a file converter, and the editors behind this portfolio and CV. Nothing is uploaded.">
+<meta name="theme-color" content="#286a6d">
+<link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32-light.png" media="(prefers-color-scheme: light)">
+<link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32-dark.png" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+<link rel="canonical" href="https://sahil.no/tool/">
+<meta name="author" content="Sahil Singh">
+
+<!-- Link previews. Full addresses, since most preview services
+     ignore relative ones. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Sahil Singh">
+<meta property="og:url" content="https://sahil.no/tool/">
+<meta property="og:title" content="Tools — Sahil">
+<meta property="og:description" content="Free browser tools by Sahil Singh: an HTML5 banner animator, compressor and tester, a frame grabber, a file converter, and the editors behind this portfolio and CV. Nothing is uploaded.">
+<meta property="og:image" content="https://sahil.no/images/og-image-ss02.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Tools",
+  "description": "Free browser tools by Sahil Singh: an HTML5 banner animator, compressor and tester, a frame grabber, a file converter, and the editors behind this portfolio and CV. Nothing is uploaded.",
+  "url": "https://sahil.no/tool/",
+  "author": {
+    "@type": "Person",
+    "name": "Sahil Singh",
+    "url": "https://sahil.no/"
+  },
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "Sahil Singh",
+    "url": "https://sahil.no/"
+  }
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="tool.css">
+</head>
+<body class="tool-page">
+
+<!-- The header band (lighter teal), the same as on the case pages:
+     logo, back link, the tool's name, what it does and a few details.
+     The tool itself sits below, on the deeper teal. -->
+<header class="stage">
+
+<div class="case-topbar">
+  <a href="../" class="case-topbar__logo-link">
+    <span class="masthead__logo logo-motion" role="img" aria-label="Sahil — back to index">
+      <picture class="logo-motion__ext">
+        <source media="(min-width: 684px)" srcset="../images/sahil-logo-ext.webp" width="3473" height="2484">
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="">
+      </picture>
+      <picture class="logo-motion__still">
+        <source media="(min-width: 684px)" srcset="../images/sahil-logo-still-ss02.webp" width="2000" height="1000">
+        <img src="../images/sahil-logo-mobile-still-ss04.webp" alt="" width="1200" height="470">
+      </picture>
+      <canvas class="logo-motion__anim" aria-hidden="true"
+        data-src-wide="../images/sahil-logo-motion-ss02.mp4"
+        data-src-narrow="../images/sahil-logo-motion-mobile-ss04.mp4"></canvas>
+    </span>
+  </a>
+  <a class="back-link" href="../">Index</a>
+</div>
+
+  <div class="case-header">
+    <h1 class="case-header__title">Tools</h1>
+    <p class="tool-lede">Small browser tools for banner production, video stills and file conversion, and for keeping this portfolio and CV up to date.</p>
+
+    <dl class="case-meta">
+      <div>
+        <dt>For</dt>
+        <dd>Banners, video, files, the portfolio and the CV</dd>
+      </div>
+      <div>
+        <dt>Runs</dt>
+        <dd>In your browser</dd>
+      </div>
+      <div>
+        <dt>Uploads</dt>
+        <dd>None. Files stay on your computer</dd>
+      </div>
+    </dl>
+  </div>
+
+</header>
+
+<main class="tool">
+  <!-- Filled in by tool/tools.js from tool/manifest.json — add,
+       remove, reorder or reword a tool there and it updates here.
+       See README.md → "The tools folder". -->
+  <div class="cases__grid tools__grid"></div>
+  <noscript><p class="cases__empty">The list of tools needs JavaScript turned on.</p></noscript>
+</main>
+
+<script src="tools.js" defer></script>
+<script src="../assets/logo-motion.js" defer></script>
+</body>
+</html>

@@ -33,18 +33,17 @@
 },
     {
   "file": "oskarsylte.html",
-  "title": "Oskar Sylte — Social Media",
+  "title": "Oskar Sylte — Brand content",
   "desc": "Monthly social content built with 3D product assets and a hands-on, AI-assisted workflow.",
   "tags": [
     "Social Media",
-    "3D",
-    "AI"
+    "3D"
   ],
   "media": {
     "type": "video",
-    "src": "cases/Assets/oskar/os-short.webm",
+    "src": "cases/Assets/oskar/OS_Can-Galore_16x9.webm",
     "mime": "video/webm",
-    "poster": "cases/Assets/oskar/os-short_preview.jpg"
+    "poster": "cases/Assets/oskar/OS_Can-Galore_16x9_preview.jpg"
   }
 },
   {

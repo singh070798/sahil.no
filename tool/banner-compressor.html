@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Banner compressor — Sahil</title>
+<meta name="description" content="Free HTML5 banner compressor. Shrinks display ad zips to fit a size limit like 150 KB by re-encoding images and fixing file references, all in your browser.">
+<meta name="theme-color" content="#286a6d">
+<link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32-light.png" media="(prefers-color-scheme: light)">
+<link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32-dark.png" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+<link rel="canonical" href="https://sahil.no/tool/banner-compressor.html">
+<meta name="author" content="Sahil Singh">
+
+<!-- Link previews. Full addresses, since most preview services
+     ignore relative ones. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Sahil Singh">
+<meta property="og:url" content="https://sahil.no/tool/banner-compressor.html">
+<meta property="og:title" content="Banner compressor — Sahil">
+<meta property="og:description" content="Free HTML5 banner compressor. Shrinks display ad zips to fit a size limit like 150 KB by re-encoding images and fixing file references, all in your browser.">
+<meta property="og:image" content="https://sahil.no/images/og-image-ss02.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Banner compressor",
+  "description": "Free HTML5 banner compressor. Shrinks display ad zips to fit a size limit like 150 KB by re-encoding images and fixing file references, all in your browser.",
+  "url": "https://sahil.no/tool/banner-compressor.html",
+  "applicationCategory": "DesignApplication",
+  "operatingSystem": "Any (runs in a web browser)",
+  "isAccessibleForFree": true,
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "NOK"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sahil Singh",
+    "url": "https://sahil.no/"
+  }
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="tool.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/upng-js@2.1.0/UPNG.js"></script>
+<style>
+/* Banner compressor — layout only; buttons, fields, panels and the
+   drop zone come from tool.css. Settings sit in a panel on the left
+   (it stays in view while results scroll), files and results on the
+   right. On narrow screens: drop zone, settings, then results. */
+.cmp {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  grid-template-areas: "settings drop" "settings bar" "settings results";
+  grid-template-rows: auto auto 1fr;
+  column-gap: var(--grid-gap);
+  align-items: start;
+}
+.cmp__drop { grid-area: drop; }
+.cmp__settings { grid-area: settings; position: sticky; top: 1.5rem; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+.cmp__bar { grid-area: bar; }
+.cmp__results { grid-area: results; min-width: 0; }
+@media (max-width: 860px) {
+  .cmp { grid-template-columns: minmax(0, 1fr); grid-template-areas: "drop" "settings" "bar" "results"; }
+  .cmp__settings { position: static; margin-top: 1rem; }
+}
+
+.drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+.drop:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.field .tool-label { margin-bottom: 0.3rem; }
+.field input, .field select { width: 100%; }
+.checks { display: flex; flex-direction: column; gap: 0.55rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+.checks label { display: flex; gap: 0.6rem; align-items: center; cursor: pointer; }
+
+.bar { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; margin: 1.25rem 0 0; }
+.note { font-size: 0.875rem; color: var(--ink-dim); }
+
+/* ---- one card per banner ---- */
+.card { padding: 1.5rem; margin-top: 1rem; }
+.card-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.6rem; align-items: baseline; }
+.card h3 { margin: 0; font-size: var(--text-h3); font-weight: 600; word-break: break-all; }
+.verdict, th, .row .k, summary, .limit span {
+  font-family: var(--font-display); font-weight: 600;
+  letter-spacing: var(--tracking-label); text-transform: uppercase;
+}
+.verdict { font-size: 0.875rem; }
+.verdict.ok { color: var(--ok); }
+.verdict.over { color: var(--danger); }
+.verdict.busy { color: var(--ink-faint); }
+
+.gauge { --lab: 92px; position: relative; margin: 1.25rem 0 0.5rem; padding-top: 1.4rem; }
+.row { display: grid; grid-template-columns: var(--lab) 1fr; gap: 0.6rem; align-items: center; margin: 0.4rem 0; }
+.row .k { font-size: 0.75rem; color: var(--ink-faint); line-height: 1.3; }
+.row .k b { display: block; color: var(--ink); font-family: var(--font-body); font-size: 1rem; letter-spacing: 0; text-transform: none; }
+.track { position: relative; height: 16px; background: var(--sunk); border-radius: 3px; }
+.fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; transition: width .5s cubic-bezier(.2,.7,.2,1); }
+.fill.before { background: #c9c5c0; }
+.fill.after { background: var(--signal-blue); }
+.fill.after.over { background: var(--danger); }
+.limit { position: absolute; top: 0; bottom: -4px; width: 0; border-left: 2px solid var(--danger); pointer-events: none;
+  left: calc(var(--lab) + 0.6rem + (100% - var(--lab) - 0.6rem) * var(--p)); }
+.limit span { position: absolute; top: 0; left: 6px; font-size: 0.72rem; color: var(--danger); white-space: nowrap; }
+@media (max-width: 520px) { .gauge { --lab: 76px; } }
+
+.meta { font-size: 0.875rem; color: var(--ink-dim); margin-top: 0.6rem; }
+.tablewrap { overflow-x: auto; margin-top: 0.6rem; }
+table { border-collapse: collapse; width: 100%; font-size: 0.875rem; min-width: 520px; }
+th, td { text-align: left; padding: 0.45rem 0.5rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 0.72rem; color: var(--ink-faint); }
+th:first-child, td:first-child { padding-left: 0; }
+td.num, th.num { text-align: right; white-space: nowrap; }
+td.file { word-break: break-all; max-width: 280px; }
+td.act { color: var(--ink-faint); }
+.changed td.act { color: var(--ink); font-weight: 500; }
+details { margin-top: 0.9rem; }
+summary { cursor: pointer; font-size: 0.8125rem; color: var(--accent); width: fit-content; }
+summary:hover { text-decoration: underline; text-underline-offset: 3px; }
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 0.75rem; }
+.compare figure { margin: 0; }
+.compare img { display: block; max-width: 100%; height: auto; border: 1px solid var(--line);
+  background: repeating-conic-gradient(#e6e4e0 0 25%, transparent 0 50%) 0 0/16px 16px; }
+.compare figcaption { font-size: 0.8rem; color: var(--ink-faint); margin-top: 0.25rem; }
+.warn { margin-top: 0.9rem; padding: 0.75rem 0.9rem; border-left: 3px solid var(--danger); background: rgba(200, 50, 30, 0.07); }
+.card-actions { margin-top: 1.1rem; display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; }
+.err { color: var(--danger); margin-top: 0.5rem; }
+@media (prefers-reduced-motion: reduce) { .fill { transition: none; } }
+</style>
+</head>
+<body class="tool-page">
+
+<!-- The header band (lighter teal), the same as on the case pages:
+     logo, back link, the tool's name, what it does and a few details.
+     The tool itself sits below, on the deeper teal. -->
+<header class="stage">
+
+<div class="case-topbar">
+  <a href="../" class="case-topbar__logo-link">
+    <span class="masthead__logo logo-motion" role="img" aria-label="Sahil — back to index">
+      <picture class="logo-motion__ext">
+        <source media="(min-width: 684px)" srcset="../images/sahil-logo-ext.webp" width="3473" height="2484">
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="">
+      </picture>
+      <picture class="logo-motion__still">
+        <source media="(min-width: 684px)" srcset="../images/sahil-logo-still-ss02.webp" width="2000" height="1000">
+        <img src="../images/sahil-logo-mobile-still-ss04.webp" alt="" width="1200" height="470">
+      </picture>
+      <canvas class="logo-motion__anim" aria-hidden="true"
+        data-src-wide="../images/sahil-logo-motion-ss02.mp4"
+        data-src-narrow="../images/sahil-logo-motion-mobile-ss04.mp4"></canvas>
+    </span>
+  </a>
+  <a class="back-link" href="./">Tools</a>
+</div>
+
+  <div class="case-header">
+    <h1 class="case-header__title">Banner compressor</h1>
+    <p class="tool-lede">Drop in HTML5 banner zips. Photos are re-encoded, file references in the HTML and CSS are updated to match, and each banner is rezipped as small as it needs to be to get under your limit.</p>
+
+    <dl class="case-meta">
+      <div>
+        <dt>Input</dt>
+        <dd>HTML5 banner zips</dd>
+      </div>
+      <div>
+        <dt>Output</dt>
+        <dd>Compressed zips, one per banner</dd>
+      </div>
+      <div>
+        <dt>Runs</dt>
+        <dd>In your browser. Nothing is uploaded</dd>
+      </div>
+    </dl>
+  </div>
+
+</header>
+
+<main class="tool">
+  <div class="cmp">
+
+    <label class="tool-drop drop cmp__drop" id="drop">
+      <input type="file" id="fileInput" accept=".zip,application/zip" multiple>
+      <strong>Choose banner zips or drop them here</strong>
+      <span>Everything runs in your browser. Nothing is uploaded.</span>
+    </label>
+
+    <aside class="tool-panel cmp__settings" aria-labelledby="settings-h">
+      <h2 class="tool-heading" id="settings-h">Settings</h2>
+      <div class="field">
+        <label class="tool-label" for="target">Size limit (KB)</label>
+        <input type="number" id="target" value="150" min="10" step="1">
+      </div>
+      <div class="field">
+        <label class="tool-label" for="measure">Limit applies to</label>
+        <select id="measure">
+          <option value="zip">The zip file</option>
+          <option value="unzipped">All files unzipped</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="tool-label" for="startQ">Best JPEG quality</label>
+        <input type="number" id="startQ" value="85" min="30" max="100" step="5">
+      </div>
+      <div class="field">
+        <label class="tool-label" for="minQ">Lowest JPEG quality</label>
+        <input type="number" id="minQ" value="50" min="20" max="100" step="5">
+      </div>
+      <div class="field">
+        <label class="tool-label" for="minScale">Image resolution</label>
+        <select id="minScale">
+          <option value="1">Keep full size</option>
+          <option value="0.75">Shrink if needed, to 75%</option>
+          <option value="0.5">Shrink if needed, to 50%</option>
+        </select>
+      </div>
+      <div class="checks">
+        <label><input type="checkbox" id="convertPng" checked> Convert opaque PNGs to JPEG</label>
+        <label><input type="checkbox" id="quantize" checked> Reduce colors in transparent PNGs</label>
+        <label><input type="checkbox" id="svgMin" checked> Clean up SVGs</label>
+        <label><input type="checkbox" id="svgRound"> Round SVG coordinates</label>
+      </div>
+      <p class="tool-hint">1 KB is counted as 1,000 bytes, the stricter reading of most ad specs. Quality starts high and only steps down until the banner fits. Images are only shrunk once the lowest quality isn't enough, 10% at a time.</p>
+    </aside>
+
+    <div class="bar cmp__bar">
+      <button id="rerun" class="btn" disabled>Recompress with these settings</button>
+      <button id="dlAll" class="btn btn--primary" disabled>Download all</button>
+      <button id="clear" class="btn btn--quiet" disabled>Clear</button>
+      <span id="dlNote" class="note"></span>
+    </div>
+
+    <div id="results" class="cmp__results"></div>
+
+  </div>
+</main>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const results = $('results');
+  const banners = []; // {id, file, el, out}
+  let downloadsApi = null;
+
+  if (window.claude && typeof window.claude.use === 'function') {
+    window.claude.use('downloads').then(d => { downloadsApi = d; }).catch(() => {});
+  }
+
+  const RASTER = {png:'image/png', jpg:'image/jpeg', jpeg:'image/jpeg'};
+  const TEXT = new Set(['html','htm','css','js','json','svg','xml','txt','mjs']);
+  const SKIP = p => /(^|\/)(__MACOSX|\.DS_Store|Thumbs\.db)(\/|$)/i.test(p);
+  const ext = p => (p.split('.').pop() || '').toLowerCase();
+  const base = p => p.split('/').pop();
+  const kb = n => (n/1000).toFixed(n < 10000 ? 1 : 0) + ' KB';
+  const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const enc = new TextEncoder(), dec = new TextDecoder();
+
+  function settings(){
+    const num = (id, d) => { const v = parseFloat($(id).value); return isFinite(v) ? v : d; };
+    let startQ = Math.min(100, Math.max(20, num('startQ', 85)));
+    let minQ = Math.min(startQ, Math.max(20, num('minQ', 50)));
+    return {
+      target: Math.max(1, num('target', 150)) * 1000,
+      measure: $('measure').value,
+      startQ, minQ,
+      minScale: Math.min(1, Math.max(0.25, parseFloat($('minScale').value) || 1)),
+      convertPng: $('convertPng').checked,
+      quantize: $('quantize').checked && !!window.UPNG,
+      svgMin: $('svgMin').checked,
+      svgRound: $('svgRound').checked,
+    };
+  }
+  if (!window.UPNG) {
+    $('quantize').checked = false; $('quantize').disabled = true;
+    $('quantize').parentElement.title = 'The PNG color library did not load.';
+  }
+
+  // ---------- drop handling ----------
+  const drop = $('drop');
+  ['dragenter','dragover'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave','drop'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.remove('over'); }));
+  drop.addEventListener('drop', e => addFiles(e.dataTransfer.files));
+  $('fileInput').addEventListener('change', e => { addFiles(e.target.files); e.target.value = ''; });
+
+  $('rerun').addEventListener('click', () => runAll());
+  $('clear').addEventListener('click', () => { banners.length = 0; results.innerHTML = ''; updateBar(); });
+  $('dlAll').addEventListener('click', downloadAll);
+
+  let seq = 0;
+  function addFiles(list){
+    const files = [...list].filter(f => /\.zip$/i.test(f.name));
+    if (!files.length) { flash('Only .zip files can be compressed.'); return; }
+    for (const file of files) {
+      const b = {id: ++seq, file, el: document.createElement('section'), out: null};
+      b.el.className = 'card tool-panel';
+      results.prepend(b.el);
+      banners.push(b);
+      run(b);
+    }
+    updateBar();
+  }
+  async function runAll(){ for (const b of banners) await run(b); }
+  function updateBar(){
+    const any = banners.length > 0;
+    $('rerun').disabled = !any; $('clear').disabled = !any;
+    $('dlAll').disabled = !banners.some(b => b.out);
+  }
+  function flash(msg){ $('dlNote').textContent = msg; setTimeout(() => { if ($('dlNote').textContent === msg) $('dlNote').textContent = ''; }, 5000); }
+
+  // ---------- image helpers ----------
+  async function decode(bytes, mime){
+    const bmp = await createImageBitmap(new Blob([bytes], {type: mime}));
+    const c = document.createElement('canvas'); c.width = bmp.width; c.height = bmp.height;
+    const ctx = c.getContext('2d', {willReadFrequently: true});
+    ctx.drawImage(bmp, 0, 0);
+    const img = ctx.getImageData(0, 0, c.width, c.height);
+    let alpha = false; const d = img.data;
+    for (let i = 3; i < d.length; i += 4) if (d[i] < 255) { alpha = true; break; }
+    return {w: c.width, h: c.height, img, alpha};
+  }
+  function toJpeg(r, q){
+    const c = document.createElement('canvas'); c.width = r.w; c.height = r.h;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, r.w, r.h);
+    const t = document.createElement('canvas'); t.width = r.w; t.height = r.h;
+    t.getContext('2d').putImageData(r.img, 0, 0);
+    ctx.drawImage(t, 0, 0);
+    return new Promise((res, rej) => c.toBlob(b => b ? b.arrayBuffer().then(a => res(new Uint8Array(a))) : rej(new Error('JPEG encode failed')), 'image/jpeg', q/100));
+  }
+  // A smaller copy of a decoded image (sc = 0.8 is 80% of the width and height).
+  function scaleRaster(r, sc){
+    const w = Math.max(1, Math.round(r.w * sc)), h = Math.max(1, Math.round(r.h * sc));
+    const src = document.createElement('canvas'); src.width = r.w; src.height = r.h;
+    src.getContext('2d').putImageData(r.img, 0, 0);
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    const ctx = c.getContext('2d', {willReadFrequently: true});
+    ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(src, 0, 0, w, h);
+    return {w, h, img: ctx.getImageData(0, 0, w, h), alpha: r.alpha};
+  }
+  function toPng(r){
+    const c = document.createElement('canvas'); c.width = r.w; c.height = r.h;
+    c.getContext('2d').putImageData(r.img, 0, 0);
+    return new Promise((res, rej) => c.toBlob(b => b ? b.arrayBuffer().then(a => res(new Uint8Array(a))) : rej(new Error('PNG encode failed')), 'image/png'));
+  }
+  function quantizePng(r, q){
+    const colors = q >= 75 ? 256 : q >= 60 ? 128 : 64;
+    const buf = window.UPNG.encode([r.img.data.buffer.slice(0)], r.w, r.h, colors);
+    return {bytes: new Uint8Array(buf), colors};
+  }
+  function minifySvg(s, round){
+    let o = s.replace(/<!--[\s\S]*?-->/g, '')
+      .replace(/<!DOCTYPE[^>]*>/gi, '')
+      .replace(/<metadata[\s\S]*?<\/metadata>/gi, '')
+      .replace(/<sodipodi:namedview[\s\S]*?(\/>|<\/sodipodi:namedview>)/gi, '')
+      .replace(/\s(?:inkscape|sodipodi):[\w-]+="[^"]*"/gi, '')
+      .replace(/>\s*\n\s*</g, '><')
+      .trim();
+    if (round) {
+      o = o.replace(/\s(d|points)="([^"]*)"/g, (m, a, v) => ' ' + a + '="' + v.replace(/-?\d*\.\d{3,}/g, n => String(+parseFloat(n).toFixed(2))) + '"');
+    }
+    return o;
+  }
+  const dataUrl = (bytes, mime) => new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(new Blob([bytes], {type: mime})); });
+
+  // ---------- core ----------
+  async function run(b){
+    const s = settings();
+    renderBusy(b, 'Reading zip…');
+    try {
+      const zip = await JSZip.loadAsync(b.file);
+      const entries = [];
+      zip.forEach((p, e) => { if (!e.dir && !SKIP(p)) entries.push(e); });
+      const files = [];
+      for (const e of entries) files.push({path: e.name, date: e.date, bytes: await e.async('uint8array')});
+      const origUnzipped = files.reduce((a, f) => a + f.bytes.length, 0);
+      const origSize = b.file.size;
+      const allPaths = new Set(files.map(f => f.path));
+
+      renderBusy(b, 'Decoding images…');
+      for (const f of files) {
+        const x = ext(f.path);
+        if (RASTER[x]) { try { f.raster = await decode(f.bytes, RASTER[x]); } catch { f.raster = null; } }
+        if (TEXT.has(x)) f.text = dec.decode(f.bytes);
+      }
+      const textFiles = files.filter(f => f.text != null);
+      const referenced = name => textFiles.some(t => t.text.includes(name) || t.text.includes(encodeURIComponent(name)));
+
+      const measureOf = r => s.measure === 'zip' ? r.zipSize : r.unzipped;
+      let best = null;
+      const qs = [];
+      for (let q = s.startQ; q >= s.minQ - 0.001; q -= 5) qs.push(Math.round(q));
+      if (!qs.length) qs.push(s.startQ);
+
+      // Full size first. Only if the lowest quality still doesn't fit,
+      // shrink images 10% at a time down to the chosen floor, trying the
+      // quality range again at each size.
+      const scales = [1];
+      if (s.minScale < 1) {
+        for (let k = 0.9; k > s.minScale + 0.001; k -= 0.1) scales.push(Math.round(k * 100) / 100);
+        scales.push(s.minScale);
+      }
+      const hasRaster = files.some(f => f.raster);
+      search:
+      for (const sc of (hasRaster ? scales : [1])) {
+        for (const q of qs) {
+          renderBusy(b, sc < 1 ? `Trying ${Math.round(sc * 100)}% size, quality ${q}…` : 'Trying quality ' + q + '…');
+          const r = await attempt(files, textFiles, allPaths, referenced, q, s, sc);
+          if (!best || measureOf(r) < measureOf(best)) best = r;
+          if (measureOf(r) <= s.target) { best = r; break search; }
+        }
+      }
+      if (s.measure === 'zip' && best.zipSize >= origSize) best.noGain = true;
+      b.out = {...best, origSize, origUnzipped, settings: s, name: b.file.name};
+      await render(b);
+    } catch (err) {
+      b.out = null;
+      b.el.innerHTML = '<div class="card-head"><h3></h3></div><p class="err"></p>';
+      b.el.querySelector('h3').textContent = b.file.name;
+      b.el.querySelector('.err').textContent = 'This zip could not be read: ' + (err && err.message || err) + '. Check that it is a valid banner export.';
+    }
+    updateBar();
+  }
+
+  async function attempt(files, textFiles, allPaths, referenced, q, s, sc = 1){
+    const out = []; const renames = [];
+    const taken = new Set(allPaths);
+    for (const f of files) {
+      const x = ext(f.path);
+      let bytes = f.bytes, path = f.path, action = 'Unchanged', changed = false, preview = null;
+      if (f.raster) {
+        let r = f.raster;
+        if (sc < 1) {
+          f.scaled = f.scaled || {};
+          r = f.scaled[sc] = f.scaled[sc] || scaleRaster(f.raster, sc);
+        }
+        const sz = sc < 1 ? `, ${Math.round(sc * 100)}% size (${r.w}×${r.h})` : '';
+        if (x === 'png' && !r.alpha && s.convertPng) {
+          if (!referenced(base(f.path))) {
+            action = 'Left as PNG: no reference to it found in HTML, CSS or JS';
+          } else {
+            const jpg = await toJpeg(r, q);
+            if (jpg.length < bytes.length) {
+              let np = f.path.replace(/\.png$/i, '.jpg');
+              while (taken.has(np)) np = np.replace(/\.jpg$/i, '-c.jpg');
+              taken.add(np);
+              renames.push([base(f.path), base(np)]);
+              bytes = jpg; path = np; changed = true;
+              action = 'PNG to JPEG, quality ' + q + sz;
+              preview = {mime: 'image/jpeg'};
+            }
+          }
+        } else if (x === 'png' && r.alpha && s.quantize) {
+          try {
+            const qp = quantizePng(r, q);
+            if (qp.bytes.length < bytes.length) { bytes = qp.bytes; changed = true; action = 'Reduced to ' + qp.colors + ' colors' + sz; preview = {mime: 'image/png'}; }
+          } catch { action = 'Unchanged (color reduction failed)'; }
+        } else if (x === 'jpg' || x === 'jpeg') {
+          const jpg = await toJpeg(r, q);
+          if (jpg.length < bytes.length) { bytes = jpg; changed = true; action = 'Re-encoded, quality ' + q + sz; preview = {mime: 'image/jpeg'}; }
+        }
+        // A PNG nothing else touched still gets the smaller size, kept lossless.
+        if (!changed && sc < 1 && x === 'png') {
+          try {
+            const png = await toPng(r);
+            if (png.length < bytes.length) { bytes = png; changed = true; action = 'Kept as PNG' + sz; preview = {mime: 'image/png'}; }
+          } catch {}
+        }
+      }
+      out.push({f, path, bytes, action, changed, preview});
+    }
+    for (const o of out) {
+      if (o.f.text == null) continue;
+      let t = o.f.text;
+      for (const [a, bName] of renames) {
+        for (const [from, to] of [[a, bName], [encodeURIComponent(a), encodeURIComponent(bName)]]) {
+          t = t.replace(new RegExp('(^|[^A-Za-z0-9_.\\-])' + esc(from), 'g'), '$1' + to);
+        }
+      }
+      const refChanged = t !== o.f.text;
+      if (ext(o.f.path) === 'svg' && s.svgMin) {
+        const m = minifySvg(t, s.svgRound);
+        if (m.length < t.length) { t = m; o.action = 'SVG cleaned up'; o.changed = true; }
+      }
+      if (refChanged) { o.action = (o.changed ? o.action + ', ' : '') + 'references updated'; o.changed = true; }
+      if (t !== o.f.text) o.bytes = enc.encode(t);
+    }
+    const z = new JSZip();
+    for (const o of out) z.file(o.path, o.bytes, {date: o.f.date, binary: true});
+    const blob = await z.generateAsync({type: 'blob', compression: 'DEFLATE', compressionOptions: {level: 9}});
+    const unzipped = out.reduce((a, o) => a + o.bytes.length, 0);
+    return {blob, zipSize: blob.size, unzipped, q, scale: sc, rows: out};
+  }
+
+  // ---------- rendering ----------
+  function renderBusy(b, msg){
+    if (!b.el.querySelector('.card-head') || !b.el.querySelector('.verdict')) {
+      b.el.innerHTML = '<div class="card-head"><h3></h3><span class="verdict busy"></span></div>';
+      b.el.querySelector('h3').textContent = b.file.name;
+    }
+    const v = b.el.querySelector('.verdict');
+    v.className = 'verdict busy'; v.textContent = msg;
+  }
+
+  async function render(b){
+    const o = b.out, s = o.settings;
+    const before = s.measure === 'zip' ? o.origSize : o.origUnzipped;
+    const after = s.measure === 'zip' ? o.zipSize : o.unzipped;
+    const fits = after <= s.target;
+    const scale = Math.max(before, after, s.target) * 1.12;
+    const pct = n => (n / scale * 100).toFixed(2) + '%';
+    const limitLabel = kb(s.target) + ' limit';
+
+    b.el.innerHTML = `
+      <div class="card-head"><h3></h3><span class="verdict ${fits ? 'ok' : 'over'}"></span></div>
+      <div class="gauge" role="img" aria-label="">
+        <div class="limit" style="--p:${(s.target/scale).toFixed(4)}"><span>${limitLabel}</span></div>
+        <div class="row"><div class="k">Before<b>${kb(before)}</b></div><div class="track"><div class="fill before" style="width:0"></div></div></div>
+        <div class="row"><div class="k">After<b>${kb(after)}</b></div><div class="track"><div class="fill after ${fits ? '' : 'over'}" style="width:0"></div></div></div>
+      </div>
+      <p class="meta"></p>
+      <details class="files"><summary></summary><div class="tablewrap"><table><thead><tr><th>File</th><th class="num">Before</th><th class="num">After</th><th>What changed</th></tr></thead><tbody></tbody></table></div></details>
+      <div class="slot"></div>
+      <div class="card-actions"><button class="btn btn--primary dl">Download ${escapeHtml(o.name)}</button><span class="note"></span></div>`;
+
+    const g = b.el.querySelector('.gauge');
+
+    b.el.querySelector('h3').textContent = o.name;
+    b.el.querySelector('.verdict').textContent = fits
+      ? 'Under ' + kb(s.target) + ' — ' + Math.round((1 - after / before) * 100) + '% smaller'
+      : 'Still over by ' + kb(after - s.target);
+    g.setAttribute('aria-label', `Before ${kb(before)}, after ${kb(after)}, limit ${kb(s.target)}`);
+    b.el.querySelector('.meta').textContent =
+      `Zip ${kb(o.origSize)} → ${kb(o.zipSize)}. Unzipped ${kb(o.origUnzipped)} → ${kb(o.unzipped)}.` +
+      (o.rows.some(r => /quality|colors/.test(r.action)) ? ` Images encoded at quality ${o.q}.` : '') +
+      (o.scale < 1 ? ` Images shrunk to ${Math.round(o.scale * 100)}% size.` : '');
+
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      b.el.querySelector('.fill.before').style.width = pct(before);
+      b.el.querySelector('.fill.after').style.width = pct(after);
+    }));
+
+    const tb = b.el.querySelector('tbody');
+    const sorted = [...o.rows].sort((a, c) => c.f.bytes.length - a.f.bytes.length);
+    for (const r of sorted) {
+      const tr = document.createElement('tr');
+      if (r.changed) tr.className = 'changed';
+      const nameCell = r.path !== r.f.path ? `${base(r.f.path)} → ${base(r.path)}` : r.path;
+      tr.innerHTML = `<td class="file"></td><td class="num">${kb(r.f.bytes.length)}</td><td class="num">${kb(r.bytes.length)}</td><td class="act"></td>`;
+      tr.querySelector('.file').textContent = nameCell;
+      tr.querySelector('.act').textContent = r.action;
+      tb.appendChild(tr);
+    }
+
+    const nChanged = o.rows.filter(r => r.changed).length;
+    b.el.querySelector('.files summary').textContent =
+      `Show files (${o.rows.length} ${o.rows.length === 1 ? 'file' : 'files'}, ${nChanged} changed)`;
+
+    const slot = b.el.querySelector('.slot');
+    if (!fits) {
+      const big = sorted.slice(0, 3).map(r => `${base(r.path)} (${kb(r.bytes.length)})`).join(', ');
+      const w = document.createElement('div'); w.className = 'warn';
+      const shrinkTip = s.minScale > 0.5 ? ', let images shrink further' : '';
+      w.textContent = `This banner is still over the limit at the lowest quality you allowed (${s.minQ})` +
+        (s.minScale < 1 ? ` and the smallest image size (${Math.round(s.minScale * 100)}%)` : '') +
+        `. The largest files are ${big}. Lower the lowest JPEG quality${shrinkTip}, turn on SVG rounding, or reduce those files in your design tool.`;
+      slot.appendChild(w);
+    }
+    if (o.scale < 1) {
+      const w = document.createElement('div'); w.className = 'warn';
+      w.textContent = `Images were shrunk to ${Math.round(o.scale * 100)}% of their pixel size to fit. If the banner's HTML or CSS doesn't set their width and height, they'll show up smaller, so preview it before sending.`;
+      slot.appendChild(w);
+    }
+    if (o.noGain) {
+      const w = document.createElement('p'); w.className = 'note';
+      w.textContent = 'Compression didn\u2019t make this zip any smaller, so there is nothing to gain from using the new one.';
+      slot.appendChild(w);
+    }
+    const imgs = o.rows.filter(r => r.preview);
+    if (imgs.length) {
+      const d = document.createElement('details');
+      d.innerHTML = '<summary>Compare images</summary>';
+      d.addEventListener('toggle', async () => {
+        if (!d.open || d.dataset.loaded) return;
+        d.dataset.loaded = '1';
+        for (const r of imgs) {
+          const x = ext(r.f.path);
+          const [a, c] = await Promise.all([dataUrl(r.f.bytes, RASTER[x]), dataUrl(r.bytes, r.preview.mime)]);
+          const wrap = document.createElement('div'); wrap.className = 'compare';
+          wrap.innerHTML = `<figure><img alt="Original"><figcaption></figcaption></figure><figure><img alt="Compressed"><figcaption></figcaption></figure>`;
+          const [i1, i2] = wrap.querySelectorAll('img'); const [c1, c2] = wrap.querySelectorAll('figcaption');
+          i1.src = a; i2.src = c;
+          c1.textContent = `Original, ${kb(r.f.bytes.length)}`; c2.textContent = `Compressed, ${kb(r.bytes.length)}`;
+          d.appendChild(wrap);
+        }
+      });
+      slot.appendChild(d);
+    }
+
+    const btn = b.el.querySelector('.dl'), note = b.el.querySelector('.card-actions .note');
+    btn.addEventListener('click', () => save(o.name, o.blob, note));
+  }
+
+  function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  // ---------- saving ----------
+  async function save(filename, blob, noteEl){
+    const say = m => { if (noteEl) noteEl.textContent = m; else flash(m); };
+    if (downloadsApi) {
+      try { await downloadsApi.save({filename, data: blob}); say('Saved ' + filename + '.'); }
+      catch (e) {
+        const code = e && e.code;
+        if (code === 'declined') say('Download cancelled.');
+        else if (code === 'rate_limited') say('A download prompt is already open. Finish that one first.');
+        else say('Downloads aren\u2019t available here (' + (code || 'unknown') + ').');
+      }
+      return;
+    }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  }
+
+  async function downloadAll(){
+    const done = banners.filter(b => b.out);
+    if (!done.length) return;
+    if (done.length === 1) return save(done[0].out.name, done[0].out.blob);
+    const z = new JSZip(); const used = new Set();
+    for (const b of done) {
+      let n = b.out.name; let i = 2;
+      while (used.has(n)) n = b.out.name.replace(/\.zip$/i, '') + '-' + (i++) + '.zip';
+      used.add(n); z.file(n, b.out.blob, {compression: 'STORE'});
+    }
+    const blob = await z.generateAsync({type: 'blob'});
+    save('banners-compressed.zip', blob);
+  }
+
+  updateBar();
+})();
+</script>
+
+<script src="../assets/logo-motion.js" defer></script>
+</body>
+</html>

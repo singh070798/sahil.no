@@ -1,0 +1,65 @@
+[
+  {
+    "file": "banner-animator.html",
+    "title": "Banner animator",
+    "desc": "Designs one HTML5 banner across every ad size, animates it on a shared timeline, and exports Google Ads zips and MP4 video.",
+    "tags": [
+      "Banners",
+      "Animation"
+    ]
+  },
+  {
+    "file": "banner-compressor.html",
+    "title": "Banner compressor",
+    "desc": "Shrinks HTML5 banner zips to fit an ad network's size limit, re-encoding images and fixing the file references to match.",
+    "tags": [
+      "Banners",
+      "Compression"
+    ]
+  },
+  {
+    "file": "banner-tester.html",
+    "title": "Banner tester",
+    "desc": "Previews a batch of HTML5 banners side by side, flags missing files and fonts, and exports a page to share.",
+    "tags": [
+      "Banners",
+      "QA"
+    ]
+  },
+  {
+    "file": "frame-grabber.html",
+    "title": "Frame grabber",
+    "desc": "Steps through a video frame by frame and saves any frame as a full-resolution PNG or JPG, for posters and thumbnails.",
+    "tags": [
+      "Video",
+      "Stills"
+    ]
+  },
+  {
+    "file": "file-converter.html",
+    "title": "File converter",
+    "desc": "Converts images, video, audio, PDFs, documents and spreadsheets between formats, one file or a whole batch.",
+    "tags": [
+      "Images",
+      "Video",
+      "Documents"
+    ]
+  },
+  {
+    "file": "case-editor.html",
+    "title": "Case page builder",
+    "desc": "Builds a case page for this portfolio from a form, with a live desktop and mobile preview, plus its homepage card entry.",
+    "tags": [
+      "Portfolio"
+    ]
+  },
+  {
+    "file": "cv-editor.html",
+    "title": "CV editor",
+    "desc": "Edits the CV as text with a live A4 preview, and downloads it as a one-page PDF.",
+    "tags": [
+      "CV",
+      "PDF"
+    ]
+  }
+]

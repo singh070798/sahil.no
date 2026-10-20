@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Frame grabber — Sahil</title>
+<meta name="description" content="Free video frame grabber. Step through an MP4, WebM or MOV frame by frame and save any frame as a full-resolution PNG or JPG, right in your browser.">
+<meta name="theme-color" content="#286a6d">
+<link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32-light.png" media="(prefers-color-scheme: light)">
+<link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32-dark.png" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+<link rel="canonical" href="https://sahil.no/tool/frame-grabber.html">
+<meta name="author" content="Sahil Singh">
+
+<!-- Link previews. Full addresses, since most preview services
+     ignore relative ones. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Sahil Singh">
+<meta property="og:url" content="https://sahil.no/tool/frame-grabber.html">
+<meta property="og:title" content="Frame grabber — Sahil">
+<meta property="og:description" content="Free video frame grabber. Step through an MP4, WebM or MOV frame by frame and save any frame as a full-resolution PNG or JPG, right in your browser.">
+<meta property="og:image" content="https://sahil.no/images/og-image-ss02.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Frame grabber",
+  "description": "Free video frame grabber. Step through an MP4, WebM or MOV frame by frame and save any frame as a full-resolution PNG or JPG, right in your browser.",
+  "url": "https://sahil.no/tool/frame-grabber.html",
+  "applicationCategory": "MultimediaApplication",
+  "operatingSystem": "Any (runs in a web browser)",
+  "isAccessibleForFree": true,
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "NOK"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sahil Singh",
+    "url": "https://sahil.no/"
+  }
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="tool.css">
+<style>
+/* Frame grabber — layout only; buttons, panels and the drop zone come
+   from tool.css. A drop zone until a video is chosen, then the video
+   and its controls in one white panel. */
+#drop { padding-block: 3.5rem; }
+#drop:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+#stage { display: none; padding: 1.25rem; }
+#stage.on { display: block; }
+.frame { background: #000; border-radius: 6px; overflow: hidden; display: flex; justify-content: center; }
+.frame video { display: block; max-width: 100%; max-height: 62vh; }
+.scrub { display: flex; align-items: center; gap: 0.75rem; margin: 1rem 0 0.4rem; }
+.scrub input[type=range] { flex: 1; accent-color: var(--accent); }
+.time { color: var(--ink-dim); min-width: 7.5em; text-align: right; }
+.row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-top: 0.75rem; }
+.spacer { flex: 1; }
+.name { color: var(--ink-faint); font-size: 0.875rem; overflow-wrap: anywhere; }
+#msg { min-height: 1.5em; margin-top: 0.6rem; color: var(--ink-dim); }
+.fg-hint { margin-top: 1rem; }
+kbd {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 0.8em;
+  border: 1px solid var(--line-strong); border-bottom-width: 2px; border-radius: 4px; padding: 0 0.35em;
+}
+</style>
+</head>
+<body class="tool-page">
+
+<!-- The header band (lighter teal), the same as on the case pages:
+     logo, back link, the tool's name, what it does and a few details.
+     The tool itself sits below, on the deeper teal. -->
+<header class="stage">
+
+<div class="case-topbar">
+  <a href="../" class="case-topbar__logo-link">
+    <span class="masthead__logo logo-motion" role="img" aria-label="Sahil — back to index">
+      <picture class="logo-motion__ext">
+        <source media="(min-width: 684px)" srcset="../images/sahil-logo-ext.webp" width="3473" height="2484">
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="">
+      </picture>
+      <picture class="logo-motion__still">
+        <source media="(min-width: 684px)" srcset="../images/sahil-logo-still-ss02.webp" width="2000" height="1000">
+        <img src="../images/sahil-logo-mobile-still-ss04.webp" alt="" width="1200" height="470">
+      </picture>
+      <canvas class="logo-motion__anim" aria-hidden="true"
+        data-src-wide="../images/sahil-logo-motion-ss02.mp4"
+        data-src-narrow="../images/sahil-logo-motion-mobile-ss04.mp4"></canvas>
+    </span>
+  </a>
+  <a class="back-link" href="./">Tools</a>
+</div>
+
+  <div class="case-header">
+    <h1 class="case-header__title">Frame grabber</h1>
+    <p class="tool-lede">Open a video, step to the exact frame you want, and save it as a full-resolution still. Handy for posters, thumbnails and preview images.</p>
+
+    <dl class="case-meta">
+      <div>
+        <dt>Input</dt>
+        <dd>A video: MP4, WebM, MOV</dd>
+      </div>
+      <div>
+        <dt>Output</dt>
+        <dd>A PNG or JPG of one frame</dd>
+      </div>
+      <div>
+        <dt>Runs</dt>
+        <dd>In your browser. Nothing is uploaded</dd>
+      </div>
+    </dl>
+  </div>
+
+</header>
+
+<main class="tool">
+  <div id="drop" class="tool-drop" tabindex="0" role="button" aria-label="Choose a video">
+    <strong>Drop a video here, or click to choose one</strong>
+    <span>MP4, WebM, MOV — anything your browser can play</span>
+  </div>
+  <input id="file" type="file" accept="video/*,.webm,.mkv,.mov" hidden>
+
+  <section id="stage" class="tool-panel" aria-label="Video">
+    <div class="frame"><video id="video" playsinline muted preload="auto"></video></div>
+
+    <div class="scrub">
+      <input id="range" type="range" min="0" max="0" step="0.001" value="0" aria-label="Position">
+      <span class="time" id="time">0:00.000</span>
+    </div>
+
+    <div class="row">
+      <button class="btn btn--small" id="back" title="Back one frame (←)">◀ Frame</button>
+      <button class="btn btn--small" id="play" title="Play / pause (space)">Play</button>
+      <button class="btn btn--small" id="fwd" title="Forward one frame (→)">Frame ▶</button>
+      <span class="spacer"></span>
+      <button class="btn btn--quiet" id="other">Choose another video</button>
+      <button class="btn btn--primary" id="grabPng">Download PNG</button>
+      <button class="btn btn--primary" id="grabJpg">Download JPG</button>
+    </div>
+    <div class="row"><span class="name" id="outname"></span></div>
+    <div id="msg" aria-live="polite"></div>
+    <p class="tool-hint fg-hint"><kbd>←</kbd> <kbd>→</kbd> step one frame (assumes 30 fps). <kbd>Shift</kbd> + arrow jumps one second. <kbd>Space</kbd> plays and pauses.</p>
+  </section>
+</main>
+
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const drop = $("drop"), file = $("file"), stage = $("stage"), video = $("video");
+  const range = $("range"), time = $("time"), msg = $("msg"), outname = $("outname");
+  const FRAME = 1 / 30;
+  let baseName = "video", url = null, downloads = null;
+
+  // Use the viewer's download capability when published; fall back to a plain link locally.
+  if (window.claude && typeof window.claude.use === "function") {
+    window.claude.use("downloads").then((d) => { downloads = d; }).catch(() => {});
+  }
+
+  function fmt(t) {
+    const m = Math.floor(t / 60), s = t - m * 60;
+    return m + ":" + s.toFixed(3).padStart(6, "0");
+  }
+  function outFile(ext) { return baseName + "_preview." + (ext || "png"); }
+
+  function load(f) {
+    if (!f) return;
+    if (!f.type.startsWith("video/") && !/\.(webm|mkv|mov|mp4|m4v|ogv)$/i.test(f.name)) {
+      msg.textContent = "That file isn't a video. Choose an MP4, WebM or similar.";
+      return;
+    }
+    baseName = f.name.replace(/\.[^.]+$/, "") || "video";
+    if (url) URL.revokeObjectURL(url);
+    url = URL.createObjectURL(f);
+    video.src = url;
+    msg.textContent = "";
+    outname.textContent = "Saves as " + baseName + "_preview.png / .jpg";
+    drop.style.display = "none";
+    stage.classList.add("on");
+  }
+
+  video.addEventListener("loadedmetadata", () => {
+    let d = video.duration;
+    // Some WebM files report Infinity until seeked to the end.
+    if (!isFinite(d)) {
+      video.currentTime = 1e9;
+      video.addEventListener("durationchange", function fix() {
+        if (isFinite(video.duration)) {
+          video.removeEventListener("durationchange", fix);
+          range.max = video.duration; video.currentTime = 0;
+        }
+      });
+    } else {
+      range.max = d;
+    }
+    range.value = 0;
+  });
+  video.addEventListener("error", () => {
+    msg.textContent = "This browser can't play that video format.";
+  });
+  video.addEventListener("timeupdate", () => {
+    range.value = video.currentTime; time.textContent = fmt(video.currentTime);
+  });
+  video.addEventListener("seeked", () => { time.textContent = fmt(video.currentTime); });
+  video.addEventListener("play", () => { $("play").textContent = "Pause"; });
+  video.addEventListener("pause", () => { $("play").textContent = "Play"; });
+
+  range.addEventListener("input", () => {
+    video.pause(); video.currentTime = parseFloat(range.value);
+    time.textContent = fmt(video.currentTime);
+  });
+
+  function step(dt) {
+    video.pause();
+    const max = parseFloat(range.max) || video.duration || 0;
+    video.currentTime = Math.min(Math.max(0, video.currentTime + dt), max);
+  }
+  $("back").onclick = () => step(-FRAME);
+  $("fwd").onclick = () => step(FRAME);
+  $("play").onclick = () => (video.paused ? video.play() : video.pause());
+  $("other").onclick = () => file.click();
+
+  document.addEventListener("keydown", (e) => {
+    if (!stage.classList.contains("on") || e.target.tagName === "INPUT" && e.target.type !== "range") return;
+    if (e.key === "ArrowLeft") { e.preventDefault(); step(e.shiftKey ? -1 : -FRAME); }
+    else if (e.key === "ArrowRight") { e.preventDefault(); step(e.shiftKey ? 1 : FRAME); }
+    else if (e.key === " " && e.target.tagName !== "BUTTON") { e.preventDefault(); $("play").click(); }
+  });
+
+  function grab(ext) {
+    if (!video.videoWidth) { msg.textContent = "The video hasn't loaded a frame yet."; return; }
+    video.pause();
+    const c = document.createElement("canvas");
+    c.width = video.videoWidth; c.height = video.videoHeight;
+    const ctx = c.getContext("2d");
+    if (ext === "jpg") { ctx.fillStyle = "#000"; ctx.fillRect(0, 0, c.width, c.height); }
+    ctx.drawImage(video, 0, 0, c.width, c.height);
+    c.toBlob(async (blob) => {
+      if (!blob) { msg.textContent = "Couldn't capture this frame."; return; }
+      const name = outFile(ext);
+      if (downloads) {
+        try {
+          await downloads.save({ filename: name, data: blob });
+          msg.textContent = "Saved " + name + " at " + fmt(video.currentTime) + ".";
+        } catch (err) {
+          msg.textContent = err && err.code === "declined" ? "Download cancelled." : "Couldn't save the file (" + (err && err.code || "error") + ").";
+        }
+      } else {
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob); a.download = name;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+        msg.textContent = "Saved " + name + " at " + fmt(video.currentTime) + ".";
+      }
+    }, ext === "jpg" ? "image/jpeg" : "image/png", 0.92);
+  }
+  $("grabPng").onclick = () => grab("png");
+  $("grabJpg").onclick = () => grab("jpg");
+
+  // Picking and dropping files
+  drop.onclick = () => file.click();
+  drop.onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); file.click(); } };
+  file.onchange = () => { load(file.files[0]); file.value = ""; };
+  ["dragenter", "dragover"].forEach((ev) => window.addEventListener(ev, (e) => {
+    e.preventDefault(); drop.classList.add("over");
+  }));
+  ["dragleave", "drop"].forEach((ev) => window.addEventListener(ev, (e) => {
+    e.preventDefault(); drop.classList.remove("over");
+  }));
+  window.addEventListener("drop", (e) => { load(e.dataTransfer.files[0]); });
+})();
+</script>
+
+<script src="../assets/logo-motion.js" defer></script>
+</body>
+</html>

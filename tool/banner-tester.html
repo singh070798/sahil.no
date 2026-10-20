@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Banner tester — Sahil</title>
+<meta name="description" content="Free HTML5 banner tester. Preview display ad banners side by side at real size, catch missing files and fonts, and export a shareable preview page.">
+<meta name="theme-color" content="#286a6d">
+<link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32-light.png" media="(prefers-color-scheme: light)">
+<link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32-dark.png" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+<link rel="canonical" href="https://sahil.no/tool/banner-tester.html">
+<meta name="author" content="Sahil Singh">
+
+<!-- Link previews. Full addresses, since most preview services
+     ignore relative ones. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Sahil Singh">
+<meta property="og:url" content="https://sahil.no/tool/banner-tester.html">
+<meta property="og:title" content="Banner tester — Sahil">
+<meta property="og:description" content="Free HTML5 banner tester. Preview display ad banners side by side at real size, catch missing files and fonts, and export a shareable preview page.">
+<meta property="og:image" content="https://sahil.no/images/og-image-ss02.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Banner tester",
+  "description": "Free HTML5 banner tester. Preview display ad banners side by side at real size, catch missing files and fonts, and export a shareable preview page.",
+  "url": "https://sahil.no/tool/banner-tester.html",
+  "applicationCategory": "DesignApplication",
+  "operatingSystem": "Any (runs in a web browser)",
+  "isAccessibleForFree": true,
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "NOK"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sahil Singh",
+    "url": "https://sahil.no/"
+  }
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="tool.css">
+<style>
+/* Banner tester — layout only; buttons, fields, panels and the drop
+   zone come from tool.css. A workspace that fills the window once
+   the header has scrolled away: the banner list in a panel on the
+   left, the toolbar and the preview area on the right. The list and
+   the preview area scroll on their own. */
+.tester {
+  --red: #ff9a8a;
+  --amber: #fbbf24;
+  --swatch: 22px;
+}
+.tester-app {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 1rem;
+}
+
+/* ---- sidebar ---- */
+.tester-side { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.sidebar-top { padding: 1.25rem; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 0.75rem; }
+.side-head { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; }
+.stat-pill { font-size: 0.8125rem; color: var(--ink-faint); white-space: nowrap; }
+.stat-pill b { color: var(--ink); font-weight: 600; }
+.drop-zone { padding: 1.25rem 1rem; }
+.drop-zone svg { display: block; margin: 0 auto 0.5rem; color: var(--ink-faint); }
+.drop-zone p { font-size: 0.875rem; color: var(--ink-dim); }
+.drop-zone p b { color: var(--ink); font-weight: 600; }
+.btn-row { display: flex; gap: 0.5rem; }
+.btn-row .btn { flex: none; padding-inline: 0.9em; }
+.btn-row .btn--primary { flex: 1; }
+
+.banner-list { flex: 1; overflow-y: auto; padding: 0.75rem; }
+.banner-item {
+  border-radius: 6px; border: 1px solid var(--line); background: var(--sunk);
+  margin-bottom: 0.4rem; cursor: pointer; overflow: hidden; user-select: none;
+  transition: border-color 0.12s ease;
+}
+.banner-item:hover { border-color: var(--line-strong); }
+.banner-item.active { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, var(--paper)); }
+.banner-item.hidden-banner { opacity: 0.45; }
+.banner-item.dragging { opacity: 0.4; border-color: var(--accent) !important; }
+.banner-item.drag-over { border-color: var(--accent); box-shadow: 0 -2px 0 var(--accent); }
+.banner-item-header { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.6rem; }
+.banner-color { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.banner-name { font-size: 0.8125rem; font-weight: 500; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.banner-size-tag {
+  font-size: 0.6875rem; color: var(--ink-faint); background: var(--paper); border: 1px solid var(--line);
+  padding: 2px 6px; border-radius: 4px; flex-shrink: 0;
+}
+.banner-item-actions { display: flex; gap: 2px; padding: 0 0.4rem 0.4rem; }
+.icon-btn {
+  width: 28px; height: 28px; border: none; background: transparent; color: var(--ink-faint);
+  border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background 0.1s ease, color 0.1s ease;
+}
+.icon-btn:hover { background: var(--paper); color: var(--ink); }
+.icon-btn.active-toggle { color: var(--accent); }
+.icon-btn.remove-btn:hover { color: var(--danger); }
+.drag-handle { cursor: grab; color: var(--ink-faint); padding: 0 2px; display: flex; align-items: center; flex-shrink: 0; opacity: 0.6; }
+.drag-handle:hover { opacity: 1; }
+.drag-handle:active { cursor: grabbing; }
+.drag-handle svg { width: 12px; height: 12px; fill: currentColor; stroke: none; }
+.empty-list { padding: 1.5rem 1rem; text-align: center; color: var(--ink-faint); font-size: 0.875rem; }
+
+svg.icon { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---- toolbar and preview area ---- */
+.tester-main { display: flex; flex-direction: column; gap: 1rem; min-width: 0; min-height: 0; }
+.canvas-toolbar { display: flex; align-items: center; gap: 0.6rem 1.1rem; padding: 0.75rem 1rem; flex-wrap: wrap; flex-shrink: 0; }
+.toolbar-group { display: flex; align-items: center; gap: 0.4rem; }
+.toolbar-group .tool-label { margin-right: 0.15rem; }
+.toolbar-push { margin-left: auto; }
+.canvas-toolbar select { font-size: 0.875rem; padding: 0.35em 0.5em; }
+.zoom-val { font-size: 0.875rem; color: var(--ink-dim); min-width: 3em; text-align: center; }
+.color-btns { display: flex; gap: 4px; }
+.color-btn {
+  width: var(--swatch); height: var(--swatch); border-radius: 5px; padding: 0;
+  border: 2px solid rgba(20, 17, 15, 0.15); cursor: pointer;
+}
+.color-btn:hover, .color-btn.active { border-color: var(--accent); }
+
+.canvas-area {
+  flex: 1; min-height: 0; padding: 1.5rem; overflow: auto;
+  display: flex; flex-direction: column; gap: 1.5rem; align-items: flex-start;
+  border-radius: var(--radius); border: 1px solid var(--line-strong);
+  /* labels on the dark backgrounds */
+  --label: #c2beb9; --label-strong: #ede8e0;
+}
+.canvas-area.bg-white { background: #fff; }
+.canvas-area.bg-light { background: #f0f0f0; }
+.canvas-area.bg-dark { background: var(--bg-deep); }
+.canvas-area.bg-black { background: #000; }
+.canvas-area.bg-checker {
+  background-color: #fff;
+  background-image: repeating-conic-gradient(#ccc 0% 25%, transparent 0% 50%);
+  background-size: 16px 16px;
+}
+/* labels on the light backgrounds */
+.canvas-area:is(.bg-white, .bg-light, .bg-checker) { --label: #4a4642; --label-strong: #14110f; --red: #c8321e; }
+.canvas-area.layout-list { flex-direction: column; gap: 1.25rem; }
+.canvas-area.layout-spread { flex-direction: row; flex-wrap: wrap; gap: 1.75rem; align-content: flex-start; }
+
+.banner-card { position: relative; }
+.banner-card-label { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+.banner-card-label .dot { width: 6px; height: 6px; border-radius: 50%; }
+.banner-card-label .name {
+  font-family: var(--font-display); font-weight: 600; font-size: 0.75rem;
+  letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--label-strong);
+}
+.banner-card-label .dims { font-size: 0.75rem; color: var(--label); }
+.banner-card-label .reload-btn {
+  margin-left: auto; width: 24px; height: 24px; border: none; background: transparent; color: var(--label);
+  cursor: pointer; border-radius: 4px; display: flex; align-items: center; justify-content: center;
+}
+.banner-card-label .reload-btn:hover { color: var(--label-strong); }
+.banner-frame-wrap { position: relative; overflow: hidden; line-height: 0; }
+.banner-frame-wrap::after { content: ''; position: absolute; inset: 0; border: 1px solid rgba(128, 128, 128, 0.25); pointer-events: none; }
+iframe.banner-frame { display: block; border: none; transform-origin: top left; }
+
+.empty-canvas {
+  flex: 1; align-self: stretch; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 0.75rem; color: var(--label); pointer-events: none; text-align: center;
+}
+.empty-canvas svg { opacity: 0.35; }
+
+.warn-badge {
+  font-size: 0.6875rem; font-weight: 600; color: var(--licorice); background: var(--amber);
+  border-radius: 10px; padding: 1px 6px; flex-shrink: 0; cursor: help; white-space: nowrap;
+}
+.issue-list {
+  font-size: 0.75rem; line-height: 1.5; color: var(--amber);
+  background: rgba(14, 48, 50, 0.92); border: 1px solid rgba(251, 191, 36, 0.3);
+  border-radius: 6px; padding: 0.4rem 0.55rem; margin-top: 0.4rem;
+  display: flex; flex-direction: column; gap: 2px; overflow-wrap: anywhere;
+}
+.issue-list:empty { display: none; }
+
+.banner-list::-webkit-scrollbar, .canvas-area::-webkit-scrollbar { width: 8px; height: 8px; }
+.banner-list::-webkit-scrollbar-thumb, .canvas-area::-webkit-scrollbar-thumb { background: rgba(128, 128, 128, 0.4); border-radius: 4px; }
+
+/* ---- export dialog ---- */
+.modal { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); z-index: 900; align-items: center; justify-content: center; padding: 1.25rem; }
+.modal__box { width: min(360px, 100%); padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+.modal__box .tool-heading { margin: 0; }
+.filename { display: flex; align-items: stretch; }
+.filename input { flex: 1; border-top-right-radius: 0 !important; border-bottom-right-radius: 0 !important; }
+.filename span {
+  display: flex; align-items: center; padding: 0 0.65em; color: var(--ink-faint); font-size: 0.875rem;
+  border: 1px solid var(--field-line); border-left: 0; border-radius: 0 6px 6px 0; background: var(--sunk);
+}
+.modal__actions { display: flex; gap: 0.5rem; justify-content: flex-end; }
+
+#toast { opacity: 0; transform: translate(-50%, 8px); transition: opacity 0.2s ease, transform 0.2s ease; pointer-events: none; }
+#toast.show { opacity: 1; transform: translate(-50%, 0); }
+#file-input { display: none; }
+
+/* ---- narrow screens: list above, preview below, page scrolls ---- */
+@media (max-width: 760px) {
+  .tester-app { grid-template-columns: minmax(0, 1fr); height: auto; min-height: 0; }
+  .banner-list { max-height: 40vh; }
+  .canvas-area { min-height: 70vh; }
+}
+</style>
+</head>
+<body class="tool-page">
+
+<!-- The header band (lighter teal), the same as on the case pages:
+     logo, back link, the tool's name, what it does and a few details.
+     The tool itself sits below, on the deeper teal. -->
+<header class="stage">
+
+<div class="case-topbar">
+  <a href="../" class="case-topbar__logo-link">
+    <span class="masthead__logo logo-motion" role="img" aria-label="Sahil — back to index">
+      <picture class="logo-motion__ext">
+        <source media="(min-width: 684px)" srcset="../images/sahil-logo-ext.webp" width="3473" height="2484">
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="">
+      </picture>
+      <picture class="logo-motion__still">
+        <source media="(min-width: 684px)" srcset="../images/sahil-logo-still-ss02.webp" width="2000" height="1000">
+        <img src="../images/sahil-logo-mobile-still-ss04.webp" alt="" width="1200" height="470">
+      </picture>
+      <canvas class="logo-motion__anim" aria-hidden="true"
+        data-src-wide="../images/sahil-logo-motion-ss02.mp4"
+        data-src-narrow="../images/sahil-logo-motion-mobile-ss04.mp4"></canvas>
+    </span>
+  </a>
+  <a class="back-link" href="./">Tools</a>
+</div>
+
+  <div class="case-header">
+    <h1 class="case-header__title">Banner tester</h1>
+    <p class="tool-lede">Load a batch of HTML5 banners and see them side by side, at real size or scaled, on different backgrounds. It flags files and fonts that won&#x27;t load, and exports a single preview page you can send to a client.</p>
+
+    <dl class="case-meta">
+      <div>
+        <dt>Input</dt>
+        <dd>Banner HTML files or zips</dd>
+      </div>
+      <div>
+        <dt>Output</dt>
+        <dd>A shareable preview page</dd>
+      </div>
+      <div>
+        <dt>Runs</dt>
+        <dd>In your browser. Nothing is uploaded</dd>
+      </div>
+    </dl>
+  </div>
+
+</header>
+
+<main class="tool tool--full tester">
+  <div class="tester-app tool-workspace">
+
+    <aside class="tool-panel tester-side">
+      <div class="sidebar-top">
+        <div class="side-head">
+          <span class="tool-label">Add banners</span>
+          <span class="stat-pill" id="stat-pill"><b>0</b> banners loaded</span>
+        </div>
+        <div class="tool-drop drop-zone" id="drop-zone">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <p>Drop <b>HTML files</b> or <b>ZIP files</b> here</p>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn--primary" onclick="document.getElementById('file-input').click()">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Browse files
+          </button>
+          <button class="btn btn--danger" onclick="clearAll()">
+            <svg class="icon" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+            Clear
+          </button>
+        </div>
+      </div>
+
+      <div class="banner-list" id="banner-list">
+        <div class="empty-list" id="empty-list-msg">No banners yet.<br>Add HTML or ZIP files above.</div>
+      </div>
+    </aside>
+
+    <section class="tester-main" aria-label="Preview">
+      <div class="tool-panel canvas-toolbar">
+        <div class="toolbar-group">
+          <label class="tool-label" for="layout-select">Layout</label>
+          <select id="layout-select" onchange="setLayout(this.value)">
+            <option value="spread" selected>Spread</option>
+            <option value="list">List</option>
+          </select>
+        </div>
+        <div class="toolbar-group">
+          <span class="tool-label">Scale</span>
+          <button class="btn btn--small" onclick="adjustZoom(-0.1)" aria-label="Smaller">–</button>
+          <span class="zoom-val" id="zoom-val">100%</span>
+          <button class="btn btn--small" onclick="adjustZoom(0.1)" aria-label="Larger">+</button>
+          <button class="btn btn--small btn--quiet" onclick="setZoom(1)">Reset</button>
+        </div>
+        <div class="toolbar-group">
+          <span class="tool-label">Background</span>
+          <div class="color-btns" id="bg-btns">
+            <button type="button" class="color-btn active" style="background:#123c3e" data-bg="bg-dark" onclick="setBg(this)" title="Teal" aria-label="Teal"></button>
+            <button type="button" class="color-btn" style="background:#000" data-bg="bg-black" onclick="setBg(this)" title="Black" aria-label="Black"></button>
+            <button type="button" class="color-btn" style="background:#fff" data-bg="bg-white" onclick="setBg(this)" title="White" aria-label="White"></button>
+            <button type="button" class="color-btn" style="background:#f0f0f0" data-bg="bg-light" onclick="setBg(this)" title="Light gray" aria-label="Light gray"></button>
+            <button type="button" class="color-btn" style="background:repeating-conic-gradient(#aaa 0% 25%, #fff 0% 50%) 0 0 / 10px 10px" data-bg="bg-checker" onclick="setBg(this)" title="Checker" aria-label="Checker"></button>
+          </div>
+        </div>
+        <div class="toolbar-group">
+          <label class="tool-label" for="font-mode">Fonts</label>
+          <select id="font-mode" onchange="setFontMode(this.value)" title="Controls whether fonts installed on this computer may be used. Viewers online only get fonts the banner embeds or loads from the web.">
+            <option value="core" selected>Web + core fonts</option>
+            <option value="strict">Web fonts only</option>
+            <option value="off">Allow installed fonts</option>
+          </select>
+        </div>
+        <div class="toolbar-group">
+          <span class="tool-label">Sort</span>
+          <button class="btn btn--small" onclick="sortBanners('name-asc')" title="A → Z">A–Z</button>
+          <button class="btn btn--small" onclick="sortBanners('name-desc')" title="Z → A">Z–A</button>
+          <button class="btn btn--small" onclick="sortBanners('size-asc')" title="Smallest first" aria-label="Smallest first">
+            <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="16" width="4" height="5" rx="0.5"/><rect x="10" y="10" width="4" height="11" rx="0.5"/><rect x="17" y="4" width="4" height="17" rx="0.5"/></svg>
+          </button>
+          <button class="btn btn--small" onclick="sortBanners('size-desc')" title="Largest first" aria-label="Largest first">
+            <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="4" height="17" rx="0.5"/><rect x="10" y="10" width="4" height="11" rx="0.5"/><rect x="17" y="16" width="4" height="5" rx="0.5"/></svg>
+          </button>
+        </div>
+        <div class="toolbar-group toolbar-push">
+          <button class="btn btn--small" onclick="reloadAll()">
+            <svg class="icon" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            Reload all
+          </button>
+          <button class="btn btn--small btn--primary" onclick="exportPreview()" id="export-btn">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export preview
+          </button>
+        </div>
+      </div>
+
+      <div class="canvas-area bg-dark layout-spread" id="canvas-area">
+        <div class="empty-canvas" id="empty-canvas">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          <p>Drop banner files in the panel on the left to get started</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div id="export-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="export-h">
+    <div class="tool-panel modal__box">
+      <h2 class="tool-heading" id="export-h">Export preview</h2>
+      <div>
+        <label class="tool-label" for="export-filename" style="margin-bottom:0.3rem">Filename</label>
+        <div class="filename">
+          <input id="export-filename" type="text" value="banner-preview"
+            onkeydown="if(event.key==='Enter')doExport();if(event.key==='Escape')closeExportModal();">
+          <span>.html</span>
+        </div>
+      </div>
+      <div class="modal__actions">
+        <button class="btn btn--quiet" onclick="closeExportModal()">Cancel</button>
+        <button class="btn btn--primary" onclick="doExport()" id="do-export-btn">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="tool-toast" role="status" aria-live="polite"></div>
+  <input type="file" id="file-input" accept=".html,.htm,.zip" multiple>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+const state = {
+  banners: [],
+  zoom: 1,
+  bg: 'bg-dark',
+  layout: 'spread',
+  nextId: 0,
+  dragSrcId: null,
+  fontMode: 'core',
+};
+
+const COLORS = ['#f4d58d','#4ade80','#f87171','#fbbf24','#38bdf8','#f472b6','#a78bfa','#34d399'];
+
+function getColor(idx) { return COLORS[idx % COLORS.length]; }
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+// ── FILE HANDLING ──
+
+document.getElementById('file-input').addEventListener('change', e => {
+  handleFiles(Array.from(e.target.files));
+  e.target.value = '';
+});
+
+const dz = document.getElementById('drop-zone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+dz.addEventListener('drop', e => {
+  e.preventDefault();
+  e.stopPropagation();
+  dz.classList.remove('dragover');
+  handleFiles(Array.from(e.dataTransfer.files));
+});
+
+// Also allow drop on the whole app
+document.addEventListener('dragover', e => e.preventDefault());
+document.addEventListener('drop', e => {
+  e.preventDefault();
+  const files = Array.from(e.dataTransfer.files).filter(f =>
+    f.name.endsWith('.html') || f.name.endsWith('.htm') || f.name.endsWith('.zip'));
+  if (files.length) handleFiles(files);
+});
+
+async function handleFiles(files) {
+  for (const file of files) {
+    if (file.name.endsWith('.zip')) {
+      await loadZip(file);
+    } else if (file.name.endsWith('.html') || file.name.endsWith('.htm')) {
+      await loadHtmlFile(file);
+    }
+  }
+}
+
+async function loadHtmlFile(file) {
+  const text = await file.text();
+  const id = state.nextId++;
+  const banner = {
+    id,
+    name: file.name.replace(/\.(html|htm)$/i, ''),
+    html: text,
+    files: { 'index.html': text },
+    width: null,
+    height: null,
+    visible: true,
+    color: getColor(id),
+    blobUrl: null,
+    fileSize: file.size,
+  };
+  detectSize(banner);
+  addBanner(banner);
+}
+
+async function loadZip(file) {
+  try {
+    const zip = await JSZip.loadAsync(file);
+    const files = {};
+    const filePromises = [];
+    zip.forEach((path, entry) => {
+      if (!entry.dir) {
+        filePromises.push(
+          entry.async('blob').then(blob => { files[path] = blob; })
+        );
+      }
+    });
+    await Promise.all(filePromises);
+
+    // Find entry HTML (prefer index.html)
+    const htmlKeys = Object.keys(files).filter(k => k.endsWith('.html') || k.endsWith('.htm'));
+    if (!htmlKeys.length) { toast('No HTML found in ZIP'); return; }
+
+    const entryKey = htmlKeys.find(k => k.toLowerCase().includes('index')) || htmlKeys[0];
+    const htmlBlob = files[entryKey];
+    const htmlText = await htmlBlob.text();
+
+    const id = state.nextId++;
+    const banner = {
+      id,
+      name: file.name.replace(/\.zip$/i, ''),
+      html: htmlText,
+      files,
+      entryKey,
+      width: null,
+      height: null,
+      visible: true,
+      color: getColor(id),
+      blobUrl: null,
+      fileSize: file.size,
+    };
+    detectSize(banner);
+    addBanner(banner);
+  } catch(e) {
+    toast('Failed to read ZIP: ' + e.message);
+  }
+}
+
+function detectSize(banner) {
+  const h = banner.html;
+
+  // 1. IAB standard ad.size meta: <meta name="ad.size" content="width=300,height=250">
+  let m = h.match(/<meta[^>]+name=["']ad\.size["'][^>]+content=["'][^"']*width=(\d+)[^"']*height=(\d+)/i);
+  if (!m) m = h.match(/<meta[^>]+content=["'][^"']*width=(\d+)[^"']*height=(\d+)[^"']*["'][^>]+name=["']ad\.size["']/i);
+  if (m) { banner.width = +m[1]; banner.height = +m[2]; return; }
+
+  // 2. Creatopy/generic: height:NNN,width:NNN in creatopyEmbed config
+  m = h.match(/height\s*:\s*(\d+)\s*,\s*width\s*:\s*(\d+)/);
+  if (m) { banner.width = +m[2]; banner.height = +m[1]; return; }
+
+  // 3. GWD admetadata JSON: "minWidth":300,"minHeight":250
+  m = h.match(/"minWidth"\s*:\s*(\d+)[^}]*"minHeight"\s*:\s*(\d+)/);
+  if (m) { banner.width = +m[1]; banner.height = +m[2]; return; }
+
+  // 4. GWD CSS size class: .gwd-page-size{width:300px;height:250px}
+  m = h.match(/gwd-page-size\s*\{[^}]*width\s*:\s*(\d+)px[^}]*height\s*:\s*(\d+)px/);
+  if (m) { banner.width = +m[1]; banner.height = +m[2]; return; }
+
+  // 5. GWD data attrs on gwd-page element: data-gwd-width="300px" data-gwd-height="250px"
+  const wm = h.match(/data-gwd-width="(\d+)(?:px)?"/);
+  const hm = h.match(/data-gwd-height="(\d+)(?:px)?"/);
+  if (wm && hm) { banner.width = +wm[1]; banner.height = +hm[1]; return; }
+
+  // 6. HTML body/div width+height style: style="width:300px;height:250px"
+  m = h.match(/style="[^"]*width\s*:\s*(\d+)px[^"]*height\s*:\s*(\d+)px/);
+  if (m) { banner.width = +m[1]; banner.height = +m[2]; return; }
+
+  // 7. Meta viewport: content="width=300"
+  m = h.match(/<meta[^>]+name="viewport"[^>]+content="[^"]*width=(\d+)/);
+  if (m) { banner.width = +m[1]; banner.height = Math.round(+m[1] * 0.75); return; }
+
+  // Default IAB standard
+  banner.width = 300;
+  banner.height = 250;
+}
+
+// ── GWD ENABLER STUB ──
+// GWD banners set body opacity=0 on load and only show after Enabler fires INIT/VISIBLE.
+// Outside Google's ad server this never happens, so we inject a stub before the real
+// Enabler.js loads. The stub immediately fires INIT + VISIBLE so the ad initialises.
+const ENABLER_STUB = `<script>
+(function(){
+  var _handlers = {};
+  var _stub = {
+    isInitialized: function(){ return true; },
+    isVisible: function(){ return true; },
+    isPageLoaded: function(){ return true; },
+    isServingInLiveEnvironment: function(){ return false; },
+    addEventListener: function(evt, fn){ (_handlers[evt]=_handlers[evt]||[]).push(fn); },
+    removeEventListener: function(evt, fn){
+      if(_handlers[evt]) _handlers[evt] = _handlers[evt].filter(function(f){return f!==fn;});
+    },
+    exit: function(){}, exitOverride: function(){}, counter: function(){},
+    startTimer: function(){}, stopTimer: function(){}, reportManualClose: function(){},
+    requestExpand: function(){}, requestCollapse: function(){},
+    requestFullscreenExpand: function(){}, requestFullscreenCollapse: function(){},
+    finishExpand: function(){}, finishCollapse: function(){},
+    finishFullscreenExpand: function(){}, finishFullscreenCollapse: function(){},
+    setResponsiveExpanding: function(){}, setResponsiveSize: function(){},
+    queryFullscreenSupport: function(){},
+    loadModule: function(id, cb){ if(cb) cb(); },
+    dynamicExit: function(){},
+    _fire: function(evt, data){
+      (_handlers[evt]||[]).forEach(function(fn){ try{ fn(data||{}); }catch(e){} });
+    }
+  };
+  var _events = {
+    INIT:'studio_init', VISIBLE:'visible', PAGE_LOADED:'page_loaded',
+    EXPAND_START:'expandStart', EXPAND_FINISH:'expandFinish',
+    COLLAPSE_START:'collapseStart', COLLAPSE_FINISH:'collapseFinish',
+    FULLSCREEN_EXPAND_START:'fsExpandStart', FULLSCREEN_EXPAND_FINISH:'fsExpandFinish',
+    FULLSCREEN_COLLAPSE_START:'fsCollapseStart', FULLSCREEN_COLLAPSE_FINISH:'fsCollapseFinish',
+    FULLSCREEN_SUPPORT:'fsSupport', FULLSCREEN_DIMENSIONS:'fsDimensions',
+    HOSTPAGE_SCROLL:'hostpageScroll'
+  };
+  window.studio = window.studio || {};
+  window.studio.events = window.studio.events || {};
+  window.studio.events.StudioEvent = _events;
+  window.studio.module = window.studio.module || {};
+  window.studio.module.ModuleId = { GDN: 'gdn', VIDEO: 'video' };
+  window.studio.video = window.studio.video || null;
+  window.studio.sdk = window.studio.sdk || { gdn: { getConfig: function(){ return { isInCreativeToolsetContext: function(){ return false; }, isInterstitial: function(){} }; } } };
+  window.Enabler = _stub;
+  // Fire init events after a short delay to let GWD's connectedCallback run first
+  setTimeout(function(){
+    document.body.style.opacity = '';
+    _stub._fire(_events.INIT);
+    _stub._fire(_events.VISIBLE);
+    _stub._fire(_events.PAGE_LOADED);
+  }, 100);
+})();
+<\/script>`;
+
+// ── MIME TYPE MAP ──
+const MIME = {
+  png:'image/png', jpg:'image/jpeg', jpeg:'image/jpeg', gif:'image/gif',
+  webp:'image/webp', svg:'image/svg+xml', ico:'image/x-icon',
+  woff:'font/woff', woff2:'font/woff2', ttf:'font/ttf', otf:'font/otf',
+  mp4:'video/mp4', webm:'video/webm', ogg:'video/ogg',
+  mp3:'audio/mpeg', wav:'audio/wav',
+  json:'application/json', js:'application/javascript', css:'text/css',
+};
+function getMime(filename) {
+  const ext = filename.split('.').pop().toLowerCase();
+  return MIME[ext] || 'application/octet-stream';
+}
+
+// Convert a Blob to a base64 data URI — avoids all cross-origin blob URL issues.
+// Blob URLs created in the parent page are opaque-origin and cannot be fetched
+// by content inside a child iframe (even on the same null origin from file://).
+async function blobToDataUri(blob) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result);
+    r.onerror = reject;
+    r.readAsDataURL(blob);
+  });
+}
+
+// ── ONLINE-FIDELITY SETTINGS ──
+// Goal: render each banner the way a random viewer online would see it, not the
+// way it happens to look on this machine. Three things get in the way:
+//  1. Fonts installed on this computer silently "fix" banners whose fonts were
+//     never embedded. We shadow every font family the banner uses that isn't
+//     delivered as a web font, so the browser can't pick up the installed copy.
+//  2. @font-face src: local(...) entries resolve against installed fonts. We
+//     neutralise them so only the downloadable sources count.
+//  3. References to files on disk (file://, C:\..., /Users/...) or to assets that
+//     aren't in the package. A CSP blocks local schemes, and anything that fails
+//     to load is reported on the banner card.
+const GENERIC_FONTS = ['serif','sans-serif','monospace','cursive','fantasy','system-ui',
+  'ui-serif','ui-sans-serif','ui-monospace','ui-rounded','math','emoji','fangsong',
+  '-apple-system','blinkmacsystemfont','inherit','initial','unset','revert','revert-layer','default'];
+// Fonts that ship with both Windows and macOS. Allowed in "Web + core fonts" mode.
+const CORE_WEB_FONTS = ['arial','arial black','helvetica','verdana','tahoma','trebuchet ms',
+  'georgia','times new roman','times','courier new','courier','impact','comic sans ms'];
+// A tiny valid font that only covers U+E000. Registering it under a family name
+// makes the browser treat that family as a web font: installed copies are
+// ignored and normal text falls through to the next family in the stack.
+// (A font that fails to load is NOT enough: Chrome then uses the installed font.)
+const SHADOW_FONT_SRC = 'url(data:font/ttf;base64,AAEAAAAKAIAAAwAgT1MvMiD3L0QAAAEoAAAAYGNtYXAADOBTAAABkAAAADRnbHlmAAAAAAAAAcwAAAABaGVhZCzIxs4AAACsAAAANmhoZWEDIf86AAAA5AAAACRobXR4AAAAAAAAAYgAAAAGbG9jYQAAAAAAAAHEAAAABm1heHAAAwACAAABCAAAACBuYW1lbsxmyQAAAdAAAABjcG9zdJ+fTKUAAAI0AAAALgABAAAAAQAA5t2K9V8PPPUAAwPoAAAAAObZQvcAAAAA5tlC9wAAAAAAAAAAAAAAAwACAAAAAAAAAAEAAAMg/zgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAEAAAACAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAwAAAZAABQAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAPz8/PwAA4ADgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAIAAAADAAAAFAADAAEAAAAUAAQAIAAAAAQABAABAADgAP//AADgAP//IAEAAQAAAAAAAAAAAAAAAAAAAAAAAAAEADYAAQAAAAAAAQAIAAAAAQAAAAAAAgAHAAgAAwABBAkAAQAQAA8AAwABBAkAAgAOAB9CVFNoYWRvd1JlZ3VsYXIAQgBUAFMAaABhAGQAbwB3AFIAZQBnAHUAbABhAHIAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAQIHdW5pRTAwMAAA)';
+// Most ad platforms (Google Ads, DV360, IAB guidelines) cap the upload at 150 KB
+const SIZE_LIMIT = 150 * 1024;
+function formatKB(bytes) { return (bytes / 1024).toFixed(bytes < 10240 ? 1 : 0) + ' KB'; }
+function checkSize(banner) {
+  if (!banner.fileSize || banner.fileSize <= SIZE_LIMIT) return;
+  let detail = '';
+  const entries = Object.entries(banner.files).map(([p, f]) => [p.split('/').pop(), new Blob([f]).size]);
+  if (entries.length > 1) {
+    const big = entries.sort((a, b) => b[1] - a[1]).slice(0, 3).map(([n, sz]) => `${n} ${formatKB(sz)}`);
+    detail = ` — largest: ${big.join(', ')}`;
+  }
+  addIssue(banner, 'size', `${formatKB(banner.fileSize)} (limit ${formatKB(SIZE_LIMIT)})${detail}`, true);
+}
+const CSP_META = `<meta http-equiv="Content-Security-Policy" content="default-src http: https: data: blob: 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval'; connect-src http: https: data: blob: ws: wss:">`;
+
+// Runs first inside every banner. Shadows non-web fonts and reports problems
+// back to the tester via postMessage. Written in ES5 so it runs anywhere.
+const GUARD_BODY = `
+var ours = {}, foreign = {}, reported = {};
+// The browser's own default family (e.g. "Times New Roman") shows up in computed
+// styles of unstyled text; it isn't something the banner chose, so leave it alone.
+var UA_DEFAULT = '';
+try { UA_DEFAULT = String(getComputedStyle(document.documentElement).fontFamily).split(',')[0].trim().replace(/^["']+|["']+$/g,'').toLowerCase(); } catch(e){}
+function norm(n){ return String(n||'').trim().replace(/^["']+|["']+$/g,'').trim().toLowerCase(); }
+function report(kind, value){ try { parent.postMessage({__bannerTester:1, id:C.id, token:C.token, kind:kind, value:String(value)}, '*'); } catch(e){} }
+function isOurs(f){ for (var k in ours) { if (ours[k].face === f) return true; } return false; }
+// foreign[family] = true if at least one of the banner's own faces for it is usable,
+// false if every one of them failed to load
+function refreshForeign(){
+  foreign = {};
+  if (!document.fonts || !document.fonts.forEach) return;
+  document.fonts.forEach(function(f){
+    if (isOurs(f)) return;
+    var l = norm(f.family);
+    foreign[l] = foreign[l] === true || f.status !== 'error';
+  });
+}
+function shadow(name, failed){
+  if (C.mode === 'off' || typeof FontFace === 'undefined' || !document.fonts) return;
+  var l = norm(name);
+  if (!l || (l === UA_DEFAULT && !failed) || ours[l] || foreign[l] === true || C.generic.indexOf(l) > -1 || C.safe.indexOf(l) > -1) return;
+  try {
+    var clean = String(name).trim().replace(/^["']+|["']+$/g,'').replace(/["\\\\]/g,'');
+    // Family name is used as-is (no quotes): Chrome treats quotes as part of the name
+    var f = new FontFace(clean, C.src, { unicodeRange: 'U+E000' });
+    document.fonts.add(f);
+    ours[l] = { face: f, name: clean, failed: !!failed };
+  } catch(e){}
+}
+// A working web font for the family showed up (CSS, Google Fonts, FontFace API):
+// drop our shadow so the real one is used. If all of the banner's own faces for a
+// family failed to load, shadow it too, or the browser quietly uses an installed copy.
+function reconcile(){
+  refreshForeign();
+  for (var l in ours) {
+    if (foreign[l] === true) { try { document.fonts.delete(ours[l].face); } catch(e){} delete ours[l]; }
+  }
+  for (var k in foreign) {
+    if (foreign[k] === false && !ours[k]) {
+      var name = k;
+      document.fonts.forEach(function(f){ if (norm(f.family) === k) name = String(f.family).replace(/^["']+|["']+$/g,''); });
+      shadow(name, true);
+    }
+  }
+}
+function hasText(el){
+  for (var n = el.firstChild; n; n = n.nextSibling) { if (n.nodeType === 3 && n.nodeValue.trim()) return true; }
+  return false;
+}
+function each(fn){
+  var els = document.getElementsByTagName('*');
+  for (var i = 0; i < els.length && i < 4000; i++) {
+    var ff; try { ff = getComputedStyle(els[i]).fontFamily; } catch(e){ continue; }
+    if (ff) fn(ff.split(','), els[i]);
+  }
+}
+function scan(){ reconcile(); each(function(list){ for (var i = 0; i < list.length; i++) shadow(list[i]); }); }
+function reportFonts(){
+  reconcile();
+  each(function(list, el){
+    if (!hasText(el)) return;
+    for (var i = 0; i < list.length; i++) {
+      var l = norm(list[i]);
+      if (ours[l] && !reported[l]) { reported[l] = 1; report(ours[l].failed ? 'fontfail' : 'font', ours[l].name); }
+    }
+  });
+}
+C.shadow.forEach(shadow);
+if (document.fonts && document.fonts.addEventListener) {
+  document.fonts.addEventListener('loading', reconcile);
+  document.fonts.addEventListener('loadingdone', reconcile);
+  document.fonts.addEventListener('loadingerror', reconcile);
+}
+var frames = 0;
+(function tick(){ reconcile(); if (++frames < 150) requestAnimationFrame(tick); })();
+document.addEventListener('DOMContentLoaded', scan);
+window.addEventListener('load', function(){
+  scan();
+  setTimeout(scan, 500);
+  setTimeout(reportFonts, 1200);
+  setTimeout(function(){ scan(); reportFonts(); }, 4000);
+});
+window.addEventListener('error', function(e){
+  var t = e.target;
+  if (!t || t === window || !t.getAttribute) return;
+  var u = t.getAttribute('src') || t.getAttribute('href') || t.getAttribute('source') || t.currentSrc || '';
+  if (u && u.indexOf('data:') !== 0) report('missing', u);
+}, true);
+document.addEventListener('securitypolicyviolation', function(e){ report('blocked', e.blockedURI || 'unknown'); });
+`;
+
+function makeGuardScript(banner, shadowList, mode) {
+  const cfg = JSON.stringify({
+    id: banner.id,
+    token: banner.buildToken || 0,
+    mode,
+    shadow: shadowList,
+    safe: mode === 'core' ? CORE_WEB_FONTS : [],
+    generic: GENERIC_FONTS,
+    src: SHADOW_FONT_SRC,
+  }).replace(/</g, '\\u003c');
+  return `<script>(function(){var C=${cfg};${GUARD_BODY}})();<\/script>`;
+}
+
+// ── FONT / PATH HELPERS ──
+function normPath(p) {
+  const out = [];
+  for (const seg of p.split('/')) {
+    if (!seg || seg === '.') continue;
+    if (seg === '..') out.pop(); else out.push(seg);
+  }
+  return out.join('/');
+}
+function dirOf(p) { const i = p.lastIndexOf('/'); return i < 0 ? '' : p.slice(0, i + 1); }
+function isExternalRef(ref) { return /^(https?:|\/\/|data:|blob:|#|javascript:|mailto:|tel:|about:)/i.test(ref.trim()); }
+function isLocalPathRef(ref) { return /^(file:|[a-z]:[\\/]|\\\\|\/(users|home|volumes|private|var|tmp)\/)/i.test(ref.trim()); }
+
+// Replace local() font sources with a source that always fails, so the browser
+// moves on to the downloadable url() sources instead of using an installed font.
+function neutraliseLocalFonts(text, mode, issues) {
+  if (mode === 'off') return text;
+  return text.replace(/@font-face\s*\{[^}]*\}/gi, block => {
+    if (!/local\(/i.test(block)) return block;
+    block.replace(/local\(\s*(['"]?)([^'")]*)\1\s*\)/gi, (m, q, name) => {
+      issues.push({ kind: 'localfont', value: name.trim() });
+    });
+    // Drop local() entries so the downloadable sources are used; if local() was
+    // the only source, substitute the shadow font so the installed copy can't be used
+    return block
+      .replace(/local\([^)]*\)\s*,\s*/gi, '')
+      .replace(/,\s*local\([^)]*\)/gi, '')
+      .replace(/local\([^)]*\)/gi, SHADOW_FONT_SRC);
+  });
+}
+
+// Collect font families a banner references and the ones it actually delivers.
+function extractFontFamilies(text, refs, defined) {
+  const addList = (val, isDef) => {
+    val.split(',').forEach(raw => {
+      const n = raw.replace(/!important/i, '').trim().replace(/^[\\'"`\s]+|[\\'"`\s]+$/g, '').trim();
+      if (!n || n.length > 60 || /[:;{}()<>=$+*\/]/.test(n) || /^\d/.test(n)) return;
+      if (isDef) defined.add(n.toLowerCase());
+      else if (!refs.has(n.toLowerCase())) refs.set(n.toLowerCase(), n);
+    });
+  };
+  let m;
+  const faceRe = /@font-face\s*\{[^}]*?font-family\s*:\s*([^;}]+)/gi;
+  while ((m = faceRe.exec(text))) addList(m[1], true);
+  const famRe = /font-?family["']?\s*[:=]\s*([^;{}<>\n]+)/gi;
+  while ((m = famRe.exec(text))) addList(m[1], false);
+  const fontRe = /(?:^|[\s{;"'.])font["']?\s*[:=]\s*([^;{}<>\n]+)/gi;
+  while ((m = fontRe.exec(text))) {
+    const v = m[1].trim().replace(/^['"`]+|['"`,]+$/g, '');
+    const s = v.match(/(?:^|\s)[\d.]+(?:px|pt|em|rem|%|vw|vh|vmin|vmax|ex|ch|q|cm|mm|in|pc)?(?:\s*\/\s*[\w.%]+)?\s+(.+)$/i);
+    if (s) addList(s[1], false);
+  }
+  // Google Fonts stylesheets define families we can read straight from the URL
+  const gRe = /fonts\.googleapis\.com\/css2?\?([^"')\s>]+)/gi;
+  while ((m = gRe.exec(text))) {
+    for (const part of m[1].replace(/&amp;/g, '&').split('&')) {
+      if (!part.startsWith('family=')) continue;
+      let fam = part.slice(7).replace(/\+/g, ' ');
+      try { fam = decodeURIComponent(fam); } catch (e) {}
+      fam.split('|').forEach(f => defined.add(f.split(':')[0].trim().toLowerCase()));
+    }
+  }
+}
+
+// Report references that would not resolve for an online viewer.
+function findUnresolvedRefs(html, issues) {
+  const seen = new Set();
+  const check = ref => {
+    ref = (ref || '').trim();
+    if (!ref || seen.has(ref) || isExternalRef(ref) || /[\s${}+`]/.test(ref)) return;
+    seen.add(ref);
+    if (isLocalPathRef(ref)) issues.push({ kind: 'local', value: ref });
+    else if (/\.[a-z0-9]{2,5}(\?.*)?$/i.test(ref)) issues.push({ kind: 'unpackaged', value: ref });
+  };
+  const tagRe = /<(img|script|link|source|video|audio|iframe|embed|image|gwd-image|use)\b[^>]*>/gi;
+  const attrRe = /\s(?:src|href|poster|source|xlink:href)\s*=\s*(["'])(.*?)\1/gi;
+  let t, a;
+  while ((t = tagRe.exec(html))) {
+    attrRe.lastIndex = 0;
+    while ((a = attrRe.exec(t[0]))) check(a[2]);
+  }
+  const urlRe = /url\(\s*(['"]?)([^'")]+)\1\s*\)/gi;
+  while ((a = urlRe.exec(html))) check(a[2]);
+}
+
+function injectIntoHead(html, snippet) {
+  const headRe = /<head(\s[^>]*)?>/i;
+  return headRe.test(html) ? html.replace(headRe, m => m + snippet) : snippet + html;
+}
+
+// ── PATCHED HTML BUILDER ──
+// Produces a fully self-contained banner document (assets as data URIs) with the
+// online-fidelity guard injected. Used for both live preview and export.
+async function buildPatchedHtml(banner) {
+  const mode = state.fontMode;
+  const issues = [];
+
+  // Detect a single top-level wrapper folder that also contains the HTML entry
+  // (e.g. "Buzz_300x250/index.html"). A folder like "media/" that does NOT
+  // contain the HTML file is real content structure and must NOT be stripped.
+  const allFilePaths = Object.keys(banner.files);
+  const htmlPaths = allFilePaths.filter(p => /\.html?$/i.test(p));
+  const nonHtmlPaths = allFilePaths.filter(p => !htmlPaths.includes(p) && p.includes('/'));
+  const topFolderSet = new Set(nonHtmlPaths.map(p => p.split('/')[0]));
+  const htmlTopFolders = new Set(htmlPaths.filter(p => p.includes('/')).map(p => p.split('/')[0]));
+  const hasWrapper = topFolderSet.size === 1 && nonHtmlPaths.length > 0
+    && htmlTopFolders.size === 1 && [...htmlTopFolders][0] === [...topFolderSet][0];
+  const wrapperPrefix = hasWrapper ? [...topFolderSet][0] + '/' : '';
+
+  // 1. Encode non-CSS assets; keep JS text for font scanning
+  const byFullPath = {};
+  const textSources = [banner.html];
+  const cssPaths = [];
+  for (const [path, fileBlob] of Object.entries(banner.files)) {
+    const lp = path.toLowerCase();
+    if (/\.html?$/.test(lp)) continue;
+    if (lp.endsWith('.css')) { cssPaths.push(path); continue; }
+    const filename = path.split('/').pop();
+    if (lp.endsWith('.js')) textSources.push(await new Blob([fileBlob]).text());
+    byFullPath[path] = await blobToDataUri(new Blob([fileBlob], { type: getMime(filename) }));
+  }
+  // 2. CSS files: resolve their url()s relative to the CSS file (so fonts and
+  //    images referenced from a stylesheet work), and neutralise local() fonts
+  for (const path of cssPaths) {
+    let css = await new Blob([banner.files[path]]).text();
+    textSources.push(css);
+    css = css.replace(/url\(\s*(['"]?)([^'")]+)\1\s*\)/g, (m, q, ref) => {
+      if (isExternalRef(ref)) return m;
+      const full = normPath(dirOf(path) + ref.split(/[?#]/)[0]);
+      return byFullPath[full] ? `url("${byFullPath[full]}")` : m;
+    });
+    css = neutraliseLocalFonts(css, mode, issues);
+    byFullPath[path] = await blobToDataUri(new Blob([css], { type: 'text/css' }));
+  }
+
+  // 3. Path variants the HTML might use
+  const assetMap = {};      // bare filename (GWD style: source="Buzz.png")
+  const assetMapPath = {};  // relative / full path variants
+  for (const [path, dataUri] of Object.entries(byFullPath)) {
+    const filename = path.split('/').pop();
+    assetMap[filename] = dataUri;
+    const relPath = wrapperPrefix && path.startsWith(wrapperPrefix) ? path.slice(wrapperPrefix.length) : path;
+    assetMapPath[relPath] = dataUri;
+    assetMapPath['./' + relPath] = dataUri;
+    assetMapPath[path] = dataUri;
+    assetMapPath['./' + filename] = dataUri;
+  }
+
+  let patched = neutraliseLocalFonts(banner.html, mode, issues);
+  const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  // Longer (more specific) paths first to avoid partial matches, then bare filenames
+  const passes = [
+    Object.entries(assetMapPath).sort((a, b) => b[0].length - a[0].length),
+    Object.entries(assetMap),
+  ];
+  for (const entries of passes) {
+    for (const [assetPath, dataUri] of entries) {
+      const esc = escRe(assetPath);
+      patched = patched.replace(new RegExp(`(=["'])${esc}(["'])`, 'g'), (m, a, b) => a + dataUri + b);
+      patched = patched.replace(new RegExp(`url\\(["']?${esc}["']?\\)`, 'g'), () => `url("${dataUri}")`);
+    }
+  }
+  // Creatopy loads fonts from fontsLocalPath; point it at nothing so the already
+  // patched @font-face data URIs are used
+  patched = patched.replace(/fontsLocalPath\s*:\s*["'][^"']*["']/g, 'fontsLocalPath:""');
+
+  // References that still point to disk or to files missing from the package
+  findUnresolvedRefs(patched, issues);
+
+  // Fonts: referenced but not delivered as web fonts → shadow them
+  const refs = new Map(), defined = new Set();
+  for (const t of textSources) extractFontFamilies(t, refs, defined);
+  const shadowList = mode === 'off' ? [] : [...refs.entries()]
+    .filter(([l]) => !defined.has(l) && !GENERIC_FONTS.includes(l) && !(mode === 'core' && CORE_WEB_FONTS.includes(l)))
+    .map(([, n]) => n);
+
+  // Enabler stub (replace real Enabler.js, or inject at top of <head>)
+  patched = patched.replace(/<script[^>]*Enabler\.js[^>]*><\/script>/gi, () => ENABLER_STUB);
+  if (!patched.includes('window.Enabler = _stub')) patched = injectIntoHead(patched, ENABLER_STUB);
+  // CSP + guard go first so they apply before anything else loads
+  patched = injectIntoHead(patched, CSP_META + makeGuardScript(banner, shadowList, mode));
+
+  return { html: patched, issues };
+}
+
+// ── ISSUES ──
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+}
+function shortRef(v) { return v.length > 70 ? v.slice(0, 40) + '…' + v.slice(-25) : v; }
+function issueText(kind, value) {
+  switch (kind) {
+    case 'font':       return `Font "${value}" isn't embedded — viewers see a fallback font`;
+    case 'fontfail':   return `Web font "${value}" failed to load — viewers see a fallback font`;
+    case 'size':       return `File too large: ${value}`;
+    case 'localfont':  return `Ignored local() source for "${value}" — not available to viewers`;
+    case 'unpackaged': return `Not in package: ${shortRef(value)}`;
+    case 'local':      return `Points to a file on this computer: ${shortRef(value)}`;
+    case 'missing':    return `Failed to load: ${shortRef(value)}`;
+    case 'blocked':    return `Blocked local/unsupported URL: ${shortRef(value)}`;
+    default:           return value;
+  }
+}
+function addIssue(b, kind, value, silent) {
+  if (!b.issues) b.issues = new Map();
+  if (kind === 'missing' && (b.issues.has('unpackaged|' + value) || b.issues.has('local|' + value))) return;
+  const key = kind + '|' + value;
+  if (b.issues.has(key)) return;
+  b.issues.set(key, issueText(kind, value));
+  if (!silent) updateIssuesUI(b);
+}
+function updateIssuesUI(b) {
+  const list = b.issues ? [...b.issues.values()] : [];
+  const box = document.getElementById('issues-' + b.id);
+  if (box) box.innerHTML = list.map(t => `<div>⚠ ${escapeHtml(t)}</div>`).join('');
+  for (const prefix of ['sb-warn-', 'card-warn-']) {
+    const el = document.getElementById(prefix + b.id);
+    if (!el) continue;
+    el.style.display = list.length ? '' : 'none';
+    el.textContent = '⚠ ' + list.length;
+    el.title = list.join('\n');
+  }
+}
+window.addEventListener('message', e => {
+  const d = e.data;
+  if (!d || d.__bannerTester !== 1) return;
+  const b = state.banners.find(x => x.id === d.id);
+  if (!b || d.token !== b.buildToken) return;
+  addIssue(b, d.kind, d.value);
+});
+
+// ── BLOB URL BUILDER ──
+async function buildBlobUrl(banner) {
+  if (banner.blobUrl) URL.revokeObjectURL(banner.blobUrl);
+  banner.blobUrl = null;
+  banner.buildToken = (banner.buildToken || 0) + 1;
+  banner.issues = new Map();
+  const { html, issues } = await buildPatchedHtml(banner);
+  checkSize(banner);
+  issues.forEach(i => addIssue(banner, i.kind, i.value, true));
+  updateIssuesUI(banner);
+  // Explicit charset: the injected guard pushes any <meta charset> past the
+  // first 1024 bytes, where the browser no longer looks for it
+  banner.blobUrl = URL.createObjectURL(new Blob([html], { type: 'text/html;charset=utf-8' }));
+}
+
+function setFontMode(mode) {
+  state.fontMode = mode;
+  if (state.banners.length) reloadAll();
+}
+
+// ── RENDER ──
+
+async function addBanner(banner) {
+  await buildBlobUrl(banner);
+  state.banners.push(banner);
+  renderSidebar();
+  renderCanvas();
+  toast(`Loaded: ${banner.name}`);
+}
+
+function renderSidebar() {
+  const list = document.getElementById('banner-list');
+  const emptyMsg = document.getElementById('empty-list-msg');
+  emptyMsg.style.display = state.banners.length ? 'none' : '';
+
+  list.querySelectorAll('.banner-item').forEach(el => el.remove());
+
+  state.banners.forEach((b, idx) => {
+    const item = document.createElement('div');
+    item.className = 'banner-item' + (b.visible ? '' : ' hidden-banner');
+    item.dataset.id = b.id;
+    item.draggable = true;
+
+    item.innerHTML = `
+      <div class="banner-item-header">
+        <div class="drag-handle" title="Drag to reorder">
+          <svg viewBox="0 0 16 16"><circle cx="5" cy="4" r="1.2"/><circle cx="11" cy="4" r="1.2"/><circle cx="5" cy="8" r="1.2"/><circle cx="11" cy="8" r="1.2"/><circle cx="5" cy="12" r="1.2"/><circle cx="11" cy="12" r="1.2"/></svg>
+        </div>
+        <div class="banner-color" style="background:${b.color}"></div>
+        <span class="banner-name" onclick="scrollToBanner(${b.id})" style="cursor:pointer">${b.name}</span>
+        <span class="banner-size-tag">${b.width}×${b.height}</span>
+        <span class="warn-badge" id="sb-warn-${b.id}" style="display:none"></span>
+      </div>
+      <div class="banner-item-actions">
+        <button class="icon-btn" title="Move up" onclick="moveBanner(${b.id},-1)" ${idx === 0 ? 'disabled style="opacity:0.25"' : ''}>
+          <svg class="icon" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+        </button>
+        <button class="icon-btn" title="Move down" onclick="moveBanner(${b.id},1)" ${idx === state.banners.length-1 ? 'disabled style="opacity:0.25"' : ''}>
+          <svg class="icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <button class="icon-btn ${b.visible ? 'active-toggle' : ''}" title="${b.visible ? 'Hide' : 'Show'}" onclick="toggleBanner(${b.id})">
+          <svg class="icon" viewBox="0 0 24 24">${b.visible
+            ? '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>'
+            : '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>'
+          }</svg>
+        </button>
+        <button class="icon-btn" title="Reload" onclick="reloadBanner(${b.id})">
+          <svg class="icon" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        </button>
+        <button class="icon-btn remove-btn" title="Remove" onclick="removeBanner(${b.id})">
+          <svg class="icon" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </button>
+      </div>
+    `;
+
+    // Drag events
+    item.addEventListener('dragstart', e => {
+      state.dragSrcId = b.id;
+      item.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    item.addEventListener('dragend', () => {
+      item.classList.remove('dragging');
+      list.querySelectorAll('.banner-item').forEach(el => el.classList.remove('drag-over'));
+    });
+    item.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      if (state.dragSrcId !== b.id) {
+        list.querySelectorAll('.banner-item').forEach(el => el.classList.remove('drag-over'));
+        item.classList.add('drag-over');
+      }
+    });
+    item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
+    item.addEventListener('drop', e => {
+      e.preventDefault();
+      item.classList.remove('drag-over');
+      if (state.dragSrcId === b.id) return;
+      const srcIdx = state.banners.findIndex(x => x.id === state.dragSrcId);
+      const dstIdx = state.banners.findIndex(x => x.id === b.id);
+      if (srcIdx === -1 || dstIdx === -1) return;
+      const [moved] = state.banners.splice(srcIdx, 1);
+      state.banners.splice(dstIdx, 0, moved);
+      renderSidebar();
+      renderCanvas();
+    });
+
+    list.appendChild(item);
+    updateIssuesUI(b);
+  });
+
+  const n = state.banners.length;
+  document.getElementById('stat-pill').innerHTML = `<b>${n}</b> banner${n !== 1 ? 's' : ''} loaded`;
+}
+
+function renderCanvas() {
+  const area = document.getElementById('canvas-area');
+  const emptyCanvas = document.getElementById('empty-canvas');
+
+  // Remove old banner cards
+  area.querySelectorAll('.banner-card').forEach(el => el.remove());
+
+  const visible = state.banners.filter(b => b.visible);
+  emptyCanvas.style.display = visible.length ? 'none' : '';
+
+  visible.forEach(b => {
+    const card = document.createElement('div');
+    card.className = 'banner-card';
+    card.id = `card-${b.id}`;
+
+    const scaledW = Math.round(b.width * state.zoom);
+    const scaledH = Math.round(b.height * state.zoom);
+
+    card.innerHTML = `
+      <div class="banner-card-label">
+        <div class="dot" style="background:${b.color}"></div>
+        <span class="name">${b.name}</span>
+        <span class="dims">${b.width}×${b.height}px${b.fileSize ? ` · <span style="${b.fileSize > SIZE_LIMIT ? 'color:var(--red);font-weight:600' : ''}">${formatKB(b.fileSize)}</span>` : ''}</span>
+        <span class="warn-badge" id="card-warn-${b.id}" style="display:none"></span>
+        <button class="reload-btn" title="Reload" onclick="reloadBanner(${b.id})">
+          <svg class="icon" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        </button>
+      </div>
+      <div class="banner-frame-wrap" style="width:${scaledW}px;height:${scaledH}px;">
+        <iframe class="banner-frame"
+          id="frame-${b.id}"
+          src="${b.blobUrl}"
+          width="${b.width}"
+          height="${b.height}"
+          style="transform:scale(${state.zoom});width:${b.width}px;height:${b.height}px;"
+          sandbox="allow-scripts allow-same-origin"
+          scrolling="no">
+        </iframe>
+      </div>
+      <div class="issue-list" id="issues-${b.id}" style="max-width:${Math.max(scaledW, 260)}px"></div>
+    `;
+    area.appendChild(card);
+    updateIssuesUI(b);
+  });
+}
+
+// ── CONTROLS ──
+
+function setLayout(val) {
+  state.layout = val;
+  const area = document.getElementById('canvas-area');
+  area.className = area.className.replace(/layout-\w+/, '').trim() + ' layout-' + val;
+}
+
+function setBg(el) {
+  document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  const area = document.getElementById('canvas-area');
+  area.className = area.className.replace(/bg-\w+/, '').trim() + ' ' + el.dataset.bg;
+  state.bg = el.dataset.bg;
+}
+
+function setZoom(z) {
+  state.zoom = Math.max(0.1, Math.min(3, +z.toFixed(2)));
+  document.getElementById('zoom-val').textContent = Math.round(state.zoom * 100) + '%';
+  renderCanvas();
+}
+function adjustZoom(d) { setZoom(state.zoom + d); }
+
+function toggleBanner(id) {
+  const b = state.banners.find(b => b.id === id);
+  if (b) { b.visible = !b.visible; renderSidebar(); renderCanvas(); }
+}
+
+function sortBanners(mode) {
+  if (!state.banners.length) return;
+  state.banners.sort((a, b) => {
+    if (mode === 'name-asc')  return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
+    if (mode === 'name-desc') return b.name.localeCompare(a.name, undefined, { sensitivity: 'base' });
+    const aArea = a.width * a.height;
+    const bArea = b.width * b.height;
+    if (mode === 'size-asc')  return aArea - bArea || a.name.localeCompare(b.name);
+    if (mode === 'size-desc') return bArea - aArea || a.name.localeCompare(b.name);
+  });
+  renderSidebar();
+  renderCanvas();
+  const labels = { 'name-asc': 'A–Z', 'name-desc': 'Z–A', 'size-asc': 'smallest first', 'size-desc': 'largest first' };
+  toast(`Sorted ${labels[mode]}`);
+}
+
+function moveBanner(id, dir) {
+  const idx = state.banners.findIndex(b => b.id === id);
+  if (idx === -1) return;
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= state.banners.length) return;
+  const [item] = state.banners.splice(idx, 1);
+  state.banners.splice(newIdx, 0, item);
+  renderSidebar();
+  renderCanvas();
+}
+
+function removeBanner(id) {
+  const idx = state.banners.findIndex(b => b.id === id);
+  if (idx !== -1) {
+    const b = state.banners[idx];
+    if (b.blobUrl) URL.revokeObjectURL(b.blobUrl);
+    state.banners.splice(idx, 1);
+    renderSidebar();
+    renderCanvas();
+  }
+}
+
+async function reloadBanner(id) {
+  const b = state.banners.find(b => b.id === id);
+  if (!b) return;
+  await buildBlobUrl(b);
+  const frame = document.getElementById('frame-' + id);
+  if (frame) frame.src = b.blobUrl;
+  toast('Reloaded: ' + b.name);
+}
+
+async function reloadAll() {
+  for (const b of state.banners) {
+    await buildBlobUrl(b);
+    const frame = document.getElementById('frame-' + b.id);
+    if (frame) frame.src = b.blobUrl;
+  }
+  toast('All banners reloaded');
+}
+
+function clearAll() {
+  state.banners.forEach(b => { if (b.blobUrl) URL.revokeObjectURL(b.blobUrl); });
+  state.banners.length = 0;
+  renderSidebar();
+  renderCanvas();
+}
+
+function exportPreview() {
+  const visible = state.banners.filter(b => b.visible);
+  if (!visible.length) { toast('No banners to export'); return; }
+  const modal = document.getElementById('export-modal');
+  modal.style.display = 'flex';
+  const input = document.getElementById('export-filename');
+  input.focus();
+  input.select();
+}
+
+function closeExportModal() {
+  document.getElementById('export-modal').style.display = 'none';
+}
+
+// Close modal on backdrop click
+document.getElementById('export-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('export-modal')) closeExportModal();
+});
+
+async function doExport() {
+  const visible = state.banners.filter(b => b.visible);
+  if (!visible.length) return;
+
+  const rawName = document.getElementById('export-filename').value.trim() || 'banner-preview';
+  const filename = rawName.replace(/\.html$/i, '') + '.html';
+  closeExportModal();
+
+  const btn = document.getElementById('export-btn');
+  btn.textContent = 'Building…';
+  btn.disabled = true;
+
+  // Build fully self-contained patched HTML for each banner (same pipeline as the live preview)
+  const built = [];
+  for (const b of visible) {
+    const { html } = await buildPatchedHtml(b);
+    built.push({ name: b.name, width: b.width, height: b.height, color: b.color, html });
+  }
+  const date = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+  const pageTitle = rawName.replace(/\.html$/i, '');
+
+  const bannerCards = built.map(b => {
+    const srcdoc = b.html.replace(/"/g, '&quot;');
+    return `
+    <div class="banner-block">
+      <div class="banner-meta">
+        <span class="banner-dot" style="background:${b.color}"></span>
+        <span class="banner-name">${b.name}</span>
+        <span class="banner-dims">${b.width}&times;${b.height}px</span>
+      </div>
+      <div class="banner-frame-outer" style="width:${b.width}px;height:${b.height}px;">
+        <iframe srcdoc="${srcdoc}"
+          width="${b.width}" height="${b.height}"
+          scrolling="no" frameborder="0"
+          sandbox="allow-scripts allow-same-origin"
+          style="display:block;border:none;width:${b.width}px;height:${b.height}px;"></iframe>
+      </div>
+    </div>`;
+  }).join('\n');
+
+  const exportHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${pageTitle}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #123c3e;
+    color: #ede8e0;
+    min-height: 100vh;
+    padding: 48px 40px;
+  }
+  .page-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 40px;
+    border-bottom: 1px solid rgba(255,255,255,0.16);
+    padding-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .page-title { font-family: 'Archivo Narrow', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #ede8e0; }
+  .page-meta { font-size: 13px; color: #c2beb9; }
+  .page-count {
+    font-size: 12px; color: #d4d1cd;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.16);
+    padding: 4px 10px; border-radius: 20px;
+  }
+  .layout-btns { margin-left: auto; display: flex; gap: 4px; }
+  .layout-btn {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.24);
+    border-radius: 6px;
+    color: #c2beb9;
+    cursor: pointer;
+    padding: 5px 7px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.1s, color 0.1s, border-color 0.1s;
+  }
+  .layout-btn:hover { background: rgba(255,255,255,0.08); color: #ede8e0; }
+  .layout-btn.active { border-color: #f4d58d; color: #14110f; background: #f4d58d; }
+  .layout-btn.active:hover { background: #ede8e0; border-color: #ede8e0; color: #14110f; }
+  .layout-btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .banners-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    align-items: flex-start;
+    align-content: flex-start;
+  }
+  .banners-wrap.layout-list {
+    flex-direction: column;
+    flex-wrap: nowrap;
+  }
+  .banner-block { display: inline-flex; flex-direction: column; gap: 10px; }
+  .banner-meta { display: flex; align-items: center; gap: 8px; }
+  .banner-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .banner-name { font-family: 'Archivo Narrow', sans-serif; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #c2beb9; }
+  .banner-dims { font-size: 11px; color: rgba(237,232,224,0.6); font-variant-numeric: tabular-nums; }
+  .banner-frame-outer { overflow: hidden; outline: 1px solid rgba(255,255,255,0.16); flex-shrink: 0; }
+  .footer { margin-top: 56px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.16); font-family: 'Archivo Narrow', sans-serif; font-weight: 600; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #c2beb9; }
+</style>
+</head>
+<body>
+  <div class="page-header">
+    <div style="display:flex;align-items:center;gap:14px;"><span class="page-title">${pageTitle}</span></div>
+    <span class="page-meta">${date}</span>
+    <span class="page-count">${built.length} banner${built.length !== 1 ? 's' : ''}</span>
+    <div class="layout-btns">
+      <button class="layout-btn active" id="btn-spread" onclick="setLayout('spread')" title="Spread">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      </button>
+      <button class="layout-btn" id="btn-list" onclick="setLayout('list')" title="List">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="4" rx="1"/><rect x="3" y="10" width="18" height="4" rx="1"/><rect x="3" y="16" width="18" height="4" rx="1"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="banners-wrap" id="banners-wrap">
+${bannerCards}
+  </div>
+  <div class="footer">Banner preview</div>
+  <script>
+    function setLayout(mode) {
+      var wrap = document.getElementById('banners-wrap');
+      wrap.classList.toggle('layout-list', mode === 'list');
+      document.getElementById('btn-spread').classList.toggle('active', mode === 'spread');
+      document.getElementById('btn-list').classList.toggle('active', mode === 'list');
+    }
+  <\/script>
+</body>
+</html>`;
+
+  const blob = new Blob([exportHtml], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+
+  btn.innerHTML = `<svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Exported`;
+  setTimeout(() => {
+    btn.innerHTML = `<svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export preview`;
+    btn.disabled = false;
+  }, 2500);
+}
+
+function scrollToBanner(id) {
+  const card = document.getElementById('card-' + id);
+  if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+
+<script src="../assets/logo-motion.js" defer></script>
+</body>
+</html>
