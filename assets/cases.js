@@ -10,6 +10,13 @@
    can't fetch a local file, so both the grid and the nav show a short
    explanation instead. See README.md → "Previewing the site". */
 (function () {
+  // Clean addresses: on the live site, links leave off ".html"
+  // (GitHub Pages serves /cases/eika from cases/eika.html). On your own
+  // computer, where preview servers like Live Server need the full file
+  // name, the ".html" stays. The manifest keeps full file names.
+  var LOCAL = location.protocol === "file:" || /^(localhost|127\.0\.0\.1|\[::1\]|0\.0\.0\.0)$/.test(location.hostname);
+  function page(file) { return LOCAL ? file : String(file).replace(/\.html$/, ""); }
+
   function esc(s) {
     return String(s == null ? "" : s)
       .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -30,7 +37,7 @@
 
   function cardHTML(entry) {
     var tags = (entry.tags || []).map(function (t) { return "<span>" + esc(t) + "</span>"; }).join("");
-    return '<a class="case-card" href="cases/' + esc(entry.file) + '">' +
+    return '<a class="case-card" href="cases/' + esc(page(entry.file)) + '">' +
       '<div class="case-card__media">' + mediaMarkup(entry.media) + '</div>' +
       '<div class="case-card__body">' +
       '<h3 class="case-card__title">' + esc(entry.title) + '</h3>' +
@@ -52,14 +59,16 @@
   // the first case's "prev" is the last), so every case page always has
   // both links and the layout never has to handle a missing side.
   function renderNav(nav, list) {
-    var file = location.pathname.split("/").pop();
-    var i = list.findIndex(function (e) { return e.file === file; });
+    // Which case is this? Compared without ".html", so it works at both
+    // /cases/eika and /cases/eika.html.
+    var here = location.pathname.split("/").pop().replace(/\.html$/, "");
+    var i = list.findIndex(function (e) { return e.file.replace(/\.html$/, "") === here; });
     if (i === -1 || list.length < 2) { nav.innerHTML = ""; return; }
     var prev = list[(i - 1 + list.length) % list.length];
     var next = list[(i + 1) % list.length];
     nav.innerHTML =
-      '<a class="case-nav__prev" href="' + esc(prev.file) + '">&larr; ' + esc(prev.title) + '</a>' +
-      '<a class="case-nav__next" href="' + esc(next.file) + '">' + esc(next.title) + ' &rarr;</a>';
+      '<a class="case-nav__prev" href="' + esc(page(prev.file)) + '">&larr; ' + esc(prev.title) + '</a>' +
+      '<a class="case-nav__next" href="' + esc(page(next.file)) + '">' + esc(next.title) + ' &rarr;</a>';
   }
 
   var grid = document.querySelector(".cases__grid");

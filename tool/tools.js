@@ -21,6 +21,13 @@
   var grid = document.querySelector(".tools__grid");
   if (!grid) return;
 
+  // Clean addresses: on the live site, links leave off ".html"
+  // (GitHub Pages serves /cases/eika from cases/eika.html). On your own
+  // computer, where preview servers like Live Server need the full file
+  // name, the ".html" stays. The manifest keeps full file names.
+  var LOCAL = location.protocol === "file:" || /^(localhost|127\.0\.0\.1|\[::1\]|0\.0\.0\.0)$/.test(location.hostname);
+  function page(file) { return LOCAL ? file : String(file).replace(/\.html$/, ""); }
+
   function esc(s) {
     return String(s == null ? "" : s)
       .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -41,7 +48,7 @@
 
   function cardHTML(t) {
     var tags = (t.tags || []).map(function (x) { return "<span>" + esc(x) + "</span>"; }).join("");
-    return '<a class="case-card" href="' + esc(t.file) + '">' +
+    return '<a class="case-card" href="' + esc(page(t.file)) + '">' +
       mediaMarkup(t.media) +
       '<div class="case-card__body">' +
       '<h2 class="case-card__title">' + esc(t.title) + '</h2>' +
@@ -64,7 +71,7 @@
           "position": i + 1,
           "name": t.title,
           "description": t.desc,
-          "url": new URL(t.file, location.href).href
+          "url": "https://sahil.no/tool/" + String(t.file).replace(/\.html$/, "")
         };
       })
     });

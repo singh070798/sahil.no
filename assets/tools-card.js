@@ -19,6 +19,13 @@
   var list = back.querySelector(".tools-card__list");
   var loaded = false;
 
+  // Clean addresses: on the live site, links leave off ".html"
+  // (GitHub Pages serves /cases/eika from cases/eika.html). On your own
+  // computer, where preview servers like Live Server need the full file
+  // name, the ".html" stays. The manifest keeps full file names.
+  var LOCAL = location.protocol === "file:" || /^(localhost|127\.0\.0\.1|\[::1\]|0\.0\.0\.0)$/.test(location.hostname);
+  function page(file) { return LOCAL ? file : String(file).replace(/\.html$/, ""); }
+
   function esc(s) {
     return String(s == null ? "" : s)
       .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -31,7 +38,7 @@
       .then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
       .then(function (tools) {
         list.innerHTML = tools.map(function (t) {
-          return '<li><a href="tool/' + esc(t.file) + '">' +
+          return '<li><a href="tool/' + esc(page(t.file)) + '">' +
             '<span class="tools-card__name">' + esc(t.title) + '</span>' +
             '<span class="tools-card__desc">' + esc(t.desc) + '</span></a></li>';
         }).join("");

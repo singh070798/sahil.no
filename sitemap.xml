@@ -3,24 +3,24 @@
      you add a case or a tool (see README.md → "The tools folder"). -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://sahil.no/</loc></url>
-  <url><loc>https://sahil.no/cases/maarud-q.html</loc></url>
-  <url><loc>https://sahil.no/cases/eika.html</loc></url>
-  <url><loc>https://sahil.no/cases/oskarsylte.html</loc></url>
-  <url><loc>https://sahil.no/cases/aschehoug.html</loc></url>
-  <url><loc>https://sahil.no/cases/silenteight.html</loc></url>
-  <url><loc>https://sahil.no/cases/ceedr.html</loc></url>
-  <url><loc>https://sahil.no/cases/onna.html</loc></url>
-  <url><loc>https://sahil.no/cases/folka.html</loc></url>
-  <url><loc>https://sahil.no/cases/komite.html</loc></url>
-  <url><loc>https://sahil.no/cases/tvp.html</loc></url>
-  <url><loc>https://sahil.no/cases/cst.html</loc></url>
-  <url><loc>https://sahil.no/cases/spond.html</loc></url>
+  <url><loc>https://sahil.no/cases/maarud-q</loc></url>
+  <url><loc>https://sahil.no/cases/eika</loc></url>
+  <url><loc>https://sahil.no/cases/oskarsylte</loc></url>
+  <url><loc>https://sahil.no/cases/aschehoug</loc></url>
+  <url><loc>https://sahil.no/cases/silenteight</loc></url>
+  <url><loc>https://sahil.no/cases/ceedr</loc></url>
+  <url><loc>https://sahil.no/cases/onna</loc></url>
+  <url><loc>https://sahil.no/cases/folka</loc></url>
+  <url><loc>https://sahil.no/cases/komite</loc></url>
+  <url><loc>https://sahil.no/cases/tvp</loc></url>
+  <url><loc>https://sahil.no/cases/cst</loc></url>
+  <url><loc>https://sahil.no/cases/spond</loc></url>
   <url><loc>https://sahil.no/tool/</loc></url>
-  <url><loc>https://sahil.no/tool/banner-compressor.html</loc></url>
-  <url><loc>https://sahil.no/tool/banner-tester.html</loc></url>
-  <url><loc>https://sahil.no/tool/case-editor.html</loc></url>
-  <url><loc>https://sahil.no/tool/cv-editor.html</loc></url>
-  <url><loc>https://sahil.no/tool/banner-animator.html</loc></url>
-  <url><loc>https://sahil.no/tool/frame-grabber.html</loc></url>
-  <url><loc>https://sahil.no/tool/file-converter.html</loc></url>
+  <url><loc>https://sahil.no/tool/banner-compressor</loc></url>
+  <url><loc>https://sahil.no/tool/banner-tester</loc></url>
+  <url><loc>https://sahil.no/tool/case-editor</loc></url>
+  <url><loc>https://sahil.no/tool/cv-editor</loc></url>
+  <url><loc>https://sahil.no/tool/banner-animator</loc></url>
+  <url><loc>https://sahil.no/tool/frame-grabber</loc></url>
+  <url><loc>https://sahil.no/tool/file-converter</loc></url>
 </urlset>

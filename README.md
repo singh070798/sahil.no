@@ -38,8 +38,8 @@ portfolio-site/
 │   └── showreel-poster.webp            ← still shown before it plays
 ├── files/
 │   └── Sahil_Singh_CV_2026.pdf   ← downloaded by the "Full Resume" button
-├── tool/                     ← small browser tools, at /tool/ (Section 12)
-├── sitemap.xml               ← every page, for search engines (Section 12)
+├── tool/                     ← small browser tools, at /tool/ (Section 13)
+├── sitemap.xml               ← every page, for search engines (Section 13)
 ├── robots.txt                ← points search engines to the sitemap
 └── cases/
     ├── manifest.json         ← the ordered list of cases — the one file you edit to add, remove or reorder one (Section 8)
@@ -347,7 +347,7 @@ the `width`/`height` on the `<img>` tag.
 ### The hidden tools card
 
 The profile card has a back that lists the tools in `tool/` (Section
-12). Two ways to turn it over:
+13). Two ways to turn it over:
 
 - **The hidden button.** Just above the card's top-right corner, outside
   the site's alignment, sits a small "reverse" icon. It's invisible until
@@ -1111,7 +1111,30 @@ at the same sizes if you have a mark you'd rather use.
 
 ---
 
-## 12. The tools folder
+## 12. Clean addresses
+
+Pages on the live site have no `.html` at the end: `sahil.no/cases/eika`,
+not `sahil.no/cases/eika.html`. The files keep their full names.
+GitHub Pages serves `eika.html` at `/cases/eika` by itself, so the
+links just leave the ending off:
+
+- The homepage grid, the case pages' Prev/Next links, the `/tool/`
+  list and the hidden tools card are all built from the manifests by
+  `assets/cases.js`, `tool/tools.js` and `assets/tools-card.js`, which
+  drop the `.html`. **The manifests keep full file names**
+  (`"file": "eika.html"`); don't remove the ending there.
+- On your own computer (Live Server, `npx serve`, `localhost`), those
+  same scripts keep the `.html`, because most preview servers need the
+  full file name to find the page.
+- Links you write by hand should leave it off too: `../` for the
+  homepage rather than `../index.html`, `eika` rather than `eika.html`.
+- The old addresses with `.html` keep working, so links already shared
+  don't break. `sitemap.xml` and the tool pages' canonical tags give the
+  clean ones, so search engines list those.
+
+---
+
+## 13. The tools folder
 
 `tool/` holds a few browser tools that live on the site but aren't
 linked from the homepage. Each one is a page you open by its address:
