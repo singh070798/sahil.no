@@ -1,4 +1,13 @@
+# Search engines may read the whole site, apart from the paths below.
+# This asks them not to list those pages; it doesn't make them private.
+# See README.md → "Titles and descriptions (seo.json)".
 User-agent: *
 Allow: /
+
+# the blank case template
+Disallow: /cases/template
+
+# recommendation letters (anything in files/ starting with "Anbefaling")
+Disallow: /files/Anbefaling
 
 Sitemap: https://sahil.no/sitemap.xml

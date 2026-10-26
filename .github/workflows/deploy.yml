@@ -1,0 +1,50 @@
+# Publishes the site to GitHub Pages on every push.
+#
+# Before publishing, scripts/apply_seo.py writes the titles,
+# descriptions and preview images from seo.json into a copy of the
+# site and builds sitemap.xml. Your files in the repo aren't changed.
+#
+# One-time setup: Settings → Pages → Build and deployment → Source:
+# "GitHub Actions". See README.md → "Titles and descriptions (seo.json)".
+
+name: Publish site
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch: # adds a "Run workflow" button under Actions
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# one publish at a time; a newer push replaces one still waiting
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Get the site
+        uses: actions/checkout@v4
+
+      - name: Apply seo.json and build the sitemap
+        run: python3 scripts/apply_seo.py . _site
+
+      - name: Set up Pages
+        uses: actions/configure-pages@v5
+
+      - name: Package the site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Publish
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,162 @@
+{
+  "site": "https://sahil.no",
+  "defaultImage": "images/og-image-ss02.jpg",
+  "exclude": [
+    "cases/template.html"
+  ],
+  "pages": {
+    "/": {
+      "title": "Sahil Singh — Motion designer & motion graphics, Oslo",
+      "description": "Motion designer in Oslo, Norway, making motion graphics, 3D animation and campaign films for brands and agencies. Showreel, experience and selected work.",
+      "schema": [
+        {
+          "@type": "Person",
+          "@id": "https://sahil.no/#person",
+          "name": "Sahil Singh",
+          "jobTitle": "Motion Designer",
+          "description": "Motion designer and 3D artist in Oslo, Norway, working in motion graphics, 3D animation, explainer films and campaign content.",
+          "url": "https://sahil.no/",
+          "image": "https://sahil.no/images/sahil-profile.jpg",
+          "email": "mailto:hello@sahil.no",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Oslo",
+            "addressCountry": "NO"
+          },
+          "worksFor": {
+            "@type": "Organization",
+            "name": "Scandinavian Design Group"
+          },
+          "knowsAbout": [
+            "Motion design",
+            "Motion graphics",
+            "3D animation",
+            "2D animation",
+            "Explainer videos",
+            "Brand films",
+            "Product visualization",
+            "Video editing",
+            "Blender",
+            "Adobe After Effects",
+            "Adobe Premiere Pro"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://sahil.no/#website",
+          "name": "Sahil Singh — Motion designer",
+          "url": "https://sahil.no/",
+          "inLanguage": "en",
+          "publisher": {
+            "@id": "https://sahil.no/#person"
+          }
+        }
+      ]
+    },
+    "/cases/maarud-q": {
+      "title": "Maarud & Q summer campaign — 3D animation | Sahil Singh",
+      "description": "3D animation and product imagery for Maarud & Q's chips-and-dip summer campaign, made for social media.",
+      "image": "cases/Assets/maarudq/Maarud_NewsScene_preview.jpg"
+    },
+    "/cases/eika": {
+      "title": "Eika credit card campaign — 3D motion graphics | Sahil Singh",
+      "description": "3D motion graphics for Eika, an alliance of local Norwegian banks: the bank's 2D brand style rebuilt in 3D for credit card campaigns on social and email.",
+      "image": "cases/Assets/eika/Eika_1200x650_SS02_preview.jpg"
+    },
+    "/cases/oskarsylte": {
+      "title": "Oskar Sylte brand content — 3D animation | Sahil Singh",
+      "description": "Monthly brand content in 3D animation for Norwegian soft drink brand Oskar Sylte, built with 3D product assets and an AI-assisted workflow.",
+      "image": "cases/Assets/oskar/OS_Can-Galore_16x9_preview.jpg"
+    },
+    "/cases/aschehoug": {
+      "title": "Aschehoug RUTE — animated learning films | Sahil Singh",
+      "description": "Ten animated learning films for RUTE, a modular learning plan from Norwegian publisher Aschehoug.",
+      "image": "cases/Assets/Aschehoug/Aschehoug_preview.png"
+    },
+    "/cases/munch": {
+      "title": "MUNCH museum brochure — 3D product renders | Sahil Singh",
+      "description": "3D product renders of a MUNCH museum brochure in Oslo, rebuilt from the print-ready PDF so every spread and its gloss finish show in motion.",
+      "image": "cases/Assets/munch/Brosjyre_SS05_preview.jpg"
+    },
+    "/cases/silenteight": {
+      "title": "Silent Eight — motion graphics brand elements | Sahil Singh",
+      "description": "Motion graphics brand elements for Silent Eight: iridescent 3D liquid loops for an AI company fighting financial crime.",
+      "image": "cases/Assets/silenteight/SilentEight_Eight_close_preview.jpg"
+    },
+    "/cases/ceedr": {
+      "title": "Ceedr rebrand — brand film & motion design | Sahil Singh",
+      "description": "A brand film and motion design elements for Ceedr, the growth agency formerly known as The Engine.",
+      "image": "cases/Assets/ceedr/C_preview.jpg"
+    },
+    "/cases/onna": {
+      "title": "Onna investor film — motion design | Sahil Singh",
+      "description": "Motion design for an investor film for Onna, a vertical farming company. The film helped it raise well above its target.",
+      "image": "cases/Assets/onna/Onna_Main_preview.jpg"
+    },
+    "/cases/folka": {
+      "title": "Folka — motion graphics explainer film | Sahil Singh",
+      "description": "A motion graphics explainer about change management for Folka, told almost entirely with coloured circles.",
+      "image": "cases/Assets/folka/Folka_endringsledelse_preview.jpg"
+    },
+    "/cases/komite": {
+      "title": "Komité agency showreel | Sahil Singh",
+      "description": "An agency showreel for Komité that slows down to let the motion design and 3D work breathe.",
+      "image": "cases/Assets/komite/Komite_Showreel_handbrake_preview.jpg"
+    },
+    "/cases/tvp": {
+      "title": "The Viking Planet — 2.5D motion posters, Oslo | Sahil Singh",
+      "description": "Subtle 2.5D motion graphics for The Viking Planet's summer campaign, shown on digital out-of-home screens across Oslo.",
+      "image": "cases/Assets/tvp/tvp-loop_preview.jpg"
+    },
+    "/cases/cst": {
+      "title": "Canadian Seafood Treasures — 2D animation | Sahil Singh",
+      "description": "Rigged 2D brand animations for Canadian Seafood Treasures, emulating the style of a hand-drawn brand film.",
+      "image": "cases/Assets/cst/CST_Illustrations_preview.jpg"
+    },
+    "/cases/spond": {
+      "title": "Spond app explainer films — animation | Sahil Singh",
+      "description": "Animated explainer films for Norwegian team app Spond, which grew into years of videos for new markets.",
+      "image": "cases/Assets/spond/Spond_Loop_5_1_preview.jpg"
+    },
+    "/tool/": {
+      "title": "Free browser tools for banners & video | Sahil Singh",
+      "description": "Free browser tools: an HTML5 banner animator, compressor and tester, a video frame grabber and a file converter. Nothing is uploaded.",
+      "noindex": true
+    },
+    "/tool/banner-animator": {
+      "title": "Banner animator — free HTML5 ad tool | Sahil Singh",
+      "description": "Lay out one HTML5 banner across every ad size, animate it on a timeline, and export Google Ads zips and MP4 video. Free, in your browser.",
+      "noindex": true
+    },
+    "/tool/banner-compressor": {
+      "title": "HTML5 banner compressor — free | Sahil Singh",
+      "description": "Free HTML5 banner compressor. Shrinks display ad zips to fit a size limit like 150 KB by re-encoding images and fixing file references, in your browser.",
+      "noindex": true
+    },
+    "/tool/banner-tester": {
+      "title": "HTML5 banner tester — free | Sahil Singh",
+      "description": "Free HTML5 banner tester. Preview display ad banners side by side at real size, catch missing files and fonts, and export a shareable preview page.",
+      "noindex": true
+    },
+    "/tool/frame-grabber": {
+      "title": "Video frame grabber — save a frame | Sahil Singh",
+      "description": "Free video frame grabber. Step through an MP4, WebM or MOV frame by frame and save any frame as a full-resolution PNG or JPG, right in your browser.",
+      "noindex": true
+    },
+    "/tool/file-converter": {
+      "title": "Free offline file converter | Sahil Singh",
+      "description": "Convert images, video, audio, PDFs, documents and spreadsheets between formats, free and in your browser. Your files never leave your computer.",
+      "noindex": true
+    },
+    "/tool/case-editor": {
+      "title": "Case page builder | Sahil Singh",
+      "description": "Builds case study pages for Sahil Singh's portfolio from a form, with a live desktop and mobile preview, plus the homepage card entry.",
+      "noindex": true
+    },
+    "/tool/cv-editor": {
+      "title": "CV editor with A4 preview | Sahil Singh",
+      "description": "A CV editor with a live A4 preview. Edit section by section in your browser and download the CV as a one-page PDF.",
+      "noindex": true
+    }
+  }
+}

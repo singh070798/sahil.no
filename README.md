@@ -39,8 +39,10 @@ portfolio-site/
 ├── files/
 │   └── Sahil_Singh_CV_2026.pdf   ← downloaded by the "Full Resume" button
 ├── tool/                     ← small browser tools, at /tool/ (Section 13)
-├── sitemap.xml               ← every page, for search engines (Section 13)
+├── seo.json                  ← every page's title, description and preview image (Section 14)
 ├── robots.txt                ← points search engines to the sitemap
+├── scripts/apply_seo.py      ← applies seo.json and writes the sitemap when the site is published
+├── .github/workflows/deploy.yml ← publishes the site on every push (Section 14)
 └── cases/
     ├── manifest.json         ← the ordered list of cases — the one file you edit to add, remove or reorder one (Section 8)
     ├── template.html        ← blank starting point for a NEW case
@@ -962,6 +964,23 @@ manifest entry. The homepage card and this case's Prev/Next links (and
 its neighbors' Prev/Next links, since they now point at it too) all
 update themselves — nothing else to touch.
 
+### Step 4 — Title and description for search
+
+Add the case to `seo.json` (Section 14), so it gets a search-friendly
+title, a description and its own preview image for shared links:
+
+```json
+"/cases/chrome-orbit": {
+  "title": "Chrome Orbit product film in 3D | Sahil Singh",
+  "description": "One or two sentences, up to about 155 characters.",
+  "image": "cases/Assets/chrome-orbit/hero_preview.jpg"
+},
+```
+
+If you forget, nothing breaks: the page keeps the title and summary
+written into it (the case page builder writes good ones), it's still
+in the sitemap, and the publish log reminds you.
+
 ### How this works
 
 `assets/cases.js` reads `cases/manifest.json` and uses it to build the
@@ -1097,12 +1116,11 @@ email, those apps show a preview card using the `og:` tags in the
 <meta property="og:image" content="images/og-image-ss02.jpg">
 ```
 
-**One thing to do once the site is online:** most preview services
-ignore relative paths, so change `og:image` in every HTML file to the
-full address, e.g. `https://your-domain.com/images/og-image-ss02.jpg`
-(the case pages currently say `../images/og-image-ss02.jpg`, which should
-become the same full address). `og-image-ss02.jpg` is 1200 × 630, the size
-these services expect; swap in a still from your reel if you prefer.
+You don't need to edit these by hand. When the site is published, the
+title, description and image come from `seo.json` (Section 14), and the
+image is written as a full address, which preview services need. Each
+case can have its own image there; anything without one uses
+`images/og-image-ss02.jpg` (1200 × 630, the size these services expect).
 
 The browser-tab icon is `images/favicon-32.png` and the phone
 home-screen icon is `images/apple-touch-icon.png` (180 × 180). They're
@@ -1129,8 +1147,8 @@ links just leave the ending off:
 - Links you write by hand should leave it off too: `../` for the
   homepage rather than `../index.html`, `eika` rather than `eika.html`.
 - The old addresses with `.html` keep working, so links already shared
-  don't break. `sitemap.xml` and the tool pages' canonical tags give the
-  clean ones, so search engines list those.
+  don't break. The sitemap and every page's canonical tag give the
+  clean ones, so search engines list those (Section 14).
 
 ---
 
@@ -1181,11 +1199,10 @@ the card in the same format as the case manifest (Section 9).
 ### Adding a tool
 
 1. Copy the `<head>` and `<header>` from one of the existing tool
-   pages into your new page, and change the title, description,
-   canonical address and the details row.
+   pages into your new page, and change the name and the details row.
 2. Put the tool inside `<main class="tool">`.
 3. Add an entry for it to `tool/manifest.json`.
-4. Add its address to `sitemap.xml`.
+4. Add its title and description to `seo.json` (Section 14).
 
 ### Width
 
@@ -1196,18 +1213,15 @@ at their real pixel sizes side by side, so they need the room. That's
 the class `tool--full` on their `<main>`. The rule of thumb for a new
 tool: if the content's size is set by something outside the page
 (like ad dimensions), make it full width; if it's a form or a list,
-keep it in the column.
-
-The case page builder sits in the column but has a **Full width**
-button for a bigger preview, remembered in that browser.
+keep it in the column. The case page builder is full width too, so
+its preview can be shown bigger.
 
 ### The case page builder's preview
 
 The preview shows the page at a real screen width: **Desktop** (1280px)
 or **Mobile** (390px), scaled down to fit, with the scale shown next to
-the buttons. **Full width** lets the workspace use the whole window, so
-the desktop preview can be shown bigger (at 100% on a wide enough
-screen). The builder remembers both choices in that browser.
+the buttons (100% on a wide enough screen). The builder remembers the
+choice in that browser.
 
 ### Search engines
 
@@ -1218,13 +1232,176 @@ as a collection and, once the manifest loads, adds the list of tools
 as structured data too.
 
 Nothing on the homepage links to the tools, so search engines find
-them through `sitemap.xml`, which lists every page on the site.
-Add a line to it when you add a case or a tool. Once the site is live,
-submit `https://sahil.no/sitemap.xml` in Google Search Console to have
-it read straight away.
+them through the sitemap, which is written automatically and lists
+every page on the site (Section 14). Once the site is live, submit
+`https://sahil.no/sitemap.xml` in Google Search Console to have it read
+straight away.
 
 ### Saved work
 
 Everything runs in the visitor's browser and nothing is uploaded. The
 case builder and the CV editor keep drafts in the browser they were
 used in, so use their export buttons to move work between computers.
+
+---
+
+## 14. Titles and descriptions (seo.json)
+
+Every page's search title, description and link-preview image live in
+one file, `seo.json`, so you never edit them inside the HTML. Change a
+line, push, and the live site updates in a minute or two.
+
+```json
+{
+  "site": "https://sahil.no",
+  "defaultImage": "images/og-image-ss02.jpg",
+  "exclude": ["cases/template.html"],
+  "pages": {
+    "/": {
+      "title": "Sahil Singh — Motion designer & 3D artist in Oslo",
+      "description": "Motion designer and 3D artist in Oslo making ..."
+    },
+    "/cases/eika": {
+      "title": "Eika credit card campaign in 3D | Sahil Singh",
+      "description": "Rebuilding Eika's 2D brand style in 3D ...",
+      "image": "cases/Assets/eika/Eika_1200x650_SS02_preview.jpg"
+    }
+  }
+}
+```
+
+- **Keys are the page's address** without `.html`: `"/"` for the
+  homepage, `"/cases/eika"`, `"/tool/"`, `"/tool/frame-grabber"`.
+- **`title`**: what search results and browser tabs show. Aim for 50–60
+  characters; Google cuts off longer ones. The pattern used here is
+  *what it is* + `| Sahil Singh`.
+- **`description`**: the line under the title in search results, and the
+  text of shared links. Aim for 140–160 characters.
+- **`image`** (optional): the picture shown when the page is shared on
+  LinkedIn, Slack, iMessage and so on, as a path from the site's root.
+  Landscape works best, ideally about 1200 × 630. Pages without one use
+  `defaultImage`.
+- **`exclude`**: pages left out entirely (the case template).
+- **`schema`** (optional, any page): structured data, a description of
+  the page that search engines read but visitors don't see. The
+  homepage uses it to say who you are: a Person (name, job title,
+  Oslo, Norway, employer, and `knowsAbout`, the skills you want to be
+  found for) and the WebSite. Write each item in schema.org's format;
+  the script adds the rest.
+
+### Being found for motion design in Oslo
+
+Search engines mostly rank what's visible on a page and how many other
+sites link to it, so `seo.json` is one part of it:
+
+- **The homepage heading** is the logo plus hidden text, "Sahil Singh —
+  Motion designer in Oslo, Norway" (in `index.html`, inside `<h1>`).
+  Screen readers and search engines read it; nobody sees it. Keep it
+  true to what the logo says and who you are.
+- **The visible text** carries the most weight. Saying "motion
+  graphics", "3D animation" and "Oslo, Norway" naturally in the bio and
+  case write-ups helps more than anything in `seo.json`.
+- **Your profiles elsewhere.** Add your LinkedIn, Vimeo, Behance or
+  Instagram addresses to the Person's `"sameAs"` list in `seo.json`:
+
+  ```json
+  "sameAs": ["https://www.linkedin.com/in/…", "https://vimeo.com/…"]
+  ```
+
+  and link back to sahil.no from each of them. Links from other sites
+  (clients' credits, Grafill's member directory) count most of all.
+- **There is no keywords tag.** A list of keywords in the page or in a
+  file is ignored by Google; `knowsAbout` above is the right place for
+  your skills.
+- **Check the results** in Google Search Console, which shows the
+  searches the site appears for, once it's been live a few weeks.
+
+### What happens when you push
+
+`.github/workflows/deploy.yml` runs on every push. It copies the site,
+runs `scripts/apply_seo.py` on the copy, and publishes the copy. The
+script:
+
+- writes each page's title and description into every place they
+  belong: `<title>`, the search description, the link-preview tags, and
+  the tools' structured data, so they can't drift apart;
+- gives every page its canonical (clean) address and a full-address
+  preview image;
+- writes `sitemap.xml` from whatever pages exist, so new cases and
+  tools are listed without you doing anything. A case page that isn't
+  in `cases/manifest.json` (one you've taken off the homepage) still
+  works at its address but is left out of the sitemap;
+- leaves out system files like `desktop.ini`, `Thumbs.db` and
+  `.DS_Store`, so they're never published.
+
+`cases/manifest.json` has to stay in the `cases/` folder: the homepage
+grid, the Prev/Next links and the sitemap all look for it there.
+
+### Keeping a page out of search
+
+Add `"noindex": true` to the page's entry in `seo.json`:
+
+```json
+"/tool/cv-editor": {
+  "title": "...",
+  "description": "...",
+  "noindex": true
+}
+```
+
+The page gets a "noindex" tag, so search engines drop it from their
+results, and it's left out of the sitemap. It still works for anyone
+with the link. All the tool pages are set this way; remove the line
+from any tool you want people to find through Google.
+
+### robots.txt
+
+`robots.txt` (in the site's root, edited by hand) tells search engines
+what not to list, and where the sitemap is. It currently keeps out the
+blank case template and the recommendation letters in `files/` (any
+file whose name starts with `Anbefaling`). This only asks search
+engines not to list them: anyone with the address can still open the
+files. To keep something out of search, add a line like:
+
+```
+Disallow: /files/some-file.pdf
+```
+
+**Your files in the repo aren't changed.** The titles inside the HTML
+files are just what a page falls back to if it has no entry in
+`seo.json`. The case page builder writes good fallbacks, so a new case
+is fine even before you add it here.
+
+### If something's off
+
+Open the **Actions** tab on GitHub and click the latest "Publish site"
+run.
+
+- **Yellow warnings** list pages without an entry, titles or
+  descriptions that are too long, image paths that don't exist, and
+  entries for pages that are gone. The site still publishes.
+- **A red run** almost always means `seo.json` isn't valid JSON, usually
+  a missing or extra comma. The log gives the line number. Nothing is
+  published until it's fixed, so the live site stays as it was. Pasting
+  the file into jsonlint.com shows the same thing.
+
+### One-time setup
+
+In the repo on GitHub: **Settings → Pages → Build and deployment →
+Source: GitHub Actions.** That's all; your custom domain stays as it
+is. After that, every push publishes through the workflow. The
+**Run workflow** button under Actions → Publish site republishes
+without a push.
+
+### Checking it on your computer
+
+To see the result before pushing, run this in the site folder:
+
+```
+python3 scripts/apply_seo.py . _site
+```
+
+It writes the processed site to `_site/` (don't commit that folder)
+and prints the same warnings. Open `_site` with your usual preview
+server to look at it.
+

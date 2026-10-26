@@ -128,20 +128,20 @@
 .bv #stage{flex:1;overflow:auto;padding:30px;display:flex;flex-wrap:wrap;gap:44px 52px;align-content:flex-start;align-items:flex-start}
 .bv .fcard{display:flex;flex-direction:column;gap:6px}
 .bv .fcard header{position:relative;z-index:3}
-.bv .adwrap{position:relative;padding:28px;margin:-28px;overflow:hidden}
-.bv .ad.ghost{overflow:visible}
+.bv .artwrap{position:relative;padding:28px;margin:-28px;overflow:hidden}
+.bv .art.ghost{overflow:visible}
 .bv .ghostmask{position:absolute;inset:0;pointer-events:none;box-shadow:0 0 0 600px color-mix(in srgb,var(--stage) 72%,transparent);z-index:1}
 .bv .ov{z-index:2}
 .bv .fcard header{display:flex;align-items:baseline;gap:8px;font:12px var(--font-mono);color:var(--muted)}
 .bv .fcard header b{color:var(--fg);font-weight:500}
 .bv .fcard.active header b{color:var(--accent)}
-.bv .adbox{position:relative;box-shadow:0 0 0 1px var(--line-2),0 4px 16px rgba(0,0,0,.08)}
-.bv .fcard.active .adbox{box-shadow:0 0 0 2px var(--accent),0 4px 16px rgba(0,0,0,.1)}
-.bv .ad{position:absolute;left:0;top:0;transform-origin:0 0;overflow:hidden;background:#fff;user-select:none;-webkit-user-select:none}
-.bv .ad .L{position:absolute}
-.bv .ad .L img{display:block;width:100%;height:100%;pointer-events:none}
-.bv .ad .L svg{display:block;overflow:visible;pointer-events:none}
-.bv .ad .L.missing{outline:1px dashed #e0457b;outline-offset:2px}
+.bv .artbox{position:relative;box-shadow:0 0 0 1px var(--line-2),0 4px 16px rgba(0,0,0,.08)}
+.bv .fcard.active .artbox{box-shadow:0 0 0 2px var(--accent),0 4px 16px rgba(0,0,0,.1)}
+.bv .art{position:absolute;left:0;top:0;transform-origin:0 0;overflow:hidden;background:#fff;user-select:none;-webkit-user-select:none}
+.bv .art .L{position:absolute}
+.bv .art .L img{display:block;width:100%;height:100%;pointer-events:none}
+.bv .art .L svg{display:block;overflow:visible;pointer-events:none}
+.bv .art .L.missing{outline:1px dashed #e0457b;outline-offset:2px}
 .bv .ov{position:absolute;inset:0;pointer-events:none}
 .bv .ov .selbox{position:absolute;border:1.5px solid var(--sel);transform-origin:center}
 .bv .ov .h{position:absolute;width:9px;height:9px;background:#fff;border:1.5px solid var(--sel);border-radius:2px;pointer-events:auto;margin:-5px 0 0 -5px}
@@ -259,8 +259,8 @@
 /* the formats sit on the deep teal: light labels there */
 .bv #stage { --fg: #ede8e0; --muted: #c2beb9; --line-2: rgba(255, 255, 255, 0.3); color: var(--fg); }
 .bv .fcard.active header b { color: #f4d58d; }
-.bv .fcard.active .adbox { box-shadow: 0 0 0 2px #f4d58d, 0 4px 16px rgba(0, 0, 0, 0.25); }
-.bv .ad { color: #14110f; }
+.bv .fcard.active .artbox { box-shadow: 0 0 0 2px #f4d58d, 0 4px 16px rgba(0, 0, 0, 0.25); }
+.bv .art { color: #14110f; }
 
 /* buttons: the shared ones, in the small size; the original's
    "primary", "ghost", "sm" and pressed states map onto them */
@@ -754,11 +754,11 @@ function renderStage(){
   if(!S.fmt||!fmtById(S.fmt)||!fmtById(S.fmt).on)S.fmt=(fmts()[0]||{}).id;
   for(const fm of fmts()){
     const card=document.createElement('div');card.className='fcard'+(fm.id===S.fmt?' active':'');card.dataset.fid=fm.id;
-    card.innerHTML=`<header><b>${fm.w} × ${fm.h}</b><span>${esc(fm.name||'')}</span></header><div class="adwrap"><div class="adbox" style="width:${fm.w*S.zoom}px;height:${fm.h*S.zoom}px"><div class="ad${S.ghost?' ghost':''}" style="width:${fm.w}px;height:${fm.h}px;transform:scale(${S.zoom});background:${esc(P.bg)}"></div>${S.ghost?'<div class="ghostmask"></div>':''}<div class="ov"></div></div></div>`;
+    card.innerHTML=`<header><b>${fm.w} × ${fm.h}</b><span>${esc(fm.name||'')}</span></header><div class="artwrap"><div class="artbox" style="width:${fm.w*S.zoom}px;height:${fm.h*S.zoom}px"><div class="art${S.ghost?' ghost':''}" style="width:${fm.w}px;height:${fm.h}px;transform:scale(${S.zoom});background:${esc(P.bg)}"></div>${S.ghost?'<div class="ghostmask"></div>':''}<div class="ov"></div></div></div>`;
     st.appendChild(card);
-    const ad=$('.ad',card);
+    const ad=$('.art',card);
     renderFormat(fm.id);
-    $('.adwrap',card).addEventListener('pointerdown',e=>onAdDown(e,fm.id));
+    $('.artwrap',card).addEventListener('pointerdown',e=>onAdDown(e,fm.id));
   }
   if(!fmts().length)st.innerHTML='<p class="note">No formats are switched on. Open Formats to add or show one.</p>';
   seek(S.t);drawOverlays();
@@ -769,7 +769,7 @@ function buildEl(L,fid,parent,mode){
   const el=document.createElement('div');el.className='L'+(m.missing?' missing':'');el.style.cssText=m.style;el.innerHTML=m.inner;el.dataset.lid=L.id;
   parent.appendChild(el);els[L.id+'|'+fid]=el;animate(el,keyframes(L,fid,mode))}
 function renderFormat(fid){
-  const ad=$(`.fcard[data-fid="${CSS.escape(fid)}"] .ad`);if(!ad)return;
+  const ad=$(`.fcard[data-fid="${CSS.escape(fid)}"] .art`);if(!ad)return;
   for(const k in els){if(k.endsWith('|'+fid)){els[k]._a&&els[k]._a.cancel();delete els[k]}}
   ad.innerHTML='';
   for(const n of renderTree(fid)){
@@ -805,7 +805,7 @@ function drawOverlays(guides){
       if(g.v!=null)d.style.cssText=`left:${g.v*z}px;top:0;width:1px;height:${fm.h*z}px`;else d.style.cssText=`top:${g.h*z}px;left:0;height:1px;width:${fm.w*z}px`;ov.appendChild(d)}
   }
 }
-function localPt(e,fid){const ad=$(`.fcard[data-fid="${CSS.escape(fid)}"] .ad`);const r=ad.getBoundingClientRect();return{x:(e.clientX-r.left)/S.zoom,y:(e.clientY-r.top)/S.zoom}}
+function localPt(e,fid){const ad=$(`.fcard[data-fid="${CSS.escape(fid)}"] .art`);const r=ad.getBoundingClientRect();return{x:(e.clientX-r.left)/S.zoom,y:(e.clientY-r.top)/S.zoom}}
 function hitTest(fid,p){for(let i=P.layers.length-1;i>=0;i--){const L=P.layers[i];if(!visibleNow(L,fid))continue;const b=box(L,fid),f=L.frames[fid];
   const cx=b.x+b.w/2,cy=b.y+b.h/2,a=-(f.rot||0)*Math.PI/180;const dx=p.x-cx,dy=p.y-cy;const lx=dx*Math.cos(a)-dy*Math.sin(a),ly=dx*Math.sin(a)+dy*Math.cos(a);
   if(Math.abs(lx)<=b.w/2&&Math.abs(ly)<=b.h/2)return L}return null}
@@ -839,7 +839,7 @@ function onAdDown(e,fid){if(e.button!==0)return;stop();setActiveFmt(fid);const p
   e.currentTarget.setPointerCapture(e.pointerId);e.currentTarget.onpointermove=onDragMove;e.currentTarget.onpointerup=e.currentTarget.onpointercancel=onDragEnd;e.preventDefault()}
 function onHandleDown(e,fid,c){e.stopPropagation();e.preventDefault();stop();const L=layerById(S.sel);
   drag={mode:'resize',corner:c,fid,lid:L.id,p0:localPt(e,fid),orig:{[L.id]:clone(L.frames)},b0:box(L,fid),moved:false,snapshot:JSON.stringify(P)};
-  const ad=$(`.fcard[data-fid="${CSS.escape(fid)}"] .ad`);ad.setPointerCapture(e.pointerId);ad.onpointermove=onDragMove;ad.onpointerup=ad.onpointercancel=onDragEnd}
+  const ad=$(`.fcard[data-fid="${CSS.escape(fid)}"] .art`);ad.setPointerCapture(e.pointerId);ad.onpointermove=onDragMove;ad.onpointerup=ad.onpointercancel=onDragEnd}
 function onDragMove(e){if(!drag)return;const p=localPt(e,drag.fid);let dx=p.x-drag.p0.x,dy=p.y-drag.p0.y;
   if(!drag.moved&&Math.hypot(dx,dy)*S.zoom<2)return;drag.moved=true;
   if(drag.mode==='marquee'){const r={x:Math.min(p.x,drag.p0.x),y:Math.min(p.y,drag.p0.y),w:Math.abs(dx),h:Math.abs(dy)};drag.rect=r;
@@ -1293,15 +1293,15 @@ async function buildAd(fm,forPreview){
   for(const [aid,w] of Object.entries(need)){const a=P.assets[aid];const r=await rasterFile(a,w,retina);let base=slug(a.name).slice(0,40),n=base+'.'+r.ext,i=2;while(used.has(n))n=`${base}-${i++}.${r.ext}`;used.add(n);names[aid]=n;files[n]=r.blob}
   if(P.backup&&P.backup.inZip){const r=await renderStill(fm);files['backup.'+r.ext]=r.blob}
   const urlFor=forPreview?(a=>{const id=Object.keys(P.assets).find(k=>P.assets[k]===a);return forPreview[names[id]]}):(a=>{const id=Object.keys(P.assets).find(k=>P.assets[k]===a);return names[id]});
-  let css=`html,body{margin:0;padding:0}#ad{position:relative;width:${fm.w}px;height:${fm.h}px;overflow:hidden;background:${P.bg};cursor:pointer}.l{position:absolute}.l img,.l svg{display:block;width:100%;height:100%}.l svg{overflow:visible}#click{position:absolute;inset:0;z-index:2;display:block}`;
-  if(P.border)css+=`#ad:after{content:"";position:absolute;inset:0;border:1px solid #c8c8c8;pointer-events:none;z-index:3}`;
+  let css=`html,body{margin:0;padding:0}#art{position:relative;width:${fm.w}px;height:${fm.h}px;overflow:hidden;background:${P.bg};cursor:pointer}.l{position:absolute}.l img,.l svg{display:block;width:100%;height:100%}.l svg{overflow:visible}#click{position:absolute;inset:0;z-index:2;display:block}`;
+  if(P.border)css+=`#art:after{content:"";position:absolute;inset:0;border:1px solid #c8c8c8;pointer-events:none;z-index:3}`;
   let body='',n=0;const one=(L,mode)=>{const m=layerMarkup(L,fm.id,urlFor,mode);const i=n++;css+=`#e${i}{${m.style}animation:k${i} ${tt}s linear 0s ${loops} both}`+cssKF('k'+i,keyframes(L,fm.id,mode));return `<div class="l" id="e${i}">${m.inner}</div>`};
   for(const node of renderTree(fm.id)){if(node.mode==='group'){const i=n++,j=n++;
       css+=`#e${i}{${groupMarkup(node.L,fm.id)}animation:k${i} ${tt}s linear 0s ${loops} both}`+cssKF('k'+i,keyframes(node.L,fm.id,'group'));
       css+=`#e${j}{${wipeMarkup(node.L,fm.id)}animation:k${j} ${tt}s linear 0s ${loops} both}`+cssKF('k'+j,keyframes(node.L,fm.id,'gclip'));
       body+=`<div class="l" id="e${i}"><div class="l" id="e${j}">`+node.children.map(c=>one(c.L,c.mode)).join('')+'</div></div>'}else body+=one(node.L,'normal')}
   const click=(P.clickUrl||'').replace(/["\\<>]/g,'');
-  const html=`<!DOCTYPE html>\n<html lang="no">\n<head>\n<meta charset="utf-8">\n<meta name="ad.size" content="width=${fm.w},height=${fm.h}">\n<title>${esc(P.name)} ${fm.w}x${fm.h}</title>\n<script type="text/javascript">var clickTag = "${click}";<\/script>\n<style>${css}</style>\n</head>\n<body>\n<div id="ad">${body}<a id="click" href="javascript:window.open(window.clickTag)" aria-label="${esc(P.name)}"></a></div>\n</body>\n</html>\n`;
+  const html=`<!DOCTYPE html>\n<html lang="no">\n<head>\n<meta charset="utf-8">\n<meta name="ad.size" content="width=${fm.w},height=${fm.h}">\n<title>${esc(P.name)} ${fm.w}x${fm.h}</title>\n<script type="text/javascript">var clickTag = "${click}";<\/script>\n<style>${css}</style>\n</head>\n<body>\n<div id="art">${body}<a id="click" href="javascript:window.open(window.clickTag)" aria-label="${esc(P.name)}"></a></div>\n</body>\n</html>\n`;
   return{html,files,names};
 }
 async function zipAd(fm){const ad=await buildAd(fm);const z=new JSZip();z.file('index.html',ad.html);for(const [n,b] of Object.entries(ad.files))z.file(n,b);

@@ -39,8 +39,13 @@
 <div class="stage" id="start">
 <header class="masthead">
   <div class="masthead__grid">
+  <!-- The page's main heading. The logo is the visible part; the text
+       next to it is hidden on screen but read by screen readers and
+       search engines, so the heading says who you are and what you do.
+       See README.md → "Titles and descriptions (seo.json)". -->
   <h1>
-    <span class="masthead__logo logo-motion" role="img" aria-label="Sahil">
+    <span class="visually-hidden">Sahil Singh — Motion designer in Oslo, Norway</span>
+    <span class="masthead__logo logo-motion" aria-hidden="true">
       <picture class="logo-motion__ext">
         <source media="(min-width: 684px)" srcset="images/sahil-logo-ext.webp" width="3473" height="2484">
         <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="">

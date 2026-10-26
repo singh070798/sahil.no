@@ -1,26 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Every page search engines should know about. Add a line here when
-     you add a case or a tool (see README.md → "The tools folder"). -->
+<!-- Written by scripts/apply_seo.py from the pages in the site. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://sahil.no/</loc></url>
-  <url><loc>https://sahil.no/cases/maarud-q</loc></url>
-  <url><loc>https://sahil.no/cases/eika</loc></url>
-  <url><loc>https://sahil.no/cases/oskarsylte</loc></url>
   <url><loc>https://sahil.no/cases/aschehoug</loc></url>
-  <url><loc>https://sahil.no/cases/silenteight</loc></url>
   <url><loc>https://sahil.no/cases/ceedr</loc></url>
-  <url><loc>https://sahil.no/cases/onna</loc></url>
+  <url><loc>https://sahil.no/cases/cst</loc></url>
+  <url><loc>https://sahil.no/cases/eika</loc></url>
   <url><loc>https://sahil.no/cases/folka</loc></url>
   <url><loc>https://sahil.no/cases/komite</loc></url>
-  <url><loc>https://sahil.no/cases/tvp</loc></url>
-  <url><loc>https://sahil.no/cases/cst</loc></url>
+  <url><loc>https://sahil.no/cases/maarud-q</loc></url>
+  <url><loc>https://sahil.no/cases/munch</loc></url>
+  <url><loc>https://sahil.no/cases/onna</loc></url>
+  <url><loc>https://sahil.no/cases/oskarsylte</loc></url>
+  <url><loc>https://sahil.no/cases/silenteight</loc></url>
   <url><loc>https://sahil.no/cases/spond</loc></url>
-  <url><loc>https://sahil.no/tool/</loc></url>
-  <url><loc>https://sahil.no/tool/banner-compressor</loc></url>
-  <url><loc>https://sahil.no/tool/banner-tester</loc></url>
-  <url><loc>https://sahil.no/tool/case-editor</loc></url>
-  <url><loc>https://sahil.no/tool/cv-editor</loc></url>
-  <url><loc>https://sahil.no/tool/banner-animator</loc></url>
-  <url><loc>https://sahil.no/tool/frame-grabber</loc></url>
-  <url><loc>https://sahil.no/tool/file-converter</loc></url>
 </urlset>
