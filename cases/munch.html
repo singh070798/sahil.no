@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Munch — Brochure — Sahil</title>
+<meta name="description" content="D product renders of a MUNCH brochure that was never photographed, built straight from the print-ready PDF.">
+<meta name="theme-color" content="#286a6d">
+<link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32-light.png" media="(prefers-color-scheme: light)">
+<link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32-dark.png" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+
+<!-- Link previews (LinkedIn, Slack, iMessage, etc.). Once the site has
+     a web address, change og:image to the full address of the image,
+     e.g. https://your-domain.com/images/og-image-ss02.jpg — most preview
+     services ignore relative paths. See README → "Link previews". -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="Munch — Brochure — Sahil">
+<meta property="og:description" content="D product renders of a MUNCH brochure that was never photographed, built straight from the print-ready PDF.">
+<meta property="og:image" content="../images/og-image-ss02.jpg">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<!-- The header band (lighter teal): logo, title and details. The
+     rest of the page sits on the deeper teal. -->
+<header class="stage">
+
+<div class="case-topbar">
+  <a href="../" class="case-topbar__logo-link">
+    <span class="masthead__logo logo-motion" role="img" aria-label="Sahil — back to index">
+      <picture class="logo-motion__ext">
+        <source media="(min-width: 684px)" srcset="../images/sahil-logo-ext.webp" width="3473" height="2484">
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="">
+      </picture>
+      <picture class="logo-motion__still">
+        <source media="(min-width: 684px)" srcset="../images/sahil-logo-still-ss02.webp" width="2000" height="1000">
+        <img src="../images/sahil-logo-mobile-still-ss04.webp" alt="" width="1200" height="470">
+      </picture>
+      <canvas class="logo-motion__anim" aria-hidden="true"
+        data-src-wide="../images/sahil-logo-motion-ss02.mp4"
+        data-src-narrow="../images/sahil-logo-motion-mobile-ss04.mp4"></canvas>
+    </span>
+  </a>
+  <a class="back-link" href="../">Index</a>
+</div>
+
+  <div class="case-header">
+    <h1 class="case-header__title">Munch — Brochure</h1>
+
+    <dl class="case-meta">
+      <div>
+        <dt>Role</dt>
+        <dd>3D, Motion</dd>
+      </div>
+      <div>
+        <dt>Year</dt>
+        <dd>2026</dd>
+      </div>
+      <div>
+        <dt>Tools</dt>
+        <dd>Blender, Photoshop, After Effects</dd>
+      </div>
+      <div>
+        <dt>Tags</dt>
+        <dd>3D, Product Visualisation</dd>
+      </div>
+    </dl>
+  </div>
+
+</header>
+
+<main>
+
+  <div class="case-visual">
+    <div class="case-visual__frame">
+      <video autoplay muted loop playsinline poster="Assets/munch/Brosjyre_SS05_preview.jpg">
+        <source src="Assets/munch/Brosjyre_SS05.webm" type="video/webm">
+      </video>
+    </div>
+  </div>
+
+  <article class="case-body">
+    <p>
+      MUNCH is the museum in Oslo dedicated to the life and work of Edvard Munch. They had produced a brochure they were proud of, but never got the chance to photograph it, and they still wanted a way to show it off. As a freelancer I was brought in to present it in 3D instead.
+    </p>
+
+    <h2>The challenge</h2>
+
+    <p>
+      Without a physical shoot, the renders had to stand in for the real thing and look convincing. MUNCH had two clear wishes. They wanted to show the variety of design across the brochure's spreads, from bold red and blue typographic pages to quiet pages of archive drawings. They also wanted to show off the high-gloss print finish the original designer had used, which only really shows when light moves across the paper.
+    </p>
+
+    <h2>The approach</h2>
+
+    <p>
+      I rebuilt the brochure in 3D directly from the print-ready PDF, so every spread matches the printed piece exactly. Copies of the brochure are laid out in a grid under soft window light, so the gloss catches highlights and shadows as the pages turn. I built a simple rig that flips through the spreads at random intervals, which keeps the scene alive and shows the full range of the design without feeling staged. I also made the rig controllable by hand. I expected MUNCH would want specific pages highlighted at specific moments, and that turned out to be the case, so the request was a quick fix rather than a rebuild.
+    </p>
+
+    <div class="case-visual">
+      <div class="case-visual__frame">
+        <video autoplay muted loop playsinline poster="Assets/munch/Brosjyre_SS04_preview.jpg">
+          <source src="Assets/munch/Brosjyre_SS04.webm" type="video/webm">
+        </video>
+      </div>
+    </div>
+
+    <h2>Result</h2>
+
+    <p>
+      A set of product renders that present the brochure as if it had been shot, with every spread accurate to print and the gloss finish visible in motion. Planning for the client's next request turned what could have been a restructure into a small adjustment.
+    </p>
+  </article>
+
+  <!-- Filled in by assets/cases.js from cases/manifest.json — no
+       need to pick a prev/next case by hand. -->
+  <nav class="case-nav"></nav>
+
+</main>
+
+<script src="../assets/cases.js" defer></script>
+<script src="../assets/logo-motion.js" defer></script>
+</body>
+</html>

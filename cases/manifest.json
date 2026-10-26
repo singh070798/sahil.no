@@ -4,7 +4,7 @@
   "title": "Maarud & Q — Campaign",
   "desc": "3D campaign content and product imagery for a chips-and-dip summer campaign.\n",
   "tags": [
-    "Social Media",
+    "Content",
     "Campaign",
     "3D"
   ],
@@ -20,7 +20,7 @@
   "title": "Eika — Kredittkort",
   "desc": "Rebuilding a 2D brand style in 3D for Eika's credit card campaigns.",
   "tags": [
-    "Social Media",
+    "Content",
     "Campaign",
     "3D"
   ],
@@ -36,7 +36,7 @@
   "title": "Oskar Sylte — Brand content",
   "desc": "Monthly social content built with 3D product assets and a hands-on, AI-assisted workflow.",
   "tags": [
-    "Social Media",
+    "Content",
     "3D"
   ],
   "media": {
@@ -59,6 +59,21 @@
     "src": "cases/Assets/Aschehoug/Aschehoug_preview.webm",
     "mime": "video/webm",
     "poster": "cases/Assets/Aschehoug/Aschehoug_preview.png"
+  }
+},
+    {
+  "file": "munch.html",
+  "title": "Munch — Brochure",
+  "desc": "Product renders of a MUNCH brochure that was never photographed, built straight from the print-ready PDF.",
+  "tags": [
+    "3D",
+    "Product Visualisation"
+  ],
+  "media": {
+    "type": "video",
+    "src": "cases/Assets/munch/Brosjyre_SS05.webm",
+    "mime": "video/webm",
+    "poster": "cases/Assets/munch/Brosjyre_SS05_preview.jpg"
   }
 },
   {
@@ -136,33 +151,18 @@
   }
 },
     {
-  "file": "tvp.html",
-  "title": "The Viking Planet — Posters",
-  "desc": "Subtle 2.5D motion for The Viking Planet's summer campaign on digital screens across Oslo.",
-  "tags": [
-    "Campaign",
-    "Digital Out-of-Home"
-  ],
-  "media": {
-    "type": "video",
-    "src": "cases/Assets/tvp/tvp-loop.webm",
-    "mime": "video/webm",
-    "poster": "cases/Assets/tvp/tvp-loop_preview.webm"
-  }
-},
-    {
   "file": "cst.html",
   "title": "CST — Brand Elements",
   "desc": "Rigged brand animations for Canadian Seafood Treasures, emulating the style of a hand-drawn brand film.",
   "tags": [
     "Motion Identity",
-    "2D animation"
+    "2D Animation"
   ],
   "media": {
     "type": "video",
-    "src": "cases/Assets/cst/kishredfish.webm",
+    "src": "cases/Assets/cst/CST_Illustrations.webm",
     "mime": "video/webm",
-    "poster": "cases/Assets/cst/kishredfish_preview.jpg"
+    "poster": "cases/Assets/cst/CST_Illustrations_preview.jpg"
   }
 },
     {
