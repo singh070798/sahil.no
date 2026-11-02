@@ -1,0 +1,255 @@
+/* =====================================================================
+   Selected Works — two-column mosaic
+   Loaded automatically by assets/cases.js (no <link> needed), after
+   assets/style.css, and built on its tokens (:root) so colors and type
+   follow the rest of the site. The old .case-card rules in style.css
+   are no longer used by the homepage and can be deleted.
+   ===================================================================== */
+
+/* ---- mosaic ----
+   Two columns. Every tile keeps its media's own shape; cases.js sets
+   how many of the tiny 4px rows each tile spans, so the columns pack
+   together like a masonry wall. --work-gap is the vertical space
+   between tiles (padding under each tile, so it's part of its height). */
+.cases__grid.works-grid {
+  --work-gap: 3rem;
+  grid-template-columns: 1fr;
+  grid-auto-rows: 4px;
+  row-gap: 0;
+  column-gap: var(--grid-gap);
+  align-items: start;
+}
+
+@media (min-width: 684px) {
+  .cases__grid.works-grid {
+    --work-gap: 3.5rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 2rem;
+  }
+}
+
+/* ---- tile ---- */
+.work {
+  display: block;
+  align-self: start;
+  padding-bottom: var(--work-gap);
+  color: var(--ink);
+}
+
+.work:focus-visible { outline: none; }
+.work:focus-visible .work__media {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.work__media {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+  /* keeps the rounded corners crisp while the media scales on hover
+     (same rendering fix style.css uses on the old cards) */
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  aspect-ratio: 16 / 10; /* placeholder until the real shape is known */
+  background: var(--bg);
+}
+
+.work__media img,
+.work__media video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.work__placeholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* "View case →" label, only on hover/focus */
+.work__view {
+  position: absolute;
+  left: 1rem;
+  bottom: 1rem;
+  padding: 0.4rem 0.65rem;
+  background: var(--ink);
+  color: var(--bg-deep);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  line-height: 1.2;
+  border-radius: calc(var(--radius) / 2);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+
+/* ---- caption: Client — Project ........ KIND ---- */
+.work__cap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  padding-top: 0.9rem;
+}
+
+.work__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.375rem;
+  line-height: 1.2;
+  color: var(--ink);
+  transition: color 0.2s ease;
+}
+
+.work__kind {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: var(--text-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* ---- hover: slight zoom, label appears, whole headline highlights.
+   Skipped right after a jump link (html.is-jumping), like the old cards. */
+html:not(.is-jumping) .work:hover .work__media img,
+html:not(.is-jumping) .work:hover .work__media video {
+  transform: scale(1.03);
+}
+
+html:not(.is-jumping) .work:hover .work__view,
+.work:focus-visible .work__view {
+  opacity: 1;
+  transform: none;
+}
+
+html:not(.is-jumping) .work:hover .work__title,
+.work:focus-visible .work__title {
+  color: var(--accent);
+}
+
+
+/* =====================================================================
+   Experiences — the CV list beside the showreel
+   Same idea as the case grid: no white card, text straight on the teal,
+   and far fewer styles — one size for every row, two shades of ink,
+   quiet group labels, and plain text links instead of two buttons.
+   Only restyles the existing markup in index.html; nothing to change
+   there.
+   ===================================================================== */
+
+/* Undo the white-card colors style.css gives .intro__cv: "inherit"
+   takes the same values as the text around it on the teal. */
+.intro__cv {
+  --ink: inherit;
+  --ink-dim: inherit;
+  --ink-faint: inherit;
+  --accent: inherit;
+  --line: inherit;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+}
+
+/* "Work" / "Freelance" — the same small label as the case categories,
+   in faint ink rather than the accent, with a hairline under it */
+.intro__cv .cv__group {
+  color: var(--ink-faint);
+  font-weight: 500;
+  padding-bottom: calc(var(--cv-li) * 0.6);
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 0;
+}
+
+/* first label sits level with the top of the showreel */
+.intro__cv > .cv__group:first-child { margin-top: 0; }
+
+/* rows: role on top, company under it, years on the right —
+   one font, one size, two weights at most */
+.intro__cv .cv__list li,
+.intro__cv .cv__list li:first-child {
+  padding: var(--cv-li) 0;
+  border-top: 0;
+  border-bottom: 1px solid var(--line);
+  column-gap: 1rem;
+}
+
+.intro__cv .cv__role,
+.intro__cv .cv__org,
+.intro__cv .cv__years {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.intro__cv .cv__role {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.intro__cv .cv__org,
+.intro__cv .cv__years {
+  font-weight: 400;
+  color: var(--ink-dim);
+}
+
+.intro__cv .cv__years {
+  align-self: baseline;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Contact / Full resume — text links instead of buttons */
+.intro__cv .cv__actions {
+  gap: 0.5rem 1.75rem;
+}
+
+.intro__cv .cv__actions .btn,
+.intro__cv .cv__actions .btn--primary,
+.intro__cv .cv__actions .btn--ghost {
+  background: none;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  text-box: normal;
+  line-height: 1.4;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.intro__cv .cv__actions .btn::after {
+  content: "\2192";
+  display: inline-block;
+  margin-left: 0.4em;
+  transition: transform 0.2s ease;
+}
+
+.intro__cv .cv__actions .btn:hover,
+.intro__cv .cv__actions .btn:focus-visible {
+  background: none;
+  color: var(--accent);
+}
+
+.intro__cv .cv__actions .btn:hover::after,
+.intro__cv .cv__actions .btn:focus-visible::after {
+  transform: translateX(3px);
+}

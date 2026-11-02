@@ -859,6 +859,25 @@ function findUnresolvedRefs(html, issues) {
   while ((a = urlRe.exec(html))) check(a[2]);
 }
 
+// Map Google's cached_libs file names to the same files on cdnjs
+function adLibToCdnjs(lib, ver) {
+  const base = `https://cdnjs.cloudflare.com/ajax/libs/gsap/${ver}/`;
+  const major = parseInt(ver, 10);
+  if (lib === 'gsap') return major >= 3 ? base + 'gsap.min.js' : null;
+  if (major >= 3) {
+    // GSAP 3 bundles the old names into gsap.min.js; plugins keep their own files
+    const v3 = { tweenmax: 'gsap.min.js', tweenlite: 'gsap.min.js', timelinemax: 'gsap.min.js',
+      timelinelite: 'gsap.min.js', cssplugin: 'CSSPlugin.min.js', easepack: 'EasePack.min.js',
+      scrolltoplugin: 'ScrollToPlugin.min.js', textplugin: 'TextPlugin.min.js', draggable: 'Draggable.min.js' };
+    return v3[lib] ? base + v3[lib] : null;
+  }
+  const v2 = { tweenmax: 'TweenMax.min.js', tweenlite: 'TweenLite.min.js', timelinemax: 'TimelineMax.min.js',
+    timelinelite: 'TimelineLite.min.js', cssplugin: 'plugins/CSSPlugin.min.js', easepack: 'easing/EasePack.min.js',
+    scrolltoplugin: 'plugins/ScrollToPlugin.min.js', textplugin: 'plugins/TextPlugin.min.js',
+    draggable: 'utils/Draggable.min.js' };
+  return v2[lib] ? base + v2[lib] : null;
+}
+
 function injectIntoHead(html, snippet) {
   const headRe = /<head(\s[^>]*)?>/i;
   return headRe.test(html) ? html.replace(headRe, m => m + snippet) : snippet + html;
@@ -940,6 +959,15 @@ async function buildPatchedHtml(banner) {
   // patched @font-face data URIs are used
   patched = patched.replace(/fontsLocalPath\s*:\s*["'][^"']*["']/g, 'fontsLocalPath:""');
 
+  // Ad-server copies of animation libraries (s0.2mdn.net/ads/studio/cached_libs/…)
+  // are blocked by ad blockers and many networks, which leaves the banner blank.
+  // Load the identical library version from cdnjs instead.
+  patched = patched.replace(/(["'])(?:https?:)?\/\/s0\.2mdn\.net\/ads\/studio\/cached_libs\/([a-z]+)_(\d+\.\d+\.\d+)_min\.js\1/gi,
+    (m, q, lib, ver) => {
+      const url = adLibToCdnjs(lib.toLowerCase(), ver);
+      return url ? q + url + q : m;
+    });
+
   // References that still point to disk or to files missing from the package
   findUnresolvedRefs(patched, issues);
 
@@ -963,6 +991,8 @@ async function buildPatchedHtml(banner) {
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
 }
+// Google/DoubleClick ad CDNs that ad blockers and some networks block
+const AD_CDN_RE = /(^|\/\/|\.)(2mdn\.net|doubleclick\.net|googlesyndication\.com|googleadservices\.com)\//i;
 function shortRef(v) { return v.length > 70 ? v.slice(0, 40) + '…' + v.slice(-25) : v; }
 function issueText(kind, value) {
   switch (kind) {
@@ -972,7 +1002,9 @@ function issueText(kind, value) {
     case 'localfont':  return `Ignored local() source for "${value}" — not available to viewers`;
     case 'unpackaged': return `Not in package: ${shortRef(value)}`;
     case 'local':      return `Points to a file on this computer: ${shortRef(value)}`;
-    case 'missing':    return `Failed to load: ${shortRef(value)}`;
+    case 'missing':    return AD_CDN_RE.test(value)
+      ? `Failed to load ad-server script: ${shortRef(value)} — likely blocked by an ad blocker or network filter; the banner can't run without it`
+      : `Failed to load: ${shortRef(value)}`;
     case 'blocked':    return `Blocked local/unsupported URL: ${shortRef(value)}`;
     default:           return value;
   }
@@ -1298,7 +1330,9 @@ async function doExport() {
   const pageTitle = rawName.replace(/\.html$/i, '');
 
   const bannerCards = built.map(b => {
-    const srcdoc = b.html.replace(/"/g, '&quot;');
+    // Escape & before " so entities inside the banner's own code (e.g. "&quot;"
+    // in Adrapid's escape table) survive the attribute decode unchanged
+    const srcdoc = b.html.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
     return `
     <div class="banner-block">
       <div class="banner-meta">
